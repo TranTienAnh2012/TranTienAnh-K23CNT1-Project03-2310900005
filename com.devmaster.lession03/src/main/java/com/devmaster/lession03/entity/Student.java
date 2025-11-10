@@ -1,81 +1,81 @@
 package com.devmaster.lession03.entity;
 
 public class Student {
-    Long id;
-    String name;
-    int age;
-    String gender;
-    String address;
-    String phone;
-    String email;
+    Long ttaId;
+    String ttaName;
+    int ttaAge;
+    String ttaGender;
+    String ttaAddress;
+    String ttaPhone;
+    String ttaEmail;
 
     public Student() {
     }
 
-    public Student(Long id, String name, int age, String gender, String address, String phone, String email)
+    public Student(Long ttaId, String ttaName, int ttaAge, String ttaGender, String ttaAddress, String ttaPhone, String ttaEmail)
     {
-        this.id = id;
-        this.name = name;
-        this.age = age;
-        this.gender = gender;
-        this.address = address;
-        this.phone = phone;
-        this.email = email;
+        this.ttaId = ttaId;
+        this.ttaName = ttaName;
+        this.ttaAge = ttaAge;
+        this.ttaGender = ttaGender;
+        this.ttaAddress = ttaAddress;
+        this.ttaPhone = ttaPhone;
+        this.ttaEmail = ttaEmail;
     }
 
-    public Long getId() {
-        return id;
+    public Long getTtaId() {
+        return ttaId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setTtaId(Long ttaId) {
+        this.ttaId = ttaId;
     }
 
-    public String getEmail() {
-        return email;
+    public String getTtaEmail() {
+        return ttaEmail;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setTtaEmail(String ttaEmail) {
+        this.ttaEmail = ttaEmail;
     }
 
-    public String getPhone() {
-        return phone;
+    public String getTtaPhone() {
+        return ttaPhone;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setTtaPhone(String ttaPhone) {
+        this.ttaPhone = ttaPhone;
     }
 
-    public String getAddress() {
-        return address;
+    public String getTtaAddress() {
+        return ttaAddress;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setTtaAddress(String ttaAddress) {
+        this.ttaAddress = ttaAddress;
     }
 
-    public String getGender() {
-        return gender;
+    public String getTtaGender() {
+        return ttaGender;
     }
 
-    public void setGender(String gender) {
-        this.gender = gender;
+    public void setTtaGender(String ttaGender) {
+        this.ttaGender = ttaGender;
     }
 
-    public int getAge() {
-        return age;
+    public int getTtaAge() {
+        return ttaAge;
     }
 
-    public void setAge(int age) {
-        this.age = age;
+    public void setTtaAge(int ttaAge) {
+        this.ttaAge = ttaAge;
     }
 
-    public String getName() {
-        return name;
+    public String getTtaName() {
+        return ttaName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTtaName(String ttaName) {
+        this.ttaName = ttaName;
     }
 }
