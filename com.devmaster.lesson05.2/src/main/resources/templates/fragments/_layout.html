@@ -1,10 +1,127 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title th:text="${title}">Devmaster::Giới thiệu Thymeleaf trong SpringBoot</title>
+
+    <!-- Bootstrap CSS -->
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <style>
+        body {
+            background-color: #f1f1f1;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        header {
+            background-color: #ffffff;
+            padding: 10px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        header img {
+            height: 60px;
+            margin-right: 20px;
+        }
+
+        .nav-link {
+            margin-right: 15px;
+            color: #343a40 !important;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            color: #007bff !important;
+        }
+
+        footer {
+            background-color: #343a40;
+            color: #ffffff;
+            padding: 15px 0;
+            margin-top: 40px;
+        }
+
+        footer img {
+            width: 50px;
+            margin-bottom: 5px;
+        }
+
+        footer a {
+            color: #ffc107;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        nav ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        nav ul li {
+            display: inline-block;
+            margin-right: 15px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #007bff;
+        }
+
+        nav ul li a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-$END$
+<!-- Header Fragment -->
+<header th:fragment="header" class="container d-flex align-items-center bg-white">
+    <a href="/">
+        <img src="https://devmaster.edu.vn/images/logo.png" alt="Devmaster Academy">
+    </a>
+
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+                <a th:href="@{/home}" class="nav-link">Trang chủ</a>
+            </li>
+            <li class="nav-item">
+                <a th:href="@{/about}" class="nav-link">Giới thiệu</a>
+            </li>
+            <li class="nav-item">
+                <a th:href="@{/contact}" class="nav-link">Liên hệ</a>
+            </li>
+        </ul>
+    </nav>
+</header>
+
+<!-- Footer Fragment -->
+<footer th:fragment="footer" class="container d-flex align-items-center">
+    <div>
+        <img src="https://devmaster.edu.vn/images/logo.png" alt="Devmaster Academy">
+        <address>© 2025 <b>Devmaster Academy</b></address>
+        <p><a href="https://devmaster.edu.vn">Website chính thức</a></p>
+    </div>
+    <!-- Chèn menu fragment -->
+    <nav th:insert="fragments/_layout::menu"></nav>
+</footer>
+
+<!-- Menu Fragment -->
+<nav th:fragment="menu">
+    <ul>
+        <li><a th:href="@{/home}">Trang chủ</a></li>
+        <li><a th:href="@{/about}">Dịch vụ</a></li>
+        <li><a th:href="@{/contact}">Liên hệ</a></li>
+    </ul>
+</nav>
+
+<!-- Bootstrap JS Bundle -->
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 </body>
 </html>
