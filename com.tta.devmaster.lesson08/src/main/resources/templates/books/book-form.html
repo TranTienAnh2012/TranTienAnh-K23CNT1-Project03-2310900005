@@ -60,7 +60,7 @@
                         </div>
                     </div>
                 </div>
-
+                =
                 <div class="mb-3">
                     <label class="form-label">Authors</label>
                     <div class="dropdown">
@@ -68,21 +68,47 @@
                                 id="authorsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                             Select Authors
                         </button>
-                        <ul class="dropdown-menu p-3" aria-labelledby="authorsDropdown" style="max-height:200px; overflow-y:auto;">
+
+                        <ul class="dropdown-menu p-3" aria-labelledby="authorsDropdown"
+                            style="max-height:200px; overflow-y:auto; width: 100%;">
+
                             <li th:each="author : ${authors}">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox"
-                                           th:id="'author_' + ${author.id}"
-                                           th:name="authorIds"
-                                           th:value="${author.id}"
-                                           th:checked="${book.authors.contains(author)}">
-                                    <label class="form-check-label" th:for="'author_' + ${author.id}"
-                                           th:text="${author.name}"></label>
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+
+                                    <!-- Checkbox chọn nhiều tác giả -->
+                                    <div class="form-check">
+                                        <input class="form-check-input"
+                                               type="checkbox"
+                                               th:id="'author_' + ${author.id}"
+                                               th:name="authorIds"
+                                               th:value="${author.id}"
+                                               th:checked="${book.authors.contains(author)}">
+
+                                        <label class="form-check-label ms-1"
+                                               th:for="'author_' + ${author.id}"
+                                               th:text="${author.name}">
+                                        </label>
+                                    </div>
+
+                                    <!-- Radio chọn tác giả chủ biên -->
+                                    <div class="form-check d-flex align-items-center">
+
+                                        <input class="form-check-input"
+                                               type="radio"
+                                               name="mainAuthorId"
+                                               th:value="${author.id}"
+                                               th:checked="${book.mainAuthor != null and book.mainAuthor.id == author.id}">
+
+                                        <label class="ms-1">Chủ biên</label>
+                                    </div>
+
                                 </div>
                             </li>
+
                         </ul>
                     </div>
                 </div>
+
 
 
                 <div class="mb-3">

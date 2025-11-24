@@ -47,4 +47,9 @@ public class Book {
             inverseJoinColumns = @JoinColumn(name = "authorId") // cột liên kết author
     )
     private List<Author> authors = new ArrayList<>();
+
+    // Many-to-One: tác giả chính
+    @ManyToOne
+    @JoinColumn(name = "mainAuthorId")  // cột FK
+    private Author mainAuthor;
 }

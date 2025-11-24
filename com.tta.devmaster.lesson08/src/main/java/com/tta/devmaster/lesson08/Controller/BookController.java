@@ -4,6 +4,8 @@ import com.tta.devmaster.lesson08.entity.Author;
 import com.tta.devmaster.lesson08.entity.Book;
 import com.tta.devmaster.lesson08.Service.AuthorService;
 import com.tta.devmaster.lesson08.Service.BookService;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,6 +29,7 @@ public class BookController {
     @Autowired
     private AuthorService authorService;
 
+
     // Thư mục lưu file ảnh (nên đặt ngoài src để chạy JAR)
     private static final String UPLOAD_DIR = "uploads/images/";
 
@@ -45,15 +48,15 @@ public class BookController {
         return "books/book-form";
     }
 
-    // -------------------- Lưu sách (thêm mới hoặc cập nhật) --------------------
     @PostMapping("/save")
     public String saveBook(
             @ModelAttribute Book book,
             @RequestParam(required = false) List<Integer> authorIds,
+            @RequestParam(required = false) Integer mainAuthorId,   // <-- thêm dòng này
             @RequestParam("imageBook") MultipartFile imageFile) {
 
-        // Thư mục lưu ảnh sách
-        Path uploadPath = Paths.get("D:/book_images/books/"); // <-- thêm /books
+        // --------- Xử lý upload ảnh giữ nguyên ----------
+        Path uploadPath = Paths.get("D:/book_images/books/");
 
         try {
             if (!Files.exists(uploadPath)) {
@@ -67,14 +70,11 @@ public class BookController {
 
                 Path filePath = uploadPath.resolve(newFileName);
 
-                // Nếu file đã tồn tại, xóa để tránh FileAlreadyExistsException
                 if (Files.exists(filePath)) {
                     Files.delete(filePath);
                 }
 
                 Files.copy(imageFile.getInputStream(), filePath);
-
-                // Lưu URL để hiển thị
                 book.setImgUrl("/uploads/images/" + newFileName);
             } else if (book.getId() != null) {
                 Book existingBook = bookService.getBookById(book.getId());
@@ -85,12 +85,21 @@ public class BookController {
             e.printStackTrace();
         }
 
-        // Gán authors
+        // --------- Xử lý danh sách tác giả (checkbox) ----------
         if (authorIds != null && !authorIds.isEmpty()) {
             List<Author> authors = authorService.findAllById(authorIds);
             book.setAuthors(authors);
         }
 
+        // --------- Xử lý CHỦ BIÊN (mainAuthorId) ----------
+        if (mainAuthorId != null) {
+            Author mainAuthor = authorService.getAuthorById(mainAuthorId);
+            book.setMainAuthor(mainAuthor);
+        } else {
+            book.setMainAuthor(null); // nếu người dùng không chọn
+        }
+
+        // --------- Lưu sách ----------
         bookService.saveBook(book);
         return "redirect:/books";
     }
