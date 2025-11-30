@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi" th:replace="~{layout/tta-admin-layout :: layout(~{::content})}">
+
+<head>
+    <title th:text="${pageTitle}">Danh mục</title>
+</head>
+
+<body>
+
+    <div th:fragment="content">
+
+        <h3 class="mb-3">Quản lý Danh mục</h3>
+
+        <!-- Tìm kiếm -->
+        <form method="get" action="#" class="row mb-3">
+            <div class="col-md-4">
+                <input type="text" name="keyword" th:value="${keyword}" class="form-control"
+                    placeholder="Tìm theo tên danh mục...">
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-primary">Tìm kiếm</button>
+            </div>
+            <div class="col-md-6 text-end">
+                <a href="/admin/danhmuc/them" class="btn btn-success">+ Thêm danh mục</a>
+            </div>
+        </form>
+
+        <!-- Bảng -->
+        <table class="table table-bordered">
+            <thead class="table-light">
+                <tr>
+                    <th>Mã</th>
+                    <th>Tên danh mục</th>
+                    <th>Mô tả</th>
+                    <th>Số sản phẩm</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr th:each="dm : ${ttaDanhMucList}">
+                    <td th:text="${dm.ttaMaDanhMuc}"></td>
+                    <td th:text="${dm.ttaTenDanhMuc}"></td>
+                    <td th:text="${dm.ttaMoTa}">—</td>
+                    <td th:text="${ttaSoSanPhamMap[dm.ttaMaDanhMuc]}">0</td>
+                    <td>
+                        <a th:href="@{'/admin/danhmuc/sua/' + ${dm.ttaMaDanhMuc}}"
+                            class="btn btn-warning btn-sm">Sửa</a>
+
+                        <form th:action="@{'/admin/danhmuc/xoa/' + ${dm.ttaMaDanhMuc}}" method="post"
+                            style="display:inline-block" onsubmit="return confirm('Bạn chắc chắn muốn xóa?');">
+                            <button class="btn btn-danger btn-sm">Xóa</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Phân trang -->
+        <nav th:if="${ttaDanhMucPage.totalPages > 1}">
+            <ul class="pagination">
+                <li class="page-item" th:classappend="${ttaDanhMucPage.first} ? 'disabled'">
+                    <a class="page-link"
+                        th:href="@{'/admin/danhmuc'(page=${ttaDanhMucPage.number - 1}, size=${ttaDanhMucPage.size})}">«</a>
+                </li>
+
+                <li th:each="i : ${#numbers.sequence(0, ttaDanhMucPage.totalPages - 1)}" class="page-item"
+                    th:classappend="${i == ttaDanhMucPage.number} ? 'active'">
+                    <a class="page-link" th:text="${i + 1}"
+                        th:href="@{'/admin/danhmuc'(page=${i}, size=${ttaDanhMucPage.size})}"></a>
+                </li>
+
+                <li class="page-item" th:classappend="${ttaDanhMucPage.last} ? 'disabled'">
+                    <a class="page-link"
+                        th:href="@{'/admin/danhmuc'(page=${ttaDanhMucPage.number + 1}, size=${ttaDanhMucPage.size})}">»</a>
+                </li>
+            </ul>
+        </nav>
+
+    </div>
+
+</body>
+
+</html>

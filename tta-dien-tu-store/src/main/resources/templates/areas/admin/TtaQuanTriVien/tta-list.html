@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi" th:replace="~{layout/tta-admin-layout :: layout(~{::content})}">
+
+<head>
+    <title th:text="${pageTitle}">Quản trị viên - TTA Store</title>
+</head>
+
+<body>
+    <div th:fragment="content">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <div>
+                <h2 class="mb-0">Quản trị viên</h2>
+                <p class="text-muted mb-0">Quản lý tài khoản quản trị và người dùng</p>
+            </div>
+            <a class="btn btn-primary" th:href="@{/admin/quan-tri-vien/them}">
+                <i class="bi bi-plus-circle"></i> Thêm quản trị viên
+            </a>
+        </div>
+
+        <form class="row g-3 align-items-center mb-4" th:action="@{/admin/quan-tri-vien}" method="get">
+            <div class="col-md-4">
+                <input type="text" name="keyword" class="form-control" placeholder="Tìm theo họ tên hoặc email"
+                    th:value="${keyword}">
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-outline-primary w-100">
+                    <i class="bi bi-search"></i> Tìm kiếm
+                </button>
+            </div>
+        </form>
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#</th>
+                                <th>Họ tên</th>
+                                <th>Email</th>
+                                <th>Vai trò</th>
+                                <th>Ngày đăng ký</th>
+                                <th class="text-end">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${ttaQtvPage == null || ttaQtvPage.totalElements == 0}">
+                                <td colspan="6" class="text-center text-muted py-4">
+                                    Chưa có quản trị viên nào
+                                </td>
+                            </tr>
+                            <tr th:each="qtv, stat : ${ttaQtvPage?.content}">
+                                <td th:text="${stat.index + 1 + (ttaQtvPage.number * ttaQtvPage.size)}">1</td>
+                                <td>
+                                    <strong th:text="${qtv.ttaHoTen}">Nguyễn Văn A</strong>
+                                </td>
+                                <td th:text="${qtv.ttaEmail}">email@example.com</td>
+                                <td>
+                                    <span class="badge"
+                                        th:classappend="${qtv.ttaVaiTro == 1} ? 'bg-danger' : 'bg-secondary'"
+                                        th:text="${qtv.ttaVaiTro == 1} ? 'ADMIN' : 'USER'">USER</span>
+                                </td>
+                                <td th:text="${#temporals.format(qtv.ttaNgayDangKy, 'dd/MM/yyyy HH:mm')}">01/01/2024
+                                </td>
+                                <td class="text-end">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a class="btn btn-outline-primary"
+                                            th:href="@{'/admin/quan-tri-vien/sua/' + ${qtv.ttaMaNguoiDung}}">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+                                        <form th:action="@{'/admin/quan-tri-vien/xoa/' + ${qtv.ttaMaNguoiDung}}"
+                                            method="post"
+                                            onsubmit="return confirm('Bạn chắc chắn muốn xóa tài khoản này?');">
+                                            <button type="submit" class="btn btn-outline-danger">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer d-flex justify-content-between align-items-center">
+                <span th:text="'Tổng: ' + ${ttaQtvPage?.totalElements} + ' tài khoản'">Tổng: 0 tài khoản</span>
+                <nav th:if="${ttaQtvPage?.totalPages > 1}">
+                    <ul class="pagination pagination-sm mb-0">
+                        <li class="page-item" th:classappend="${ttaQtvPage.first} ? 'disabled'">
+                            <a class="page-link"
+                                th:href="@{/admin/quan-tri-vien(page=${ttaQtvPage.number - 1}, size=${ttaQtvPage.size}, sortBy=${sortBy}, sortDir=${sortDir}, keyword=${keyword})}">
+                                Trước
+                            </a>
+                        </li>
+                        <li class="page-item" th:each="i : ${#numbers.sequence(0, ttaQtvPage.totalPages - 1)}"
+                            th:classappend="${i == ttaQtvPage.number} ? 'active'">
+                            <a class="page-link" th:text="${i + 1}"
+                                th:href="@{/admin/quan-tri-vien(page=${i}, size=${ttaQtvPage.size}, sortBy=${sortBy}, sortDir=${sortDir}, keyword=${keyword})}">1</a>
+                        </li>
+                        <li class="page-item" th:classappend="${ttaQtvPage.last} ? 'disabled'">
+                            <a class="page-link"
+                                th:href="@{/admin/quan-tri-vien(page=${ttaQtvPage.number + 1}, size=${ttaQtvPage.size}, sortBy=${sortBy}, sortDir=${sortDir}, keyword=${keyword})}">
+                                Sau
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

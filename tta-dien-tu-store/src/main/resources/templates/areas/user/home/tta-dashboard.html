@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+
+<head th:replace="~{layout/tta-user-layout :: head}">
+    <title>Trang chủ - TTA Store</title>
+</head>
+
+<body th:replace="~{layout/tta-user-layout :: layout(~{::content})}">
+    <div th:fragment="content">
+        <!-- Features -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-4 animate-fade-in" style="animation-delay: 0.1s;">
+                <div class="feature-card h-100 text-center">
+                    <i class="bi bi-truck text-primary feature-icon"></i>
+                    <h5 class="mt-3 fw-bold">Giao hàng nhanh</h5>
+                    <p class="text-muted">Giao hàng toàn quốc trong 24h với chi phí thấp nhất</p>
+                </div>
+            </div>
+            <div class="col-md-4 animate-fade-in" style="animation-delay: 0.2s;">
+                <div class="feature-card h-100 text-center">
+                    <i class="bi bi-shield-check text-success feature-icon"></i>
+                    <h5 class="mt-3 fw-bold">Bảo hành chính hãng</h5>
+                    <p class="text-muted">Cam kết bảo hành 12 tháng 1 đổi 1 cho tất cả sản phẩm</p>
+                </div>
+            </div>
+            <div class="col-md-4 animate-fade-in" style="animation-delay: 0.3s;">
+                <div class="feature-card h-100 text-center">
+                    <i class="bi bi-headset text-info feature-icon"></i>
+                    <h5 class="mt-3 fw-bold">Hỗ trợ 24/7</h5>
+                    <p class="text-muted">Đội ngũ kỹ thuật viên chuyên nghiệp luôn sẵn sàng hỗ trợ</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

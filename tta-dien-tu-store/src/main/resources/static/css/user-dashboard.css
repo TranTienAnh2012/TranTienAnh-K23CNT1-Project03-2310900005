@@ -1,0 +1,33 @@
+/* Hero gradient background */
+.hero-card {
+    background: linear-gradient(135deg, #007bff, #00c6ff);
+    border-radius: 1rem;
+}
+
+/* Floating icon */
+.floating-icon {
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+}
+
+/* Button gradient */
+.btn-gradient {
+    background: linear-gradient(90deg, #ff416c, #ff4b2b);
+    color: #fff;
+    border: none;
+    transition: transform 0.3s;
+}
+.btn-gradient:hover {
+    transform: scale(1.05);
+    text-decoration: none;
+}
+
+/* Features hover */
+.feature-card:hover {
+    transform: translateY(-5px);
+    transition: all 0.3s;
+}

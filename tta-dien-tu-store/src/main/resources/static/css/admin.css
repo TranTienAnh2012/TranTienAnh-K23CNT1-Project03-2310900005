@@ -1,0 +1,58 @@
+/* Admin Layout Styles */
+.admin-wrapper {
+    min-height: 100vh;
+}
+
+.admin-sidebar {
+    width: 250px;
+    min-height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 1000;
+}
+
+.admin-sidebar .nav-link {
+    color: rgba(255, 255, 255, 0.8) !important;
+    padding: 0.75rem 1rem;
+    border-radius: 5px;
+    transition: all 0.3s;
+}
+
+.admin-sidebar .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white !important;
+}
+
+.admin-sidebar .nav-link.active {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white !important;
+    font-weight: bold;
+}
+
+.admin-main {
+    margin-left: 250px;
+    width: calc(100% - 250px);
+}
+
+.admin-topbar {
+    border-bottom: 1px solid #dee2e6;
+}
+
+.admin-content {
+    background-color: #f8f9fa;
+    min-height: calc(100vh - 80px);
+}
+
+@media (max-width: 768px) {
+    .admin-sidebar {
+        width: 100%;
+        position: relative;
+    }
+    
+    .admin-main {
+        margin-left: 0;
+        width: 100%;
+    }
+}
+

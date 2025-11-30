@@ -1,0 +1,204 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+
+<head th:replace="~{layout/tta-user-layout :: head}">
+    <title>Sản phẩm</title>
+</head>
+
+<body th:replace="~{layout/tta-user-layout :: layout(~{::content})}">
+    <div th:fragment="content">
+        <!-- Sidebar Toggle Button (Desktop) -->
+        <div class="mb-3">
+            <button class="btn btn-outline-primary btn-sm" id="sidebarToggle" onclick="toggleSidebar()">
+                <i class="bi bi-funnel" id="toggleIcon"></i>
+                <span id="toggleText">Ẩn bộ lọc</span>
+            </button>
+        </div>
+
+        <div class="row" id="mainContainer">
+            <!-- Sidebar Filter -->
+            <div class="col-lg-3 mb-4" id="sidebarColumn">
+                <div class="card border-0 shadow-sm">
+                    <div
+                        class="card-header bg-white border-bottom d-flex justify-content-between align-items-center py-3">
+                        <h5 class="mb-0 fw-bold"><i class="bi bi-funnel"></i> Bộ lọc</h5>
+                        <button class="btn btn-outline-secondary btn-sm d-lg-none" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#filterSidebar" aria-expanded="true"
+                            aria-controls="filterSidebar">
+                            <i class="bi bi-list"></i>
+                        </button>
+                    </div>
+                    <div class="collapse show d-lg-block" id="filterSidebar">
+                        <div class="card-body">
+                            <!-- Category Filter -->
+                            <div class="mb-4">
+                                <h6 class="fw-bold mb-3" data-bs-toggle="collapse" data-bs-target="#categoryCollapse"
+                                    style="cursor: pointer;" aria-expanded="true">
+                                    Danh mục <i class="bi bi-chevron-down float-end"></i>
+                                </h6>
+                                <div class="collapse show" id="categoryCollapse">
+                                    <div class="list-group list-group-flush">
+                                        <a th:href="@{/user/san-pham}"
+                                            class="list-group-item list-group-item-action border-0 px-0"
+                                            th:classappend="${activeCategoryId == null} ? 'text-primary fw-bold' : ''">
+                                            <i class="bi bi-grid me-2"></i> Tất cả sản phẩm
+                                        </a>
+                                        <a th:each="ttaDm : ${ttaDanhMucs}"
+                                            th:href="@{/user/san-pham(categoryId=${ttaDm.ttaMaDanhMuc}, minPrice=${minPrice}, maxPrice=${maxPrice})}"
+                                            class="list-group-item list-group-item-action border-0 px-0"
+                                            th:classappend="${activeCategoryId == ttaDm.ttaMaDanhMuc} ? 'text-primary fw-bold' : ''">
+                                            <i class="bi bi-chevron-right me-2" style="font-size: 0.8rem;"></i>
+                                            <span th:text="${ttaDm.ttaTenDanhMuc}">Danh mục</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr class="my-3">
+
+                            <!-- Price Filter -->
+                            <div class="mb-4">
+                                <h6 class="fw-bold mb-3" data-bs-toggle="collapse" data-bs-target="#priceCollapse"
+                                    style="cursor: pointer;" aria-expanded="true">
+                                    Khoảng giá <i class="bi bi-chevron-down float-end"></i>
+                                </h6>
+                                <div class="collapse show" id="priceCollapse">
+                                    <form th:action="@{/user/san-pham}" method="get">
+                                        <input type="hidden" name="categoryId" th:value="${activeCategoryId}"
+                                            th:if="${activeCategoryId != null}">
+
+                                        <div class="mb-2">
+                                            <label class="form-label small text-muted">Từ (VNĐ)</label>
+                                            <input type="number" name="minPrice" class="form-control form-control-sm"
+                                                th:value="${minPrice}" placeholder="0">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label small text-muted">Đến (VNĐ)</label>
+                                            <input type="number" name="maxPrice" class="form-control form-control-sm"
+                                                th:value="${maxPrice}" placeholder="Tối đa">
+                                        </div>
+                                        <div class="d-grid">
+                                            <button type="submit" class="btn btn-primary btn-sm">
+                                                <i class="bi bi-filter"></i> Áp dụng
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Grid -->
+            <div class="col-lg-9" id="productColumn">
+                <div class="row mb-4" id="productListGrid">
+                    <div class="col-6 col-md-4 col-lg-3 mb-3 animate-fade-in product-item"
+                        th:each="ttaSp, iterStat : ${ttaSanPhams}" th:attr="data-index=${iterStat.index}"
+                        th:style="${iterStat.index >= 12} ? 'display: none;' : ''">
+                        <div class="product-card position-relative h-100">
+                            <span class="badge-installment">Trả góp 0%</span>
+                            <a th:href="@{'/user/san-pham/' + ${ttaSp.ttaMaSanPham}}" class="text-decoration-none">
+                                <img th:src="@{'/uploads/' + ${ttaSp.ttaHinhAnh}}" class="card-img-top"
+                                    alt="Product Image" style="height: 180px; object-fit: contain;">
+                            </a>
+                            <div class="card-body p-2 d-flex flex-column">
+                                <a th:href="@{'/user/san-pham/' + ${ttaSp.ttaMaSanPham}}" class="text-decoration-none">
+                                    <h6 class="product-name" th:text="${ttaSp.ttaTenSanPham}">Tên sản phẩm</h6>
+                                </a>
+                                <div class="mt-auto">
+                                    <div class="product-price mb-1"
+                                        th:text="${#numbers.formatDecimal(ttaSp.ttaGia, 0, 'COMMA', 0, 'POINT')} + '₫'">
+                                        10.000.000₫
+                                    </div>
+                                    <div class="product-rating mb-2">
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-half"></i>
+                                        <span class="text-muted ms-1" style="font-size: 0.7rem;">(15)</span>
+                                    </div>
+                                    <a th:href="@{'/user/cart/add/' + ${ttaSp.ttaMaSanPham}}"
+                                        class="btn btn-outline-danger btn-sm w-100 rounded-pill">
+                                        <i class="bi bi-cart-plus"></i> Thêm vào giỏ
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- No products found message -->
+                    <div class="col-12 text-center py-5" th:if="${ttaSanPhams.empty}">
+                        <i class="bi bi-search display-1 text-muted"></i>
+                        <p class="mt-3 text-muted">Không tìm thấy sản phẩm nào phù hợp.</p>
+                        <a th:href="@{/user/san-pham}" class="btn btn-outline-primary">Xem tất cả sản phẩm</a>
+                    </div>
+                </div>
+
+                <!-- Nút Xem thêm -->
+                <div class="text-center mb-5" id="showMoreContainer" th:if="${ttaSanPhams.size() > 12}">
+                    <button class="btn btn-outline-primary btn-lg" id="showMoreBtn" onclick="showMoreProducts()">
+                        <i class="bi bi-chevron-down"></i> Xem thêm sản phẩm
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            let sidebarVisible = true;
+
+            function toggleSidebar() {
+                const sidebar = document.getElementById('sidebarColumn');
+                const productColumn = document.getElementById('productColumn');
+                const toggleText = document.getElementById('toggleText');
+                const toggleIcon = document.getElementById('toggleIcon');
+                const productItems = document.querySelectorAll('.product-item');
+
+                sidebarVisible = !sidebarVisible;
+
+                if (sidebarVisible) {
+                    // Show sidebar
+                    sidebar.style.display = 'block';
+                    productColumn.classList.remove('col-lg-12');
+                    productColumn.classList.add('col-lg-9');
+                    toggleText.textContent = 'Ẩn bộ lọc';
+                    toggleIcon.className = 'bi bi-funnel';
+
+                    // Reset product columns to 4 per row (col-lg-3)
+                    productItems.forEach(item => {
+                        item.classList.remove('col-lg-2');
+                        item.classList.add('col-lg-3');
+                    });
+                } else {
+                    // Hide sidebar
+                    sidebar.style.display = 'none';
+                    productColumn.classList.remove('col-lg-9');
+                    productColumn.classList.add('col-lg-12');
+                    toggleText.textContent = 'Hiện bộ lọc';
+                    toggleIcon.className = 'bi bi-funnel-fill';
+
+                    // Change product columns to 6 per row (col-lg-2)
+                    productItems.forEach(item => {
+                        item.classList.remove('col-lg-3');
+                        item.classList.add('col-lg-2');
+                    });
+                }
+            }
+
+            function showMoreProducts() {
+                // Hiển thị tất cả sản phẩm
+                const allProducts = document.querySelectorAll('.product-item');
+                allProducts.forEach(product => {
+                    product.style.display = '';
+                });
+
+                // Ẩn nút "Xem thêm"
+                document.getElementById('showMoreContainer').style.display = 'none';
+            }
+        </script>
+    </div>
+</body>
+
+</html>
