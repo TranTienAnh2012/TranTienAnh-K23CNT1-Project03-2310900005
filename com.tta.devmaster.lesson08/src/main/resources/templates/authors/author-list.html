@@ -19,28 +19,36 @@
             <thead class="table-dark">
             <tr>
                 <th>ID</th>
+                <th>Code</th>
                 <th>Name</th>
                 <th>Email</th>
+                <th>Phone</th>
+                <th>Address</th>
                 <th>Image</th>
+                <th>Active</th>
                 <th>Actions</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="author : ${authors}">
                 <td th:text="${author.id}"></td>
+                <td th:text="${author.code}"></td>
                 <td th:text="${author.name}"></td>
                 <td th:text="${author.email}"></td>
+                <td th:text="${author.phone}"></td>
+                <td th:text="${author.address}"></td>
                 <td>
-                    <!-- Chỉ hiển thị khi có ảnh -->
                     <img th:if="${author.imgUrl != null}"
                          th:src="${author.imgUrl}"
                          th:alt="${author.name}"
                          class="img-thumbnail"
                          style="max-width:80px; max-height:80px;"/>
-                    <!-- Nếu không có ảnh, hiển thị placeholder -->
                     <span th:if="${author.imgUrl == null}">No Image</span>
                 </td>
-
+                <td>
+                    <span th:text="${author.isActive} ? 'Yes' : 'No'"
+                          th:classappend="${author.isActive} ? 'text-success' : 'text-danger'"></span>
+                </td>
                 <td>
                     <a th:href="@{/authors/edit/{id}(id=${author.id})}"
                        class="btn btn-primary btn-sm me-1">Edit</a>

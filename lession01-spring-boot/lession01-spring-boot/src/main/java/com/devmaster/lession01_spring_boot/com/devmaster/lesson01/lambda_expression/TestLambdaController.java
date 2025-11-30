@@ -53,7 +53,7 @@ public class TestLambdaController {
         Shape shape = new Shape();
         shape.draw();
         shape.setColor("Đỏ");
-        return "Đã chạy draw() và setColor() – xem log console!";
+        return "Đã chạy draw() và setColor() – xem log console! Trần Tiến Anh";
     }
 
     // Endpoint test MultiInheritance

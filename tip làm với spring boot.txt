@@ -1,0 +1,54 @@
+tip làm với spring boot
+ reload pom: mvn clean install
+- port 8080 đang bị chiếm. 🔥
++ Kiểm tra tiến trình chiếm port 8080:netstat -ano | findstr :8080
++ Ghi nhớ PID (Process ID), ví dụ PID = 1234. 
++ Dừng tiến trình:taskkill /PID 1234 /F
++ Chạy lại Spring Boot.
+
+✅ 1. ENTITY – Đại diện cho bảng trong Database
+
+Entity = Một lớp Java dùng để ánh xạ 1 bảng trong MySQL.
+Ví dụ bảng SanPham trong DB → class SanPham.java trong Java.
+Chức năng:
+Đại diện cho dữ liệu trong database
+Mỗi thuộc tính trong Entity = 1 cột trong bảng
+Spring dùng Entity để lấy dữ liệu hoặc lưu dữ liệu
+
+✅ 2. REPOSITORY – Làm việc trực tiếp với Database
+
+Repository = nơi chứa các hàm truy vấn database
+(Như SELECT, INSERT, UPDATE, DELETE)
+Spring Boot dùng JpaRepository để tự sinh query.
+Chức năng:
+Lấy danh sách dữ liệu
+Tìm theo id
+Lưu dữ liệu
+Xóa dữ liệu
+Tìm theo điều kiện (tên, email, danh mục…)
+
+✅ 3. SERVICE – Xử lý Logic (Business Logic Layer)
+
+Service = nơi viết logic nghiệp vụ (business logic).
+Service gọi Repository để lấy dữ liệu và thực hiện xử lý.
+Chức năng:
+Kiểm tra dữ liệu trước khi lưu
+Tính toán (giá, giảm giá, số lượng tồn…
+Kiểm tra hợp lệ
+Gom nhiều thao tác DB thành 1 hàm
+Chuyển dữ liệu sang dạng cần cho Controll
+
+✅ 4. CONTROLLER – Nhận request từ người dùng
+Controller = nơi nhận request từ browser và trả dữ liệu cho giao diện.
+Chức năng:
+Nhận URL request
+Gọi Service để lấy dữ liệu
+Trả dữ liệu về View (.html)
+
+
+| Phần           | Vai trò                | Làm việc với                   |
+| -------------- | ---------------------- | ------------------------------ |
+| **Entity**     | Mô tả bảng DB          | Không làm gì, chỉ chứa dữ liệu |
+| **Repository** | Truy vấn DB            | Entity & Database              |
+| **Service**    | Xử lý logic nghiệp vụ  | Repository                     |
+| **Controller** | Nhận request, trả view | Service                        |

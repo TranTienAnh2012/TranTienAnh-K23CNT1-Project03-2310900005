@@ -11,16 +11,43 @@
     <form th:action="@{/authors/save}" th:object="${author}" method="post" enctype="multipart/form-data">
         <input type="hidden" th:field="*{id}"/>
 
+        <!-- Code -->
+        <div class="mb-3">
+            <label class="form-label">Code</label>
+            <input type="text" th:field="*{code}" class="form-control" placeholder="Author Code" required/>
+        </div>
+
+        <!-- Name -->
         <div class="mb-3">
             <label class="form-label">Name</label>
             <input type="text" th:field="*{name}" class="form-control" placeholder="Author Name" required/>
         </div>
 
+        <!-- Email -->
         <div class="mb-3">
             <label class="form-label">Email</label>
             <input type="email" th:field="*{email}" class="form-control" placeholder="Author Email"/>
         </div>
 
+        <!-- Phone -->
+        <div class="mb-3">
+            <label class="form-label">Phone</label>
+            <input type="text" th:field="*{phone}" class="form-control" placeholder="Author Phone"/>
+        </div>
+
+        <!-- Address -->
+        <div class="mb-3">
+            <label class="form-label">Address</label>
+            <textarea th:field="*{address}" class="form-control" rows="3" placeholder="Author Address"></textarea>
+        </div>
+
+        <!-- Active -->
+        <div class="mb-3 form-check">
+            <input type="checkbox" th:field="*{isActive}" class="form-check-input" id="isActive">
+            <label class="form-check-label" for="isActive">Active</label>
+        </div>
+
+        <!-- Image -->
         <div class="mb-3">
             <label class="form-label">Author Image</label>
             <input type="file" name="imageAuthor" class="form-control"/>
@@ -30,6 +57,7 @@
             </div>
         </div>
 
+        <!-- Buttons -->
         <button type="submit" class="btn btn-success">Save</button>
         <a th:href="@{/authors}" class="btn btn-secondary">Cancel</a>
     </form>
