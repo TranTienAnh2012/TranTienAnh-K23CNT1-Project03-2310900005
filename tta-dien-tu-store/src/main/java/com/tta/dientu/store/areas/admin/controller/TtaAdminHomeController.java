@@ -5,6 +5,7 @@ import com.tta.dientu.store.repository.TtaDonHangRepository;
 import com.tta.dientu.store.repository.TtaSanPhamRepository;
 import com.tta.dientu.store.repository.TtaQuanTriVienRepository;
 import com.tta.dientu.store.repository.TtaDanhGiaRepository;
+import com.tta.dientu.store.enums.TtaTrangThaiDonHang;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,8 +34,9 @@ public class TtaAdminHomeController {
         long tongNguoiDung = ttaQuanTriVienRepository.count();
         long tongDanhGia = ttaDanhGiaRepository.count();
 
-        // Đơn hàng chưa xử lý
-        long donHangChuaXuLy = ttaDonHangRepository.countByTtaTrangThaiFalse();
+        // Đơn hàng chưa xử lý (Đã đặt + Đang xử lý)
+        long donHangChuaXuLy = ttaDonHangRepository.countByTtaTrangThaiIn(
+                List.of(TtaTrangThaiDonHang.DA_DAT, TtaTrangThaiDonHang.DANG_XU_LY));
 
         // Doanh thu tháng này
         LocalDateTime now = LocalDateTime.now();

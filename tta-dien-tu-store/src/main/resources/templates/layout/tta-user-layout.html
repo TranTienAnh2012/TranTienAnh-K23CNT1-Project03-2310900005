@@ -32,8 +32,9 @@
 
                         <!-- Search Bar -->
                         <div class="search-bar mx-4 d-none d-lg-block">
-                            <form action="#" method="get">
-                                <input type="text" placeholder="Bạn tìm gì hôm nay?">
+                            <form th:action="@{/user/san-pham}" method="get">
+                                <input type="text" name="keyword" placeholder="Bạn tìm gì hôm nay?"
+                                    th:value="${keyword}">
                                 <button type="submit"><i class="bi bi-search"></i></button>
                             </form>
                         </div>

@@ -25,13 +25,30 @@ public class TtaDonHang {
     @Column(name = "tta_TongTien", nullable = false, precision = 18, scale = 2)
     private BigDecimal ttaTongTien;
 
-    @Column(name = "tta_TrangThai")
-    private Boolean ttaTrangThai;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tta_TrangThai", length = 20)
+    private com.tta.dientu.store.enums.TtaTrangThaiDonHang ttaTrangThai;
+
+    // Thông tin người nhận
+    @Column(name = "tta_HoTenNguoiNhan", length = 100)
+    private String ttaHoTenNguoiNhan;
+
+    @Column(name = "tta_SoDienThoaiNguoiNhan", length = 15)
+    private String ttaSoDienThoaiNguoiNhan;
+
+    @Column(name = "tta_DiaChiNguoiNhan", length = 255)
+    private String ttaDiaChiNguoiNhan;
+
+    @Column(name = "tta_EmailNguoiNhan", length = 100)
+    private String ttaEmailNguoiNhan;
+
+    @Column(name = "tta_GhiChu", columnDefinition = "TEXT")
+    private String ttaGhiChu;
 
     // Constructor mặc định
     public TtaDonHang() {
         this.ttaNgayDatHang = LocalDateTime.now();
-        this.ttaTrangThai = false; // Mặc định là chưa xử lý
+        this.ttaTrangThai = com.tta.dientu.store.enums.TtaTrangThaiDonHang.DA_DAT; // Mặc định là đã đặt
         this.ttaTongTien = BigDecimal.ZERO;
     }
 
@@ -46,12 +63,17 @@ public class TtaDonHang {
     public String getTrangThaiText() {
         if (this.ttaTrangThai == null)
             return "Chưa xác định";
-        return this.ttaTrangThai ? "Đã hoàn thành" : "Đang xử lý";
+        return this.ttaTrangThai.getTenHienThi();
     }
 
     // Kiểm tra đơn hàng mới
     public boolean isDonHangMoi() {
         return this.ttaNgayDatHang != null &&
                 this.ttaNgayDatHang.isAfter(LocalDateTime.now().minusDays(1));
+    }
+
+    // Kiểm tra có thể hủy không
+    public boolean coTheHuy() {
+        return this.ttaTrangThai != null && this.ttaTrangThai.coTheHuy();
     }
 }

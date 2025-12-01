@@ -29,12 +29,13 @@
                                 <th>SĐT</th>
                                 <th>Ngày đặt</th>
                                 <th>Tổng tiền</th>
+                                <th>Trạng thái</th>
                                 <th class="text-end">Hành động</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr th:if="${ttaDonHangList == null || ttaDonHangList.empty}">
-                                <td colspan="7" class="text-center text-muted py-4">
+                                <td colspan="8" class="text-center text-muted py-4">
                                     Không có đơn hàng nào chưa xử lý
                                 </td>
                             </tr>
@@ -47,18 +48,24 @@
                                 </td>
                                 <td th:text="${#numbers.formatDecimal(dh.ttaTongTien, 0, 'COMMA', 0, 'POINT') + ' đ'}">
                                     100.000 đ</td>
+                                <td>
+                                    <span class="badge" th:classappend="'bg-' + ${dh.ttaTrangThai.mauBadge}">
+                                        <i th:class="'bi ' + ${dh.ttaTrangThai.icon}"></i>
+                                        <span th:text="${dh.ttaTrangThai.tenHienThi}">Trạng thái</span>
+                                    </span>
+                                </td>
                                 <td class="text-end">
                                     <div class="btn-group btn-group-sm" role="group">
                                         <a class="btn btn-outline-info"
                                             th:href="@{'/admin/donhang/chitiet/' + ${dh.ttaMaDonHang}}">
                                             <i class="bi bi-eye"></i> Chi tiết
                                         </a>
-                                        <form th:action="@{'/admin/donhang/trangthai/' + ${dh.ttaMaDonHang}}"
+                                        <form th:if="${dh.ttaTrangThai.name() == 'DA_DAT'}"
+                                            th:action="@{'/admin/donhang/trangthai/' + ${dh.ttaMaDonHang}}"
                                             method="post" style="display: inline;">
-                                            <input type="hidden" name="ttaTrangThai" value="true">
-                                            <button type="submit" class="btn btn-outline-success"
-                                                title="Đánh dấu đã xử lý">
-                                                <i class="bi bi-check-lg"></i> Xử lý
+                                            <input type="hidden" name="ttaTrangThai" value="DANG_XU_LY">
+                                            <button type="submit" class="btn btn-outline-primary" title="Bắt đầu xử lý">
+                                                <i class="bi bi-gear"></i> Xử lý
                                             </button>
                                         </form>
                                     </div>

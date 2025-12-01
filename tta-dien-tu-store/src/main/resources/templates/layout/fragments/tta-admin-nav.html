@@ -1,37 +1,45 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <body>
     <!-- Admin Sidebar Navigation Fragment -->
     <nav th:fragment="admin-sidebar-nav" class="sidebar-nav p-3">
         <ul class="nav flex-column">
             <li class="nav-item mb-2">
-                <a class="nav-link text-white" th:href="@{/admin/dashboard}" 
-                   th:classappend="${activePage == 'dashboard'} ? 'active'">
+                <a class="nav-link text-white" th:href="@{/admin/dashboard}"
+                    th:classappend="${activePage == 'dashboard'} ? 'active'">
                     <i class="bi bi-speedometer2"></i> Dashboard
                 </a>
             </li>
             <li class="nav-item mb-2">
-                <a class="nav-link text-white" th:href="@{/admin/quan-tri-vien}" 
-                   th:classappend="${activePage == 'quantrivien'} ? 'active'">
+                <a class="nav-link text-white" th:href="@{/admin/quan-tri-vien}"
+                    th:classappend="${activePage == 'quantrivien'} ? 'active'">
                     <i class="bi bi-people"></i> Quản trị viên
                 </a>
             </li>
             <li class="nav-item mb-2">
                 <a class="nav-link text-white" th:href="@{/admin/sanpham}"
-                   th:classappend="${activePage == 'sanpham'} ? 'active'">
+                    th:classappend="${activePage == 'sanpham'} ? 'active'">
                     <i class="bi bi-box-seam"></i> Sản phẩm
                 </a>
             </li>
             <li class="nav-item mb-2">
                 <a class="nav-link text-white" th:href="@{/admin/danhmuc}"
-                   th:classappend="${activePage == 'danhmuc'} ? 'active'">
+                    th:classappend="${activePage == 'danhmuc'} ? 'active'">
                     <i class="bi bi-tags"></i> Danh mục
                 </a>
             </li>
             <li class="nav-item mb-2">
-                <a class="nav-link text-white" th:href="@{/admin/don-hang}" 
-                   th:classappend="${activePage == 'don-hang'} ? 'active'">
+                <a class="nav-link text-white" th:href="@{/admin/donhang}"
+                    th:classappend="${activePage == 'TtaDonHang'} ? 'active'">
                     <i class="bi bi-cart-check"></i> Đơn hàng
+                </a>
+            </li>
+            <!-- Thêm Chi tiết đơn hàng -->
+            <li class="nav-item mb-2">
+                <a class="nav-link text-white" th:href="@{/admin/ttachitietdonhang}"
+                   th:classappend="${activePage == 'chitietdonhang'} ? 'active'">
+                    <i class="bi bi-card-list"></i> Chi tiết đơn hàng
                 </a>
             </li>
             <li class="nav-item mb-2">
@@ -47,5 +55,5 @@
         </ul>
     </nav>
 </body>
-</html>
 
+</html>

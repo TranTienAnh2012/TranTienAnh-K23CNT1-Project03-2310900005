@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/admin-layout :: layout(~{::content})}">
+
+<div th:fragment="content">
+    <h2 class="mb-3">Danh sách Chi Tiết Đơn Hàng</h2>
+
+    <a th:href="@{/admin/ttachitietdonhang/create}" class="btn btn-primary mb-3">Thêm chi tiết đơn hàng</a>
+
+    <table class="table table-bordered">
+        <thead class="table-dark">
+        <tr>
+            <th>Mã CT</th>
+            <th>Mã ĐH</th>
+            <th>Sản phẩm</th>
+            <th>Số lượng</th>
+            <th>Đơn giá</th>
+            <th>Thành tiền</th>
+            <th>Chức năng</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${ttaList}">
+            <td th:text="${item.ttaMaChiTiet}"></td>
+            <td th:text="${item.ttaDonHang != null ? item.ttaDonHang.ttaMaDonHang : 'N/A'}"></td>
+            <td th:text="${item.ttaSanPham != null ? item.ttaSanPham.ttaTenSanPham : 'N/A'}"></td>
+            <td th:text="${item.ttaSoLuong}"></td>
+            <td th:text="${item.ttaDonGia}"></td>
+            <td th:text="${item.ttaSoLuong != null && item.ttaDonGia != null ? item.ttaSoLuong * item.ttaDonGia : 0}"></td>
+            <td>
+                <a th:href="@{'/admin/ttachitietdonhang/edit/' + ${item.ttaMaChiTiet}}" class="btn btn-warning btn-sm">Sửa</a>
+                <a th:href="@{'/admin/ttachitietdonhang/delete/' + ${item.ttaMaChiTiet}}" onclick="return confirm('Xác nhận xóa?')" class="btn btn-danger btn-sm">Xóa</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</html>

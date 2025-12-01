@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/admin-layout :: layout(~{::content})}">
+
+<div th:fragment="content">
+    <h2 class="mb-3">Sửa chi tiết đơn hàng</h2>
+
+    <form th:action="@{'/admin/ttachitietdonhang/edit/' + ${ttaChiTietDonHang.ttaMaChiTiet}}"
+          th:object="${ttaChiTietDonHang}" method="post">
+
+        <div class="mb-3">
+            <label class="form-label">Đơn hàng</label>
+            <input type="text"
+                   th:value="${ttaChiTietDonHang.ttaDonHang != null ? ttaChiTietDonHang.ttaDonHang.ttaMaDonHang : ''}"
+                   class="form-control" readonly>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Sản phẩm</label>
+            <input type="text"
+                   th:value="${ttaChiTietDonHang.ttaSanPham != null ? ttaChiTietDonHang.ttaSanPham.ttaTenSanPham : ''}"
+                   class="form-control" readonly>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Số lượng</label>
+            <input type="number" th:field="*{ttaSoLuong}" class="form-control" required>
+        </div>
+
+        <button type="submit" class="btn btn-success">Cập nhật</button>
+        <a th:href="@{/admin/ttachitietdonhang}" class="btn btn-secondary">Hủy</a>
+    </form>
+</div>
+
+</html>

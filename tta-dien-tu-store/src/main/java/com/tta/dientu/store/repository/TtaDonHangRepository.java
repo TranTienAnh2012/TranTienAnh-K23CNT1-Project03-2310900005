@@ -1,6 +1,7 @@
 package com.tta.dientu.store.repository;
 
 import com.tta.dientu.store.entity.TtaDonHang;
+import com.tta.dientu.store.enums.TtaTrangThaiDonHang;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,7 +20,10 @@ public interface TtaDonHangRepository extends JpaRepository<TtaDonHang, Integer>
     List<TtaDonHang> findByTtaNguoiDung_TtaMaNguoiDung(Integer ttaMaNguoiDung);
 
     // Tìm đơn hàng theo trạng thái
-    List<TtaDonHang> findByTtaTrangThai(Boolean ttaTrangThai);
+    List<TtaDonHang> findByTtaTrangThai(TtaTrangThaiDonHang ttaTrangThai);
+
+    // Tìm đơn hàng theo nhiều trạng thái
+    List<TtaDonHang> findByTtaTrangThaiIn(List<TtaTrangThaiDonHang> trangThais);
 
     // Tìm đơn hàng theo khoảng thời gian
     List<TtaDonHang> findByTtaNgayDatHangBetween(LocalDateTime startDate, LocalDateTime endDate);
@@ -32,21 +36,24 @@ public interface TtaDonHangRepository extends JpaRepository<TtaDonHang, Integer>
     Long countByThangNam(@Param("year") int year, @Param("month") int month);
 
     // Tính tổng doanh thu theo tháng
-    @Query("SELECT SUM(dh.ttaTongTien) FROM TtaDonHang dh WHERE YEAR(dh.ttaNgayDatHang) = :year AND MONTH(dh.ttaNgayDatHang) = :month AND dh.ttaTrangThai = true")
+    // Tính tổng doanh thu theo tháng
+    @Query("SELECT SUM(dh.ttaTongTien) FROM TtaDonHang dh WHERE YEAR(dh.ttaNgayDatHang) = :year AND MONTH(dh.ttaNgayDatHang) = :month AND dh.ttaTrangThai = com.tta.dientu.store.enums.TtaTrangThaiDonHang.DA_GIAO")
     BigDecimal getTongDoanhThuThang(@Param("year") int year, @Param("month") int month);
 
     // Phân trang đơn hàng
     Page<TtaDonHang> findAll(Pageable pageable);
 
-    // Tìm kiếm đơn hàng theo mã hoặc tên người dùng
+    // Tìm kiếm đơn hàng theo mã hoặc thông tin người nhận
     @Query("SELECT dh FROM TtaDonHang dh WHERE " +
-            "dh.ttaMaDonHang = :keyword OR " +
-            "dh.ttaNguoiDung.ttaHoTen LIKE %:keyword% OR " +
-            "dh.ttaNguoiDung.ttaEmail LIKE %:keyword%")
+            "CAST(dh.ttaMaDonHang AS string) LIKE %:keyword% OR " +
+            "dh.ttaHoTenNguoiNhan LIKE %:keyword% OR " +
+            "dh.ttaSoDienThoaiNguoiNhan LIKE %:keyword% OR " +
+            "dh.ttaEmailNguoiNhan LIKE %:keyword%")
     Page<TtaDonHang> searchDonHang(@Param("keyword") String keyword, Pageable pageable);
 
-    // Đếm số đơn hàng chưa xử lý
-    long countByTtaTrangThaiFalse();
+    // Đếm số đơn hàng theo trạng thái
+    long countByTtaTrangThai(TtaTrangThaiDonHang ttaTrangThai);
 
-    List<TtaDonHang> findByTtaTrangThaiFalse();
+    // Đếm số đơn hàng theo nhiều trạng thái
+    long countByTtaTrangThaiIn(List<TtaTrangThaiDonHang> trangThais);
 }

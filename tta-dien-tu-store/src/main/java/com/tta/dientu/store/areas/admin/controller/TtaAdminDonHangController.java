@@ -3,6 +3,7 @@ package com.tta.dientu.store.areas.admin.controller;
 import com.tta.dientu.store.areas.admin.service.TtaAdminDonHangService;
 import com.tta.dientu.store.entity.TtaDonHang;
 import com.tta.dientu.store.entity.TtaChiTietDonHang;
+import com.tta.dientu.store.enums.TtaTrangThaiDonHang;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -53,8 +54,14 @@ public class TtaAdminDonHangController {
         model.addAttribute("sortBy", sortBy);
         model.addAttribute("sortDir", sortDir);
         model.addAttribute("tongDonHang", thongKe[0]);
-        model.addAttribute("donHangChuaXuLy", thongKe[1]);
-        model.addAttribute("donHangDaXuLy", thongKe[2]);
+        model.addAttribute("donHangDaDat", thongKe[1]);
+        model.addAttribute("donHangDangXuLy", thongKe[2]);
+        model.addAttribute("donHangDangGiao", thongKe[3]);
+        model.addAttribute("donHangDaGiao", thongKe[4]);
+        model.addAttribute("donHangDaHuy", thongKe[5]);
+
+        // Thêm danh sách trạng thái cho dropdown
+        model.addAttribute("allTrangThai", TtaTrangThaiDonHang.values());
 
         return "areas/admin/TtaDonHang/tta-list";
     }
@@ -82,7 +89,7 @@ public class TtaAdminDonHangController {
     // Cập nhật trạng thái đơn hàng
     @PostMapping("/trangthai/{id}")
     public String updateTrangThai(@PathVariable Integer id,
-            @RequestParam Boolean ttaTrangThai,
+            @RequestParam TtaTrangThaiDonHang ttaTrangThai,
             RedirectAttributes redirectAttributes) {
         try {
             boolean updated = ttaAdminDonHangService.updateTrangThaiDonHang(id, ttaTrangThai);
@@ -94,7 +101,7 @@ public class TtaAdminDonHangController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Lỗi khi cập nhật trạng thái: " + e.getMessage());
         }
-        return "redirect:/admin/TtaDonHang";
+        return "redirect:/admin/donhang";
     }
 
     // Xóa đơn hàng

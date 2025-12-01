@@ -16,27 +16,51 @@
 
         <!-- Thống kê nhanh -->
         <div class="row g-3 mb-4">
-            <div class="col-md-4">
-                <div class="card bg-primary text-white">
-                    <div class="card-body">
-                        <h6 class="card-title">Tổng đơn hàng</h6>
+            <div class="col-md-2">
+                <div class="card bg-primary text-white h-100">
+                    <div class="card-body p-3">
+                        <h6 class="card-title" style="font-size: 0.9rem;">Tổng đơn</h6>
                         <h3 class="mb-0" th:text="${tongDonHang}">0</h3>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card bg-warning text-dark">
-                    <div class="card-body">
-                        <h6 class="card-title">Chưa xử lý</h6>
-                        <h3 class="mb-0" th:text="${donHangChuaXuLy}">0</h3>
+            <div class="col-md-2">
+                <div class="card bg-warning text-dark h-100">
+                    <div class="card-body p-3">
+                        <h6 class="card-title" style="font-size: 0.9rem;">Mới đặt</h6>
+                        <h3 class="mb-0" th:text="${donHangDaDat}">0</h3>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card bg-success text-white">
-                    <div class="card-body">
-                        <h6 class="card-title">Đã xử lý</h6>
-                        <h3 class="mb-0" th:text="${donHangDaXuLy}">0</h3>
+            <div class="col-md-2">
+                <div class="card bg-info text-dark h-100">
+                    <div class="card-body p-3">
+                        <h6 class="card-title" style="font-size: 0.9rem;">Đang xử lý</h6>
+                        <h3 class="mb-0" th:text="${donHangDangXuLy}">0</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="card bg-primary text-white h-100" style="--bs-bg-opacity: .8;">
+                    <div class="card-body p-3">
+                        <h6 class="card-title" style="font-size: 0.9rem;">Đang giao</h6>
+                        <h3 class="mb-0" th:text="${donHangDangGiao}">0</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="card bg-success text-white h-100">
+                    <div class="card-body p-3">
+                        <h6 class="card-title" style="font-size: 0.9rem;">Hoàn thành</h6>
+                        <h3 class="mb-0" th:text="${donHangDaGiao}">0</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="card bg-danger text-white h-100">
+                    <div class="card-body p-3">
+                        <h6 class="card-title" style="font-size: 0.9rem;">Đã hủy</h6>
+                        <h3 class="mb-0" th:text="${donHangDaHuy}">0</h3>
                     </div>
                 </div>
             </div>
@@ -86,9 +110,10 @@
                                 <td th:text="${#numbers.formatDecimal(dh.ttaTongTien, 0, 'COMMA', 0, 'POINT') + ' đ'}">
                                     100.000 đ</td>
                                 <td>
-                                    <span class="badge"
-                                        th:classappend="${dh.ttaTrangThai} ? 'bg-success' : 'bg-warning'"
-                                        th:text="${dh.ttaTrangThai} ? 'Đã xử lý' : 'Chưa xử lý'">Chưa xử lý</span>
+                                    <span class="badge" th:classappend="'bg-' + ${dh.ttaTrangThai.mauBadge}">
+                                        <i th:class="'bi ' + ${dh.ttaTrangThai.icon}"></i>
+                                        <span th:text="${dh.ttaTrangThai.tenHienThi}">Trạng thái</span>
+                                    </span>
                                 </td>
                                 <td class="text-end">
                                     <div class="btn-group btn-group-sm" role="group">
@@ -98,7 +123,8 @@
                                         </a>
                                         <form th:action="@{'/admin/donhang/xoa/' + ${dh.ttaMaDonHang}}" method="post"
                                             onsubmit="return confirm('Bạn chắc chắn muốn xóa đơn hàng này?');">
-                                            <button type="submit" class="btn btn-outline-danger">
+                                            <button type="submit" class="btn btn-outline-danger"
+                                                th:disabled="${!dh.coTheHuy()}">
                                                 <i class="bi bi-trash"></i>
                                             </button>
                                         </form>

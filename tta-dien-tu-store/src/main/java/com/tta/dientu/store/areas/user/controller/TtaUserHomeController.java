@@ -28,6 +28,7 @@ public class TtaUserHomeController {
     public String listProducts(@RequestParam(required = false) Integer categoryId,
             @RequestParam(required = false) Double minPrice,
             @RequestParam(required = false) Double maxPrice,
+            @RequestParam(required = false) String keyword,
             Model model) {
         model.addAttribute("pageTitle", "Sản phẩm - TTA Store");
         model.addAttribute("activePage", "san-pham");
@@ -35,26 +36,34 @@ public class TtaUserHomeController {
         // Lấy danh sách danh mục để hiển thị filter
         model.addAttribute("ttaDanhMucs", ttaDanhMucRepository.findAllByOrderByTtaTenDanhMucAsc());
 
-        BigDecimal min = minPrice != null ? BigDecimal.valueOf(minPrice) : BigDecimal.ZERO;
-        BigDecimal max = maxPrice != null ? BigDecimal.valueOf(maxPrice) : BigDecimal.valueOf(1000000000); // 1 tỷ
-
-        if (categoryId != null) {
-            if (minPrice != null || maxPrice != null) {
-                model.addAttribute("ttaSanPhams", ttaSanPhamRepository.findByCategoryAndPrice(categoryId, min, max));
-            } else {
-                model.addAttribute("ttaSanPhams", ttaSanPhamRepository.findByTtaDanhMuc_TtaMaDanhMuc(categoryId));
-            }
-            model.addAttribute("activeCategoryId", categoryId);
+        // Nếu có từ khóa tìm kiếm, ưu tiên tìm kiếm theo từ khóa
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            model.addAttribute("ttaSanPhams", ttaSanPhamRepository.searchByKeywordList(keyword.trim()));
+            model.addAttribute("keyword", keyword);
+            model.addAttribute("pageTitle", "Tìm kiếm: " + keyword + " - TTA Store");
         } else {
-            if (minPrice != null || maxPrice != null) {
-                model.addAttribute("ttaSanPhams", ttaSanPhamRepository.findByGiaBetween(min, max));
-            } else {
-                model.addAttribute("ttaSanPhams", ttaSanPhamRepository.findByTtaTrangThai(true));
-            }
-        }
+            BigDecimal min = minPrice != null ? BigDecimal.valueOf(minPrice) : BigDecimal.ZERO;
+            BigDecimal max = maxPrice != null ? BigDecimal.valueOf(maxPrice) : BigDecimal.valueOf(1000000000); // 1 tỷ
 
-        model.addAttribute("minPrice", minPrice);
-        model.addAttribute("maxPrice", maxPrice);
+            if (categoryId != null) {
+                if (minPrice != null || maxPrice != null) {
+                    model.addAttribute("ttaSanPhams",
+                            ttaSanPhamRepository.findByCategoryAndPrice(categoryId, min, max));
+                } else {
+                    model.addAttribute("ttaSanPhams", ttaSanPhamRepository.findByTtaDanhMuc_TtaMaDanhMuc(categoryId));
+                }
+                model.addAttribute("activeCategoryId", categoryId);
+            } else {
+                if (minPrice != null || maxPrice != null) {
+                    model.addAttribute("ttaSanPhams", ttaSanPhamRepository.findByGiaBetween(min, max));
+                } else {
+                    model.addAttribute("ttaSanPhams", ttaSanPhamRepository.findByTtaTrangThai(true));
+                }
+            }
+
+            model.addAttribute("minPrice", minPrice);
+            model.addAttribute("maxPrice", maxPrice);
+        }
 
         return "areas/user/TtaSanPham/tta-list";
     }

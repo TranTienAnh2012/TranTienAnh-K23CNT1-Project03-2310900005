@@ -2,6 +2,7 @@ package com.tta.dientu.store.areas.admin.service;
 
 import com.tta.dientu.store.entity.TtaDonHang;
 import com.tta.dientu.store.entity.TtaChiTietDonHang;
+import com.tta.dientu.store.enums.TtaTrangThaiDonHang;
 import com.tta.dientu.store.repository.TtaDonHangRepository;
 import com.tta.dientu.store.repository.TtaChiTietDonHangRepository;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +43,7 @@ public class TtaAdminDonHangService {
     }
 
     // Cập nhật trạng thái đơn hàng
-    public boolean updateTrangThaiDonHang(Integer id, Boolean ttaTrangThai) {
+    public boolean updateTrangThaiDonHang(Integer id, TtaTrangThaiDonHang ttaTrangThai) {
         Optional<TtaDonHang> ttaDonHangOpt = ttaDonHangRepository.findById(id);
         if (ttaDonHangOpt.isPresent()) {
             TtaDonHang ttaDonHang = ttaDonHangOpt.get();
@@ -53,9 +54,10 @@ public class TtaAdminDonHangService {
         return false;
     }
 
-    // Lấy đơn hàng chưa xử lý
+    // Lấy đơn hàng chưa xử lý (Đã đặt và Đang xử lý)
     public List<TtaDonHang> getDonHangChuaXuLy() {
-        return ttaDonHangRepository.findByTtaTrangThaiFalse();
+        return ttaDonHangRepository.findByTtaTrangThaiIn(
+                List.of(TtaTrangThaiDonHang.DA_DAT, TtaTrangThaiDonHang.DANG_XU_LY));
     }
 
     // Lấy đơn hàng mới nhất
@@ -66,16 +68,20 @@ public class TtaAdminDonHangService {
     // Thống kê đơn hàng
     public Object[] getThongKeDonHang() {
         long tongDonHang = ttaDonHangRepository.count();
-        long donHangChuaXuLy = ttaDonHangRepository.countByTtaTrangThaiFalse();
-        long donHangDaXuLy = tongDonHang - donHangChuaXuLy;
+        long donHangDaDat = ttaDonHangRepository.countByTtaTrangThai(TtaTrangThaiDonHang.DA_DAT);
+        long donHangDangXuLy = ttaDonHangRepository.countByTtaTrangThai(TtaTrangThaiDonHang.DANG_XU_LY);
+        long donHangDangGiao = ttaDonHangRepository.countByTtaTrangThai(TtaTrangThaiDonHang.DANG_GIAO);
+        long donHangDaGiao = ttaDonHangRepository.countByTtaTrangThai(TtaTrangThaiDonHang.DA_GIAO);
+        long donHangDaHuy = ttaDonHangRepository.countByTtaTrangThai(TtaTrangThaiDonHang.DA_HUY);
 
-        return new Object[] { tongDonHang, donHangChuaXuLy, donHangDaXuLy };
+        return new Object[] { tongDonHang, donHangDaDat, donHangDangXuLy, donHangDangGiao, donHangDaGiao,
+                donHangDaHuy };
     }
 
-    // Xóa đơn hàng (chỉ xóa khi chưa xử lý)
+    // Xóa đơn hàng (chỉ xóa khi có thể hủy)
     public boolean deleteDonHang(Integer id) {
         Optional<TtaDonHang> ttaDonHangOpt = ttaDonHangRepository.findById(id);
-        if (ttaDonHangOpt.isPresent() && !ttaDonHangOpt.get().getTtaTrangThai()) {
+        if (ttaDonHangOpt.isPresent() && ttaDonHangOpt.get().coTheHuy()) {
             // Xóa chi tiết đơn hàng trước
             List<TtaChiTietDonHang> ttaChiTietList = ttaChiTietDonHangRepository.findByTtaDonHang_TtaMaDonHang(id);
             ttaChiTietDonHangRepository.deleteAll(ttaChiTietList);
