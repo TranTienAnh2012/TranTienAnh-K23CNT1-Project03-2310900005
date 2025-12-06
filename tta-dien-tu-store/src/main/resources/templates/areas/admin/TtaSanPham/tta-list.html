@@ -68,7 +68,7 @@
                             <tr th:each="sp, stat : ${ttaSanPhamPage.content}">
                                 <td th:text="${stat.index + 1 + (ttaSanPhamPage.number * ttaSanPhamPage.size)}"></td>
 
-                                <td>'
+                                <td>
                                     <img th:if="${sp.ttaHinhAnh != null and !sp.ttaHinhAnh.isEmpty()}"
                                         th:src="@{|/uploads/${sp.ttaHinhAnh}|}" loading="lazy" width="60" height="60"
                                         class="rounded" style="object-fit: cover;">

@@ -42,9 +42,10 @@
                         <!-- Right Icons -->
                         <div class="d-flex align-items-center">
                             <!-- Order History - Only for authenticated users -->
-                            <a sec:authorize="isAuthenticated()" href="#" class="header-icon-link d-none d-md-flex">
+                            <a sec:authorize="isAuthenticated()" th:href="@{/user/orders}"
+                                class="header-icon-link d-none d-md-flex">
                                 <i class="bi bi-clock-history"></i>
-                                <span>Lịch sử đơn</span>
+                                <span>Đơn hàng của tôi</span>
                             </a>
 
                             <!-- Cart - Only for authenticated users -->

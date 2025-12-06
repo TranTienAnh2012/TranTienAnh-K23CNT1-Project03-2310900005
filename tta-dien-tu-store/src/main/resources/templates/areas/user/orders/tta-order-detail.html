@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+
+<head th:replace="~{layout/tta-user-layout :: head}">
+    <title>Chi tiết đơn hàng</title>
+</head>
+
+<body th:replace="~{layout/tta-user-layout :: layout(~{::content})}">
+    <div th:fragment="content">
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/user/orders">Đơn hàng của tôi</a></li>
+                        <li class="breadcrumb-item active">Chi tiết đơn hàng</li>
+                    </ol>
+                </nav>
+                <h2 class="mb-2">
+                    <i class="bi bi-receipt text-primary"></i>
+                    Đơn hàng #<span th:text="${order.ttaMaDonHang}">001</span>
+                </h2>
+                <p class="text-muted">
+                    <i class="bi bi-calendar3"></i>
+                    Đặt ngày: <span
+                        th:text="${#temporals.format(order.ttaNgayDatHang, 'dd/MM/yyyy HH:mm')}">01/01/2024</span>
+                </p>
+            </div>
+            <div class="col-md-4 text-end">
+                <span class="badge status-badge-large" th:classappend="${order.ttaTrangThai.name() == 'DA_DAT' ? 'bg-info' :
+                                   order.ttaTrangThai.name() == 'DANG_XU_LY' ? 'bg-warning' :
+                                   order.ttaTrangThai.name() == 'DANG_GIAO' ? 'bg-primary' :
+                                   order.ttaTrangThai.name() == 'DA_GIAO' ? 'bg-success' : 'bg-danger'}"
+                    th:text="${order.ttaTrangThai.tenHienThi}">
+                    Đã đặt
+                </span>
+            </div>
+        </div>
+
+        <!-- Order Status Timeline -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="card-title mb-4">
+                    <i class="bi bi-clock-history"></i> Trạng thái đơn hàng
+                </h5>
+                <div class="order-timeline">
+                    <div class="timeline-item"
+                        th:classappend="${order.ttaTrangThai.name() == 'DA_DAT' || order.ttaTrangThai.name() == 'DANG_XU_LY' || order.ttaTrangThai.name() == 'DANG_GIAO' || order.ttaTrangThai.name() == 'DA_GIAO' ? 'active' : ''}">
+                        <div class="timeline-icon">
+                            <i class="bi bi-check-circle"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <h6>Đã đặt hàng</h6>
+                            <small class="text-muted">Đơn hàng đã được tạo</small>
+                        </div>
+                    </div>
+                    <div class="timeline-item"
+                        th:classappend="${order.ttaTrangThai.name() == 'DANG_XU_LY' || order.ttaTrangThai.name() == 'DANG_GIAO' || order.ttaTrangThai.name() == 'DA_GIAO' ? 'active' : ''}">
+                        <div class="timeline-icon">
+                            <i class="bi bi-box-seam"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <h6>Đang xử lý</h6>
+                            <small class="text-muted">Đơn hàng đang được chuẩn bị</small>
+                        </div>
+                    </div>
+                    <div class="timeline-item"
+                        th:classappend="${order.ttaTrangThai.name() == 'DANG_GIAO' || order.ttaTrangThai.name() == 'DA_GIAO' ? 'active' : ''}">
+                        <div class="timeline-icon">
+                            <i class="bi bi-truck"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <h6>Đang giao hàng</h6>
+                            <small class="text-muted">Đơn hàng đang trên đường giao</small>
+                        </div>
+                    </div>
+                    <div class="timeline-item"
+                        th:classappend="${order.ttaTrangThai.name() == 'DA_GIAO' ? 'active' : ''}">
+                        <div class="timeline-icon">
+                            <i class="bi bi-house-check"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <h6>Đã giao hàng</h6>
+                            <small class="text-muted">Giao hàng thành công</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cancelled Status -->
+                <div th:if="${order.ttaTrangThai.name() == 'DA_HUY'}" class="alert alert-danger mt-3">
+                    <i class="bi bi-x-circle"></i> Đơn hàng đã bị hủy
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Shipping Information -->
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">
+                            <i class="bi bi-geo-alt"></i> Thông tin giao hàng
+                        </h5>
+                        <div class="info-item">
+                            <strong>Người nhận:</strong>
+                            <span th:text="${order.ttaHoTenNguoiNhan}">Nguyễn Văn A</span>
+                        </div>
+                        <div class="info-item">
+                            <strong>Số điện thoại:</strong>
+                            <span th:text="${order.ttaSoDienThoaiNguoiNhan}">0123456789</span>
+                        </div>
+                        <div class="info-item">
+                            <strong>Email:</strong>
+                            <span th:text="${order.ttaEmailNguoiNhan}">email@example.com</span>
+                        </div>
+                        <div class="info-item">
+                            <strong>Địa chỉ:</strong>
+                            <span th:text="${order.ttaDiaChiNguoiNhan}">123 Đường ABC, Quận 1, TP.HCM</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Information -->
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">
+                            <i class="bi bi-credit-card"></i> Thông tin thanh toán
+                        </h5>
+                        <div class="info-item">
+                            <strong>Phương thức:</strong>
+                            <span>COD (Thanh toán khi nhận hàng)</span>
+                        </div>
+                        <div class="info-item">
+                            <strong>Tổng tiền hàng:</strong>
+                            <span class="text-danger fw-bold">
+                                <span
+                                    th:text="${#numbers.formatDecimal(order.ttaTongTien, 0, 'COMMA', 0, 'POINT')}">0</span>đ
+                            </span>
+                        </div>
+                        <div class="info-item" th:if="${order.ttaGhiChu != null && !order.ttaGhiChu.isEmpty()}">
+                            <strong>Ghi chú:</strong>
+                            <span th:text="${order.ttaGhiChu}">Ghi chú</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Items -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="card-title mb-3">
+                    <i class="bi bi-cart3"></i> Sản phẩm đã đặt
+                </h5>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Sản phẩm</th>
+                                <th class="text-center">Số lượng</th>
+                                <th class="text-end">Đơn giá</th>
+                                <th class="text-end">Thành tiền</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="item : ${order.ttaChiTietDonHangs}">
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div>
+                                            <div class="fw-medium"
+                                                th:text="${item.ttaSanPham?.ttaTenSanPham != null ? item.ttaSanPham.ttaTenSanPham : 'N/A'}">
+                                                Tên sản phẩm
+                                            </div>
+                                            <small class="text-muted" th:if="${item.ttaSanPham?.ttaMaSanPham != null}">
+                                                Mã: <span th:text="${item.ttaSanPham.ttaMaSanPham}">SP001</span>
+                                            </small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-info" th:text="${item.ttaSoLuong}">1</span>
+                                </td>
+                                <td class="text-end">
+                                    <span
+                                        th:text="${#numbers.formatDecimal(item.ttaDonGia, 0, 'COMMA', 0, 'POINT')}">0</span>đ
+                                </td>
+                                <td class="text-end fw-bold text-danger">
+                                    <span
+                                        th:text="${#numbers.formatDecimal(item.ttaSoLuong * item.ttaDonGia, 0, 'COMMA', 0, 'POINT')}">0</span>đ
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr class="table-light">
+                                <td colspan="3" class="text-end fw-bold">Tổng cộng:</td>
+                                <td class="text-end fw-bold text-danger fs-5">
+                                    <span
+                                        th:text="${#numbers.formatDecimal(order.ttaTongTien, 0, 'COMMA', 0, 'POINT')}">0</span>đ
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="row">
+            <div class="col-12">
+                <a href="/user/orders" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Quay lại
+                </a>
+
+                <form th:if="${canCancel}" th:action="@{'/user/orders/' + ${order.ttaMaDonHang} + '/cancel'}"
+                    method="post" class="d-inline"
+                    onsubmit="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này?');">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-x-circle"></i> Hủy đơn hàng
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <style>
+            .status-badge-large {
+                padding: 0.75rem 1.5rem;
+                font-size: 1rem;
+                font-weight: 600;
+            }
+
+            .order-timeline {
+                display: flex;
+                justify-content: space-between;
+                position: relative;
+                padding: 2rem 0;
+            }
+
+            .order-timeline::before {
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: 0;
+                right: 0;
+                height: 2px;
+                background: #e0e0e0;
+                z-index: 0;
+            }
+
+            .timeline-item {
+                flex: 1;
+                text-align: center;
+                position: relative;
+                z-index: 1;
+            }
+
+            .timeline-icon {
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                background: #e0e0e0;
+                color: #999;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto 0.5rem;
+                font-size: 1.5rem;
+                transition: all 0.3s ease;
+            }
+
+            .timeline-item.active .timeline-icon {
+                background: #0d6efd;
+                color: white;
+                box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.2);
+            }
+
+            .timeline-item.active .timeline-content h6 {
+                color: #0d6efd;
+                font-weight: 600;
+            }
+
+            .info-item {
+                padding: 0.5rem 0;
+                border-bottom: 1px solid #f0f0f0;
+            }
+
+            .info-item:last-child {
+                border-bottom: none;
+            }
+
+            .info-item strong {
+                display: inline-block;
+                width: 150px;
+                color: #666;
+            }
+
+            @media (max-width: 768px) {
+                .order-timeline {
+                    flex-direction: column;
+                }
+
+                .order-timeline::before {
+                    top: 0;
+                    bottom: 0;
+                    left: 25px;
+                    width: 2px;
+                    height: auto;
+                }
+
+                .timeline-item {
+                    text-align: left;
+                    padding-left: 70px;
+                    margin-bottom: 2rem;
+                }
+
+                .timeline-icon {
+                    position: absolute;
+                    left: 0;
+                }
+            }
+        </style>
+    </div>
+</body>
+
+</html>

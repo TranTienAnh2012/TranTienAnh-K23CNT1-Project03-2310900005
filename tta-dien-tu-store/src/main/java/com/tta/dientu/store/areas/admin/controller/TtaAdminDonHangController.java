@@ -101,7 +101,7 @@ public class TtaAdminDonHangController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Lỗi khi cập nhật trạng thái: " + e.getMessage());
         }
-        return "redirect:/admin/donhang";
+        return "redirect:/admin/donhang/chitiet/" + id;
     }
 
     // Xóa đơn hàng

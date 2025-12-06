@@ -1,68 +1,80 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="vi" th:replace="~{layout/tta-admin-layout :: layout(~{::content})}">
 
 <head>
-    <title th:text="${pageTitle}">Chi tiết đơn hàng - TTA Store</title>
+    <title th:text="${pageTitle}">Chi tiết Đơn hàng - TTA Store</title>
 </head>
 
 <body>
     <div th:fragment="content">
-        <div class="d-flex justify-content-between align-items-center mb-4">
+        <!-- Header -->
+        <div class="d-flex align-items-center justify-content-between mb-4">
             <div>
-                <h2 class="mb-0">Chi tiết đơn hàng #<span th:text="${ttaDonHang.ttaMaDonHang}"></span></h2>
-                <p class="text-muted mb-0"
-                    th:text="${#temporals.format(ttaDonHang.ttaNgayDatHang, 'dd/MM/yyyy HH:mm')}"></p>
+                <h2 class="mb-0">Chi tiết Đơn hàng #<span th:text="${ttaDonHang.ttaMaDonHang}">1</span></h2>
+                <p class="text-muted mb-0">
+                    Ngày đặt: <span
+                        th:text="${#temporals.format(ttaDonHang.ttaNgayDatHang, 'dd/MM/yyyy HH:mm')}">01/01/2024
+                        10:00</span>
+                </p>
             </div>
-            <a class="btn btn-outline-secondary" th:href="@{/admin/donhang}">
-                <i class="bi bi-arrow-left"></i> Quay lại
-            </a>
+            <div>
+                <a th:href="@{/admin/donhang}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Quay lại
+                </a>
+            </div>
         </div>
 
-        <div class="row g-4">
+        <div class="row">
+            <!-- Thông tin đơn hàng -->
             <div class="col-md-8">
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-header bg-white">
-                        <h5 class="mb-0">Danh sách sản phẩm</h5>
+                        <h5 class="mb-0"><i class="bi bi-box-seam"></i> Sản phẩm đã đặt</h5>
                     </div>
                     <div class="card-body p-0">
                         <div class="table-responsive">
                             <table class="table table-hover mb-0">
                                 <thead class="table-light">
                                     <tr>
+                                        <th>STT</th>
                                         <th>Sản phẩm</th>
-                                        <th>Giá</th>
+                                        <th>Đơn giá</th>
                                         <th>Số lượng</th>
-                                        <th class="text-end">Thành tiền</th>
+                                        <th>Thành tiền</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr th:each="ct : ${ttaChiTietList}">
+                                    <tr th:each="ct, stat : ${ttaChiTietList}">
+                                        <td th:text="${stat.index + 1}">1</td>
                                         <td>
                                             <div class="d-flex align-items-center">
                                                 <img th:if="${ct.ttaSanPham.ttaHinhAnh != null}"
-                                                    th:src="@{'/uploads/' + ${ct.ttaSanPham.ttaHinhAnh}}"
-                                                    class="rounded me-2"
-                                                    style="width: 40px; height: 40px; object-fit: cover;">
-                                                <span th:text="${ct.ttaSanPham.ttaTenSanPham}">Tên SP</span>
+                                                    th:src="@{'/uploads/' + ${ct.ttaSanPham.ttaHinhAnh}}" alt="Product"
+                                                    class="me-2"
+                                                    style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
+                                                <div>
+                                                    <div class="fw-bold" th:text="${ct.ttaSanPham.ttaTenSanPham}">Tên
+                                                        sản phẩm</div>
+                                                    <small class="text-muted">Mã: <span
+                                                            th:text="${ct.ttaSanPham.ttaMaSanPham}">SP001</span></small>
+                                                </div>
                                             </div>
                                         </td>
                                         <td
-                                            th:text="${#numbers.formatDecimal(ct.ttaGiaMua, 0, 'COMMA', 0, 'POINT') + ' đ'}">
-                                            100.000 đ</td>
+                                            th:text="${#numbers.formatDecimal(ct.ttaDonGia, 0, 'COMMA', 0, 'POINT') + ' đ'}">
+                                            1.000.000 đ</td>
                                         <td th:text="${ct.ttaSoLuong}">1</td>
-                                        <td class="text-end fw-bold"
-                                            th:text="${#numbers.formatDecimal(ct.ttaThanhTien, 0, 'COMMA', 0, 'POINT') + ' đ'}">
-                                            100.000 đ
-                                        </td>
+                                        <td class="fw-bold"
+                                            th:text="${#numbers.formatDecimal(ct.ttaDonGia * ct.ttaSoLuong, 0, 'COMMA', 0, 'POINT') + ' đ'}">
+                                            1.000.000 đ</td>
                                     </tr>
                                 </tbody>
                                 <tfoot class="table-light">
                                     <tr>
-                                        <td colspan="3" class="text-end fw-bold">Tổng cộng:</td>
-                                        <td class="text-end fw-bold text-primary"
+                                        <td colspan="4" class="text-end fw-bold">Tổng tiền:</td>
+                                        <td class="fw-bold text-primary fs-5"
                                             th:text="${#numbers.formatDecimal(ttaDonHang.ttaTongTien, 0, 'COMMA', 0, 'POINT') + ' đ'}">
-                                            100.000 đ
-                                        </td>
+                                            1.000.000 đ</td>
                                     </tr>
                                 </tfoot>
                             </table>
@@ -71,179 +83,83 @@
                 </div>
             </div>
 
+            <!-- Thông tin khách hàng và trạng thái -->
             <div class="col-md-4">
+                <!-- Trạng thái đơn hàng -->
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-header bg-white">
-                        <h5 class="mb-0">Thông tin khách hàng</h5>
+                        <h5 class="mb-0"><i class="bi bi-gear"></i> Quản lý trạng thái</h5>
                     </div>
                     <div class="card-body">
                         <div class="mb-3">
-                            <label class="text-muted small">Họ tên</label>
-                            <div class="fw-bold" th:text="${ttaDonHang.ttaHoTenNguoiNhan}">Nguyễn Văn A</div>
+                            <label class="form-label fw-bold">Trạng thái hiện tại:</label>
+                            <div>
+                                <span class="badge fs-6" th:classappend="'bg-' + ${ttaDonHang.ttaTrangThai.mauBadge}">
+                                    <i th:class="'bi ' + ${ttaDonHang.ttaTrangThai.icon}"></i>
+                                    <span th:text="${ttaDonHang.ttaTrangThai.tenHienThi}">Trạng thái</span>
+                                </span>
+                            </div>
+                        </div>
+
+                        <form th:action="@{'/admin/donhang/trangthai/' + ${ttaDonHang.ttaMaDonHang}}" method="post"
+                            onsubmit="return confirm('Bạn chắc chắn muốn cập nhật trạng thái đơn hàng này?');">
+                            <div class="mb-3">
+                                <label for="ttaTrangThai" class="form-label fw-bold">Cập nhật trạng thái:</label>
+                                <select class="form-select" id="ttaTrangThai" name="ttaTrangThai" required>
+                                    <option value="">-- Chọn trạng thái --</option>
+                                    <option
+                                        th:each="trangThai : ${T(com.tta.dientu.store.enums.TtaTrangThaiDonHang).values()}"
+                                        th:value="${trangThai}" th:text="${trangThai.tenHienThi}"
+                                        th:selected="${trangThai == ttaDonHang.ttaTrangThai}">
+                                        Trạng thái
+                                    </option>
+                                </select>
+                                <small class="text-muted">Chọn trạng thái mới cho đơn hàng</small>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="bi bi-check-circle"></i> Cập nhật trạng thái
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Thông tin khách hàng -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0"><i class="bi bi-person"></i> Thông tin khách hàng</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-muted small">Họ tên:</label>
+                            <p class="mb-0" th:text="${ttaDonHang.ttaHoTenNguoiNhan}">Nguyễn Văn A</p>
                         </div>
                         <div class="mb-3">
-                            <label class="text-muted small">Số điện thoại</label>
-                            <div th:text="${ttaDonHang.ttaSoDienThoaiNguoiNhan}">0901234567</div>
+                            <label class="form-label fw-bold text-muted small">Số điện thoại:</label>
+                            <p class="mb-0">
+                                <i class="bi bi-telephone"></i>
+                                <span th:text="${ttaDonHang.ttaSoDienThoaiNguoiNhan}">0901234567</span>
+                            </p>
                         </div>
-                        <div class="mb-3">
-                            <label class="text-muted small">Địa chỉ</label>
-                            <div th:text="${ttaDonHang.ttaDiaChiNguoiNhan}">123 Đường ABC</div>
+                        <div class="mb-0">
+                            <label class="form-label fw-bold text-muted small">Địa chỉ giao hàng:</label>
+                            <p class="mb-0" th:text="${ttaDonHang.ttaDiaChiNguoiNhan}">123 Đường ABC, Quận 1, TP.HCM</p>
                         </div>
-                        <div class="mb-3">
-                            <label class="text-muted small">Email</label>
-                            <div th:text="${ttaDonHang.ttaEmailNguoiNhan}">email@example.com</div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="text-muted small">Ghi chú</label>
-                            <!DOCTYPE html>
-                            <html xmlns:th="http://www.thymeleaf.org" lang="vi"
-                                th:replace="~{layout/tta-admin-layout :: layout(~{::content})}">
+                    </div>
+                </div>
 
-                            <head>
-                                <title th:text="${pageTitle}">Chi tiết đơn hàng - TTA Store</title>
-                            </head>
+                <!-- Ghi chú -->
+                <div class="card border-0 shadow-sm"
+                    th:if="${ttaDonHang.ttaGhiChu != null && !ttaDonHang.ttaGhiChu.isEmpty()}">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0"><i class="bi bi-sticky"></i> Ghi chú</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-0" th:text="${ttaDonHang.ttaGhiChu}">Ghi chú của khách hàng</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
 
-                            <body>
-                                <div th:fragment="content">
-                                    <div class="d-flex justify-content-between align-items-center mb-4">
-                                        <div>
-                                            <h2 class="mb-0">Chi tiết đơn hàng #<span
-                                                    th:text="${ttaDonHang.ttaMaDonHang}"></span></h2>
-                                            <p class="text-muted mb-0"
-                                                th:text="${#temporals.format(ttaDonHang.ttaNgayDatHang, 'dd/MM/yyyy HH:mm')}">
-                                            </p>
-                                        </div>
-                                        <a class="btn btn-outline-secondary" th:href="@{/admin/donhang}">
-                                            <i class="bi bi-arrow-left"></i> Quay lại
-                                        </a>
-                                    </div>
-
-                                    <div class="row g-4">
-                                        <div class="col-md-8">
-                                            <div class="card border-0 shadow-sm mb-4">
-                                                <div class="card-header bg-white">
-                                                    <h5 class="mb-0">Danh sách sản phẩm</h5>
-                                                </div>
-                                                <div class="card-body p-0">
-                                                    <div class="table-responsive">
-                                                        <table class="table table-hover mb-0">
-                                                            <thead class="table-light">
-                                                                <tr>
-                                                                    <th>Sản phẩm</th>
-                                                                    <th>Giá</th>
-                                                                    <th>Số lượng</th>
-                                                                    <th class="text-end">Thành tiền</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                <tr th:each="ct : ${ttaChiTietList}">
-                                                                    <td>
-                                                                        <div class="d-flex align-items-center">
-                                                                            <img th:if="${ct.ttaSanPham.ttaHinhAnh != null}"
-                                                                                th:src="@{'/uploads/' + ${ct.ttaSanPham.ttaHinhAnh}}"
-                                                                                class="rounded me-2"
-                                                                                style="width: 40px; height: 40px; object-fit: cover;">
-                                                                            <span
-                                                                                th:text="${ct.ttaSanPham.ttaTenSanPham}">Tên
-                                                                                SP</span>
-                                                                        </div>
-                                                                    </td>
-                                                                    <td
-                                                                        th:text="${#numbers.formatDecimal(ct.ttaGiaMua, 0, 'COMMA', 0, 'POINT') + ' đ'}">
-                                                                        100.000 đ</td>
-                                                                    <td th:text="${ct.ttaSoLuong}">1</td>
-                                                                    <td class="text-end fw-bold"
-                                                                        th:text="${#numbers.formatDecimal(ct.ttaThanhTien, 0, 'COMMA', 0, 'POINT') + ' đ'}">
-                                                                        100.000 đ
-                                                                    </td>
-                                                                </tr>
-                                                            </tbody>
-                                                            <tfoot class="table-light">
-                                                                <tr>
-                                                                    <td colspan="3" class="text-end fw-bold">Tổng cộng:
-                                                                    </td>
-                                                                    <td class="text-end fw-bold text-primary"
-                                                                        th:text="${#numbers.formatDecimal(ttaDonHang.ttaTongTien, 0, 'COMMA', 0, 'POINT') + ' đ'}">
-                                                                        100.000 đ
-                                                                    </td>
-                                                                </tr>
-                                                            </tfoot>
-                                                        </table>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-4">
-                                            <div class="card border-0 shadow-sm mb-4">
-                                                <div class="card-header bg-white">
-                                                    <h5 class="mb-0">Thông tin khách hàng</h5>
-                                                </div>
-                                                <div class="card-body">
-                                                    <div class="mb-3">
-                                                        <label class="text-muted small">Họ tên</label>
-                                                        <div class="fw-bold" th:text="${ttaDonHang.ttaHoTenNguoiNhan}">
-                                                            Nguyễn Văn A</div>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label class="text-muted small">Số điện thoại</label>
-                                                        <div th:text="${ttaDonHang.ttaSoDienThoaiNguoiNhan}">0901234567
-                                                        </div>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label class="text-muted small">Địa chỉ</label>
-                                                        <div th:text="${ttaDonHang.ttaDiaChiNguoiNhan}">123 Đường ABC
-                                                        </div>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label class="text-muted small">Email</label>
-                                                        <div th:text="${ttaDonHang.ttaEmailNguoiNhan}">email@example.com
-                                                        </div>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label class="text-muted small">Ghi chú</label>
-                                                        <div class="text-muted fst-italic"
-                                                            th:text="${ttaDonHang.ttaGhiChu ?: 'Không có'}">Không có
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="card border-0 shadow-sm">
-                                                <div class="card-header bg-white">
-                                                    <h5 class="mb-0">Trạng thái đơn hàng</h5>
-                                                </div>
-                                                <div class="card-body">
-                                                    <div class="mb-3 text-center">
-                                                        <span class="badge fs-6"
-                                                            th:classappend="'bg-' + ${ttaDonHang.ttaTrangThai.mauBadge}">
-                                                            <i th:class="'bi ' + ${ttaDonHang.ttaTrangThai.icon}"></i>
-                                                            <span th:text="${ttaDonHang.ttaTrangThai.tenHienThi}">Trạng
-                                                                thái</span>
-                                                        </span>
-                                                    </div>
-                                                    <form
-                                                        th:action="@{'/admin/donhang/trangthai/' + ${ttaDonHang.ttaMaDonHang}}"
-                                                        method="post">
-                                                        <div class="mb-3">
-                                                            <label class="form-label">Cập nhật trạng thái</label>
-                                                            <select class="form-select" name="ttaTrangThai">
-                                                                <option
-                                                                    th:each="status : ${T(com.tta.dientu.store.enums.TtaTrangThaiDonHang).values()}"
-                                                                    th:value="${status}" th:text="${status.tenHienThi}"
-                                                                    th:selected="${status == ttaDonHang.ttaTrangThai}">
-                                                                </option>
-                                                            </select>
-                                                        </div>
-                                                        <button type="submit" class="btn btn-primary w-100">
-                                                            <i class="bi bi-check-circle"></i> Cập nhật
-                                                        </button>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </body>
-
-                            </html>
+</html>

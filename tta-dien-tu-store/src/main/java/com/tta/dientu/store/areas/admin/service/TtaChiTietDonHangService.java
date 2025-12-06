@@ -1,4 +1,4 @@
-package com.tta.dientu.store.service;
+package com.tta.dientu.store.areas.admin.service;
 
 import com.tta.dientu.store.entity.TtaChiTietDonHang;
 import com.tta.dientu.store.entity.TtaDonHang;
@@ -18,8 +18,8 @@ public class TtaChiTietDonHangService {
     private final TtaSanPhamRepository sanPhamRepo;
 
     public TtaChiTietDonHangService(TtaChiTietDonHangRepository chiTietRepo,
-                                    TtaDonHangRepository donHangRepo,
-                                    TtaSanPhamRepository sanPhamRepo) {
+            TtaDonHangRepository donHangRepo,
+            TtaSanPhamRepository sanPhamRepo) {
         this.chiTietRepo = chiTietRepo;
         this.donHangRepo = donHangRepo;
         this.sanPhamRepo = sanPhamRepo;
@@ -61,6 +61,7 @@ public class TtaChiTietDonHangService {
         ct.setTtaSoLuong(soLuong);
         return chiTietRepo.save(ct);
     }
+
     // Trong TtaChiTietDonHangService
     public TtaChiTietDonHang getById(Integer id) {
         return chiTietRepo.findById(id)

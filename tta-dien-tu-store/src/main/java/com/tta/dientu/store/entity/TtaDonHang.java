@@ -29,6 +29,9 @@ public class TtaDonHang {
     @Column(name = "tta_TrangThai", length = 20)
     private com.tta.dientu.store.enums.TtaTrangThaiDonHang ttaTrangThai;
 
+    @OneToMany(mappedBy = "ttaDonHang", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private java.util.List<TtaChiTietDonHang> ttaChiTietDonHangs;
+
     // Thông tin người nhận
     @Column(name = "tta_HoTenNguoiNhan", length = 100)
     private String ttaHoTenNguoiNhan;

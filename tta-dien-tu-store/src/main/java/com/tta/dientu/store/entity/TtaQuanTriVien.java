@@ -1,12 +1,10 @@
 package com.tta.dientu.store.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "tta_QuanTriVien")
-@Data
 public class TtaQuanTriVien {
 
     @Id
@@ -33,5 +31,54 @@ public class TtaQuanTriVien {
     public TtaQuanTriVien() {
         this.ttaNgayDangKy = LocalDateTime.now();
         this.ttaVaiTro = 0; // Mặc định là user thường
+    }
+
+    // Getters and Setters
+    public Integer getTtaMaNguoiDung() {
+        return ttaMaNguoiDung;
+    }
+
+    public void setTtaMaNguoiDung(Integer ttaMaNguoiDung) {
+        this.ttaMaNguoiDung = ttaMaNguoiDung;
+    }
+
+    public String getTtaHoTen() {
+        return ttaHoTen;
+    }
+
+    public void setTtaHoTen(String ttaHoTen) {
+        this.ttaHoTen = ttaHoTen;
+    }
+
+    public String getTtaEmail() {
+        return ttaEmail;
+    }
+
+    public void setTtaEmail(String ttaEmail) {
+        this.ttaEmail = ttaEmail;
+    }
+
+    public String getTtaMatKhau() {
+        return ttaMatKhau;
+    }
+
+    public void setTtaMatKhau(String ttaMatKhau) {
+        this.ttaMatKhau = ttaMatKhau;
+    }
+
+    public Integer getTtaVaiTro() {
+        return ttaVaiTro;
+    }
+
+    public void setTtaVaiTro(Integer ttaVaiTro) {
+        this.ttaVaiTro = ttaVaiTro;
+    }
+
+    public LocalDateTime getTtaNgayDangKy() {
+        return ttaNgayDangKy;
+    }
+
+    public void setTtaNgayDangKy(LocalDateTime ttaNgayDangKy) {
+        this.ttaNgayDangKy = ttaNgayDangKy;
     }
 }

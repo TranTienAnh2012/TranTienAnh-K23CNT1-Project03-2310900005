@@ -21,6 +21,8 @@ import java.util.stream.Collectors;
 public class TtaCartService {
     private final TtaGioHangRepository ttaGioHangRepository;
     private final TtaQuanTriVienRepository ttaQuanTriVienRepository;
+    private final com.tta.dientu.store.repository.TtaDonHangRepository ttaDonHangRepository;
+    private final com.tta.dientu.store.repository.TtaChiTietDonHangRepository ttaChiTietDonHangRepository;
 
     private Integer getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -32,6 +34,51 @@ public class TtaCartService {
         return ttaQuanTriVienRepository.findByTtaEmail(ttaEmail)
                 .map(TtaQuanTriVien::getTtaMaNguoiDung)
                 .orElse(null);
+    }
+
+    @Transactional
+    public void checkout(String hoTen, String soDienThoai, String diaChi, String email, String ghiChu) {
+        Integer userId = getCurrentUserId();
+        if (userId == null) {
+            throw new RuntimeException("Bạn cần đăng nhập để thanh toán");
+        }
+
+        List<TtaCartItem> cartItems = getCartItems();
+        if (cartItems.isEmpty()) {
+            throw new RuntimeException("Giỏ hàng trống");
+        }
+
+        TtaQuanTriVien user = ttaQuanTriVienRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Người dùng không tồn tại"));
+
+        // Tạo đơn hàng
+        com.tta.dientu.store.entity.TtaDonHang donHang = new com.tta.dientu.store.entity.TtaDonHang();
+        donHang.setTtaNguoiDung(user);
+        donHang.setTtaNgayDatHang(java.time.LocalDateTime.now());
+        donHang.setTtaTongTien(java.math.BigDecimal.valueOf(getTotal()));
+        donHang.setTtaTrangThai(com.tta.dientu.store.enums.TtaTrangThaiDonHang.DA_DAT);
+
+        donHang.setTtaHoTenNguoiNhan(hoTen);
+        donHang.setTtaSoDienThoaiNguoiNhan(soDienThoai);
+        donHang.setTtaDiaChiNguoiNhan(diaChi);
+        donHang.setTtaEmailNguoiNhan(email);
+        donHang.setTtaGhiChu(ghiChu);
+
+        donHang = ttaDonHangRepository.save(donHang);
+
+        // Tạo chi tiết đơn hàng
+        for (TtaCartItem item : cartItems) {
+            com.tta.dientu.store.entity.TtaChiTietDonHang chiTiet = new com.tta.dientu.store.entity.TtaChiTietDonHang();
+            chiTiet.setTtaDonHang(donHang);
+            chiTiet.setTtaSanPham(item.getTtaSanPham());
+            chiTiet.setTtaSoLuong(item.getTtaSoLuong());
+            chiTiet.setTtaDonGia(item.getTtaSanPham().getGiaKhuyenMai());
+
+            ttaChiTietDonHangRepository.save(chiTiet);
+        }
+
+        // Xóa giỏ hàng
+        clearCart();
     }
 
     public List<TtaCartItem> getCartItems() {
