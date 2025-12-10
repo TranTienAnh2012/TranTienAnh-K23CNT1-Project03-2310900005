@@ -57,16 +57,11 @@
                                 </h5>
                                 <small class="text-muted">
                                     <i class="bi bi-calendar3"></i>
-                                    <span
-                                        th:text="${#temporals.format(order.ttaNgayDatHang, 'dd/MM/yyyy HH:mm')}">01/01/2024</span>
+                                    <span th:text="${order.ttaNgayDatHang}">01/01/2024</span>
                                 </small>
                             </div>
                             <div class="col-md-3">
-                                <span class="badge"
-                                    th:classappend="${order.ttaTrangThai.name() == 'DA_DAT' ? 'bg-info' :
-                                                      order.ttaTrangThai.name() == 'DANG_XU_LY' ? 'bg-warning' :
-                                                      order.ttaTrangThai.name() == 'DANG_GIAO' ? 'bg-primary' :
-                                                      order.ttaTrangThai.name() == 'DA_GIAO' ? 'bg-success' : 'bg-danger'}"
+                                <span class="badge" th:classappend="${order.ttaTrangThai.badgeClass}"
                                     th:text="${order.ttaTrangThai.tenHienThi}">
                                     Đã đặt
                                 </span>

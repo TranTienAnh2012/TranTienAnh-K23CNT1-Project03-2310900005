@@ -16,7 +16,8 @@ body {
 
 /* Header Styles */
 .tgdd-header {
-    background-color: #fff;  /* Đổi sang màu trắng */
+    background-color: #fff;
+    /* Đổi sang màu trắng */
     padding: 10px 0;
 }
 
@@ -72,7 +73,8 @@ body {
 
 /* Sub-Header / Navigation */
 .sub-nav {
-   background-color: #fff;  /* Đổi sang màu trắng */
+    background-color: #fff;
+    /* Đổi sang màu trắng */
     border-top: 1px solid rgba(0, 0, 0, 0.05);
     padding: 5px 0;
 }
@@ -210,4 +212,38 @@ button[data-bs-toggle="collapse"] .bi-chevron-down {
 
 button[data-bs-toggle="collapse"][aria-expanded="false"] .bi-chevron-down {
     transform: rotate(-90deg);
+}
+
+/* User Layout Styles (Moved from user.css) */
+.user-wrapper {
+    min-height: 100vh;
+}
+
+.user-header {
+    background: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.user-main {
+    background-color: #f8f9fa;
+}
+
+.user-footer {
+    border-top: 1px solid #dee2e6;
+}
+
+/* Navigation active state */
+.user-header .nav-link.active {
+    color: #667eea !important;
+    font-weight: bold;
+}
+
+/* Card styles */
+.card {
+    border: none;
+    border-radius: 10px;
+}
+
+.card-header {
+    border-radius: 10px 10px 0 0 !important;
 }

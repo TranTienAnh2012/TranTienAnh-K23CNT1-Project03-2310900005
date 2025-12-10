@@ -23,6 +23,7 @@ public class TtaCartService {
     private final TtaQuanTriVienRepository ttaQuanTriVienRepository;
     private final com.tta.dientu.store.repository.TtaDonHangRepository ttaDonHangRepository;
     private final com.tta.dientu.store.repository.TtaChiTietDonHangRepository ttaChiTietDonHangRepository;
+    private final com.tta.dientu.store.repository.TtaSanPhamRepository ttaSanPhamRepository;
 
     private Integer getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -154,5 +155,58 @@ public class TtaCartService {
 
     public int getCount() {
         return getCartItems().stream().mapToInt(TtaCartItem::getTtaSoLuong).sum();
+    }
+
+    // Create order directly from Buy Now (skip cart)
+    @Transactional
+    public Integer createDirectOrder(Integer productId, int quantity, String hoTen, String soDienThoai, String diaChi,
+            String ghiChu) {
+        Integer userId = getCurrentUserId();
+        if (userId == null) {
+            throw new RuntimeException("Bạn cần đăng nhập để mua hàng");
+        }
+
+        // Load product
+        com.tta.dientu.store.entity.TtaSanPham product = ttaSanPhamRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Sản phẩm không tồn tại"));
+
+        // Check stock
+        if (product.getTtaSoLuongTon() < quantity) {
+            throw new RuntimeException("Sản phẩm không đủ số lượng");
+        }
+
+        TtaQuanTriVien user = ttaQuanTriVienRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Người dùng không tồn tại"));
+
+        // Calculate total
+        java.math.BigDecimal total = product.getTtaGia().multiply(java.math.BigDecimal.valueOf(quantity));
+
+        // Create order
+        com.tta.dientu.store.entity.TtaDonHang donHang = new com.tta.dientu.store.entity.TtaDonHang();
+        donHang.setTtaNguoiDung(user);
+        donHang.setTtaNgayDatHang(java.time.LocalDateTime.now());
+        donHang.setTtaTongTien(total);
+        donHang.setTtaTrangThai(com.tta.dientu.store.enums.TtaTrangThaiDonHang.DA_DAT);
+        donHang.setTtaHoTenNguoiNhan(hoTen);
+        donHang.setTtaSoDienThoaiNguoiNhan(soDienThoai);
+        donHang.setTtaDiaChiNguoiNhan(diaChi);
+        donHang.setTtaGhiChu(ghiChu);
+
+        donHang = ttaDonHangRepository.save(donHang);
+
+        // Create order detail
+        com.tta.dientu.store.entity.TtaChiTietDonHang chiTiet = new com.tta.dientu.store.entity.TtaChiTietDonHang();
+        chiTiet.setTtaDonHang(donHang);
+        chiTiet.setTtaSanPham(product);
+        chiTiet.setTtaSoLuong(quantity);
+        chiTiet.setTtaDonGia(product.getTtaGia());
+
+        ttaChiTietDonHangRepository.save(chiTiet);
+
+        // Update stock
+        product.setTtaSoLuongTon(product.getTtaSoLuongTon() - quantity);
+        ttaSanPhamRepository.save(product);
+
+        return donHang.getTtaMaDonHang();
     }
 }

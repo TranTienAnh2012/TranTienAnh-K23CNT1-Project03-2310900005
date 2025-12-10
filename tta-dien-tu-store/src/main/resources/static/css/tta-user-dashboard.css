@@ -10,8 +10,15 @@
 }
 
 @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-15px); }
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-15px);
+    }
 }
 
 /* Button gradient */
@@ -21,6 +28,7 @@
     border: none;
     transition: transform 0.3s;
 }
+
 .btn-gradient:hover {
     transform: scale(1.05);
     text-decoration: none;

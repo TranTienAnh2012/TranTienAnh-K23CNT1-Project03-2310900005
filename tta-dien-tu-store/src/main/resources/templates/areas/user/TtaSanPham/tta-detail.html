@@ -39,7 +39,13 @@
                         <button class="btn btn-link text-dark text-decoration-none px-3"
                             onclick="increaseQuantity()">+</button>
                     </div>
-                    <button onclick="addToCart()" class="btn btn-primary btn-lg flex-grow-1">
+                </div>
+
+                <div class="d-grid gap-2 mb-4">
+                    <button onclick="buyNow()" class="btn btn-danger btn-lg">
+                        <i class="bi bi-lightning-fill"></i> Mua ngay
+                    </button>
+                    <button onclick="addToCart()" class="btn btn-outline-primary btn-lg">
                         <i class="bi bi-cart-plus"></i> Thêm vào giỏ hàng
                     </button>
                 </div>
@@ -76,6 +82,13 @@
                 var quantity = document.getElementById('quantity').value;
                 var productId = [[${ ttaSanPham.ttaMaSanPham }]];
                 window.location.href = '/user/cart/add/' + productId + '?quantity=' + quantity;
+            }
+
+            function buyNow() {
+                var quantity = document.getElementById('quantity').value;
+                var productId = [[${ ttaSanPham.ttaMaSanPham }]];
+                // Redirect to direct checkout - FIXED URL with /cart/ prefix
+                window.location.href = '/user/cart/checkout/direct?productId=' + productId + '&quantity=' + quantity;
             }
         </script>
     </div>

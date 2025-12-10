@@ -73,7 +73,7 @@ public class TtaAdminDonHangController {
         Optional<TtaDonHang> ttaDonHangOpt = ttaAdminDonHangService.getDonHangById(id);
         if (ttaDonHangOpt.isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "Không tìm thấy đơn hàng");
-            return "redirect:/admin/TtaDonHang";
+            return "redirect:/admin/donhang";
         }
 
         List<TtaChiTietDonHang> ttaChiTietList = ttaAdminDonHangService.getChiTietDonHang(id);
@@ -118,7 +118,7 @@ public class TtaAdminDonHangController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Lỗi khi xóa đơn hàng: " + e.getMessage());
         }
-        return "redirect:/admin/TtaDonHang";
+        return "redirect:/admin/donhang";
     }
 
     // Đơn hàng chưa xử lý

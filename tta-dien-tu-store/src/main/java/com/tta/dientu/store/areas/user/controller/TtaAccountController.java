@@ -44,6 +44,7 @@ public class TtaAccountController {
     @GetMapping("/login")
     public String showLoginForm(Model model) {
         model.addAttribute("pageTitle", "TTA Store - Đăng nhập");
+        model.addAttribute("ttaUser", new TtaQuanTriVien()); // Added for Register form in the same view
 
         // Debug: Hiển thị danh sách users có trong database (chỉ để debug)
         var allUsers = ttaQuanTriVienRepository.findAll();

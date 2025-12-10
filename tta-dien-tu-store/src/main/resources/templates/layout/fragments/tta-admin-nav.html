@@ -35,10 +35,16 @@
                     <i class="bi bi-cart-check"></i> Đơn hàng
                 </a>
             </li>
+            <li class="nav-item mb-2">
+                <a class="nav-link text-white" th:href="@{/admin/banner}"
+                    th:classappend="${activePage == 'banner'} ? 'active'">
+                    <i class="bi bi-card-image"></i> Banner
+                </a>
+            </li>
             <!-- Thêm Chi tiết đơn hàng -->
             <li class="nav-item mb-2">
                 <a class="nav-link text-white" th:href="@{/admin/ttachitietdonhang}"
-                   th:classappend="${activePage == 'chitietdonhang'} ? 'active'">
+                    th:classappend="${activePage == 'chitietdonhang'} ? 'active'">
                     <i class="bi bi-card-list"></i> Chi tiết đơn hàng
                 </a>
             </li>
@@ -48,7 +54,9 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-white" th:href="@{/account/logout}">
+                <form th:action="@{/account/logout}" method="post" id="logoutForm" class="d-none"></form>
+                <a class="nav-link text-white" href="#"
+                    onclick="document.getElementById('logoutForm').submit(); return false;">
                     <i class="bi bi-box-arrow-right"></i> Đăng xuất
                 </a>
             </li>

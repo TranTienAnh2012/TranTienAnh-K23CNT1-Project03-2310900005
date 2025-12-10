@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+
+<head th:replace="~{layout/tta-admin-layout :: head}">
+    <title>Thêm Banner Mới</title>
+</head>
+
+<body th:replace="~{layout/tta-admin-layout :: layout(~{::content})}">
+    <div th:fragment="content">
+        <div
+            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h1 class="h2">Thêm Banner Mới</h1>
+            <div class="btn-toolbar mb-2 mb-md-0">
+                <a th:href="@{/admin/banner}" class="btn btn-sm btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Quay lại
+                </a>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <div class="card">
+                    <div class="card-body">
+                        <form th:action="@{/admin/banner/add}" th:object="${ttaBanner}" method="post"
+                            enctype="multipart/form-data">
+
+                            <div class="mb-3">
+                                <label for="ttaTenBanner" class="form-label">Tên Banner <span
+                                        class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="ttaTenBanner" th:field="*{ttaTenBanner}"
+                                    required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="imageFile" class="form-label">Hình ảnh</label>
+                                <input type="file" class="form-control" id="imageFile" name="imageFile"
+                                    accept="image/*">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="ttaDanhMuc" class="form-label">Danh mục (Để trống nếu là Banner
+                                    chung)</label>
+                                <select class="form-select" id="ttaDanhMuc" th:field="*{ttaDanhMuc}">
+                                    <option value="">-- Chọn danh mục --</option>
+                                    <option th:each="dm : ${ttaDanhMucs}" th:value="${dm.ttaMaDanhMuc}"
+                                        th:text="${dm.ttaTenDanhMuc}"></option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="ttaNoiDung" class="form-label">Nội dung mô tả</label>
+                                <textarea class="form-control" id="ttaNoiDung" th:field="*{ttaNoiDung}"
+                                    rows="3"></textarea>
+                            </div>
+
+                            <div class="mb-3 form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="ttaTrangThai"
+                                    th:field="*{ttaTrangThai}">
+                                <label class="form-check-label" for="ttaTrangThai">Hiển thị ngay</label>
+                            </div>
+
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <button type="reset" class="btn btn-light me-md-2">Nhập lại</button>
+                                <button type="submit" class="btn btn-primary">Thêm mới</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

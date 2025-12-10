@@ -8,6 +8,55 @@
 <body th:replace="~{layout/tta-user-layout :: layout(~{::content})}">
     <div th:fragment="content">
         <!-- Sidebar Toggle Button (Desktop) -->
+
+        <!-- Banner Dynamic -->
+        <!-- Banner Dynamic / Slider -->
+        <div class="mb-4 animate-fade-in">
+            <!-- Case 1: Multiple Banners (Carousel) - Rendered when bannerList is present (All Products) -->
+            <div th:if="${bannerList != null and !bannerList.empty}" id="bannerCarousel"
+                class="carousel slide rounded shadow-sm overflow-hidden" data-bs-ride="carousel">
+                <div class="carousel-indicators">
+                    <button type="button" data-bs-target="#bannerCarousel" th:each="banner, iterStat : ${bannerList}"
+                        th:data-bs-slide-to="${iterStat.index}" th:classappend="${iterStat.first} ? 'active'"
+                        th:aria-current="${iterStat.first} ? 'true'"
+                        th:aria-label="'Slide ' + ${iterStat.count}"></button>
+                </div>
+                <div class="carousel-inner">
+                    <div class="carousel-item" th:each="banner, iterStat : ${bannerList}"
+                        th:classappend="${iterStat.first} ? 'active'">
+                        <img th:src="@{'/uploads/' + ${banner.ttaHinhAnh}}" class="d-block w-100"
+                            th:alt="${banner.ttaTenBanner}" style="max-height: 350px; object-fit: cover;">
+                        <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded p-2"
+                            th:if="${banner.ttaNoiDung != null and !banner.ttaNoiDung.isEmpty()}">
+                            <h5 th:text="${banner.ttaTenBanner}">Title</h5>
+                            <p th:text="${banner.ttaNoiDung}">Description</p>
+                        </div>
+                    </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#bannerCarousel"
+                    data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#bannerCarousel"
+                    data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+
+            <!-- Case 2: Single Banner (Category specific) - Rendered when ttaBanner is present -->
+            <div th:if="${ttaBanner != null}" class="position-relative overflow-hidden rounded shadow-sm">
+                <img th:src="@{'/uploads/' + ${ttaBanner.ttaHinhAnh}}" class="img-fluid w-100"
+                    th:alt="${ttaBanner.ttaTenBanner}" style="max-height: 350px; object-fit: cover;">
+                <div class="position-absolute bottom-0 start-0 w-100 bg-dark bg-opacity-50 p-3 text-white"
+                    th:if="${ttaBanner.ttaNoiDung != null and !ttaBanner.ttaNoiDung.isEmpty()}">
+                    <h3 class="h5 mb-1" th:text="${ttaBanner.ttaTenBanner}">Banner Title</h3>
+                    <p class="mb-0 small" th:text="${ttaBanner.ttaNoiDung}">Description</p>
+                </div>
+            </div>
+        </div>
+
         <div class="mb-3">
             <button class="btn btn-outline-primary btn-sm" id="sidebarToggle" onclick="toggleSidebar()">
                 <i class="bi bi-funnel" id="toggleIcon"></i>

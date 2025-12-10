@@ -1,6 +1,9 @@
 package com.tta.dientu.store.areas.user.controller;
 
 import com.tta.dientu.store.service.TtaCartService;
+import com.tta.dientu.store.entity.TtaSanPham;
+import com.tta.dientu.store.repository.TtaSanPhamRepository;
+import java.math.BigDecimal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,8 +14,8 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class TtaCartController {
     private final TtaCartService ttaCartService;
-
     private final com.tta.dientu.store.repository.TtaQuanTriVienRepository ttaQuanTriVienRepository;
+    private final TtaSanPhamRepository ttaSanPhamRepository;
 
     @GetMapping
     public String viewCart(Model model) {
@@ -82,6 +85,55 @@ public class TtaCartController {
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
             return "redirect:/user/cart/checkout";
+        }
+    }
+
+    // Direct checkout for Buy Now feature
+    @GetMapping("/checkout/direct")
+    public String directCheckout(@RequestParam("productId") Integer productId,
+            @RequestParam("quantity") int quantity,
+            Model model) {
+        // Load product
+        TtaSanPham product = ttaSanPhamRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Sản phẩm không tồn tại"));
+
+        // Calculate total
+        BigDecimal total = product.getTtaGia().multiply(BigDecimal.valueOf(quantity));
+
+        // Get current user info
+        org.springframework.security.core.Authentication authentication = org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()
+                && !"anonymousUser".equals(authentication.getPrincipal())) {
+            String email = authentication.getName();
+            ttaQuanTriVienRepository.findByTtaEmail(email).ifPresent(user -> {
+                model.addAttribute("user", user);
+            });
+        }
+
+        model.addAttribute("product", product);
+        model.addAttribute("quantity", quantity);
+        model.addAttribute("total", total);
+        model.addAttribute("pageTitle", "Thanh toán - TTA Store");
+        return "areas/user/cart/tta-checkout-direct";
+    }
+
+    @PostMapping("/checkout/direct")
+    public String processDirectCheckout(@RequestParam("productId") Integer productId,
+            @RequestParam("quantity") int quantity,
+            @RequestParam("hoTen") String hoTen,
+            @RequestParam("soDienThoai") String soDienThoai,
+            @RequestParam("diaChi") String diaChi,
+            @RequestParam(value = "ghiChu", required = false) String ghiChu,
+            org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+        try {
+            // Create order directly
+            Integer orderId = ttaCartService.createDirectOrder(productId, quantity, hoTen, soDienThoai, diaChi, ghiChu);
+            redirectAttributes.addFlashAttribute("message", "Đặt hàng thành công!");
+            return "redirect:/user/invoice/" + orderId;
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/user/cart/checkout/direct?productId=" + productId + "&quantity=" + quantity;
         }
     }
 }

@@ -120,6 +120,30 @@
     </style>
 
     <th:block th:fragment="head-extra"></th:block>
+
+    <!-- Fix for full height layout -->
+    <style>
+        body,
+        html {
+            height: 100%;
+            margin: 0;
+        }
+
+        .admin-wrapper {
+            min-height: 100vh !important;
+        }
+
+        .admin-main {
+            min-height: 100vh !important;
+            display: flex !important;
+            flex-direction: column !important;
+        }
+
+        .admin-content {
+            flex: 1 !important;
+            background-color: #f8f9fa !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -204,7 +228,10 @@
                                         <hr class="dropdown-divider">
                                     </li>
                                     <li>
-                                        <a class="dropdown-item text-danger" th:href="@{/logout}">
+                                        <form th:action="@{/account/logout}" method="post" id="adminLogoutForm"
+                                            class="d-none"></form>
+                                        <a class="dropdown-item text-danger" href="#"
+                                            onclick="document.getElementById('adminLogoutForm').submit(); return false;">
                                             <i class="bi bi-box-arrow-right me-2"></i>Đăng xuất
                                         </a>
                                     </li>
@@ -269,7 +296,10 @@
 
             forms.forEach(form => {
                 form.addEventListener('submit', function (e) {
-                    if (loadingOverlay) {
+                    // Don't show loading if form has onsubmit (confirmation dialog)
+                    const hasOnsubmit = this.hasAttribute('onsubmit');
+
+                    if (!hasOnsubmit && loadingOverlay) {
                         loadingOverlay.classList.remove('hidden');
                     }
                 });

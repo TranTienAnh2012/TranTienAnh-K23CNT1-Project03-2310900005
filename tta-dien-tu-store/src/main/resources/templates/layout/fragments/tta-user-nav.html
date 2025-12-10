@@ -1,66 +1,74 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<body>
-<!-- User Header Navigation Fragment -->
-<div th:fragment="user-header-nav" class="collapse navbar-collapse" id="navbarNav">
-    <ul class="navbar-nav me-auto">
-        <li class="nav-item">
-            <a class="nav-link" th:href="@{/user/dashboard}"
-               th:classappend="${activePage == 'dashboard'} ? 'active'">
-                Trang chủ
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" th:href="@{/user/san-pham}"
-               th:classappend="${activePage == 'san-pham'} ? 'active'">
-                Sản phẩm
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" th:href="@{/user/cart}"
-               th:classappend="${activePage == 'cart'} ? 'active'">
-                <i class="bi bi-cart"></i> Giỏ hàng
-            </a>
-        </li>
-    </ul>
-    <ul class="navbar-nav align-items-center">
-        <!-- Khi đã đăng nhập: Hiển thị email/tên và dropdown với nút đăng xuất -->
-        <li class="nav-item dropdown" th:if="${#authentication != null and #authentication.isAuthenticated()}">
-            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
-                <i class="bi bi-person-circle me-1"></i>
-                <span th:text="${#authentication.name}">Email</span>
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end">
-                <li class="px-3 py-2">
-                    <small class="text-muted d-block">
-                        <i class="bi bi-envelope"></i>
-                        <span th:text="${#authentication.name}">Email</span>
-                    </small>
-                </li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" th:href="@{/account/profile}">
-                    <i class="bi bi-person"></i> Hồ sơ
-                </a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item text-danger" th:href="@{/account/logout}">
-                    <i class="bi bi-box-arrow-right"></i> Đăng xuất
-                </a></li>
-            </ul>
-        </li>
-        <!-- Nút Admin cho tài khoản có quyền ADMIN -->
-        <li class="nav-item ms-2" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
-            <a class="btn btn-sm btn-warning text-white" th:href="@{/admin/dashboard}">
-                <i class="bi bi-speedometer2"></i> Admin
-            </a>
-        </li>
-        <!-- Khi chưa đăng nhập: Hiển thị nút Đăng nhập -->
-        <li class="nav-item" th:if="${#authentication == null or !#authentication.isAuthenticated()}">
-            <a class="nav-link" th:href="@{/account/login}">
-                <i class="bi bi-box-arrow-in-right"></i> Đăng nhập
-            </a>
-        </li>
-    </ul>
-</div>
-</body>
-</html>
 
+<body>
+    <!-- User Header Navigation Fragment -->
+    <div th:fragment="user-header-nav" class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/user/dashboard}"
+                    th:classappend="${activePage == 'dashboard'} ? 'active'">
+                    Trang chủ
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/user/san-pham}" th:classappend="${activePage == 'san-pham'} ? 'active'">
+                    Sản phẩm
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/user/cart}" th:classappend="${activePage == 'cart'} ? 'active'">
+                    <i class="bi bi-cart"></i> Giỏ hàng
+                </a>
+            </li>
+        </ul>
+        <ul class="navbar-nav align-items-center">
+            <!-- Khi đã đăng nhập: Hiển thị email/tên và dropdown với nút đăng xuất -->
+            <li class="nav-item dropdown" th:if="${#authentication != null and #authentication.isAuthenticated()}">
+                <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button"
+                    data-bs-toggle="dropdown">
+                    <i class="bi bi-person-circle me-1"></i>
+                    <span th:text="${#authentication.name}">Email</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li class="px-3 py-2">
+                        <small class="text-muted d-block">
+                            <i class="bi bi-envelope"></i>
+                            <span th:text="${#authentication.name}">Email</span>
+                        </small>
+                    </li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><a class="dropdown-item" th:href="@{/account/profile}">
+                            <i class="bi bi-person"></i> Hồ sơ
+                        </a></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li>
+                        <form th:action="@{/account/logout}" method="post" id="userLogoutForm" class="d-none"></form>
+                        <a class="dropdown-item text-danger" href="#"
+                            onclick="document.getElementById('userLogoutForm').submit(); return false;">
+                            <i class="bi bi-box-arrow-right"></i> Đăng xuất
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <!-- Nút Admin cho tài khoản có quyền ADMIN -->
+            <li class="nav-item ms-2" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+                <a class="btn btn-sm btn-warning text-white" th:href="@{/admin/dashboard}">
+                    <i class="bi bi-speedometer2"></i> Admin
+                </a>
+            </li>
+            <!-- Khi chưa đăng nhập: Hiển thị nút Đăng nhập -->
+            <li class="nav-item" th:if="${#authentication == null or !#authentication.isAuthenticated()}">
+                <a class="nav-link" th:href="@{/account/login}">
+                    <i class="bi bi-box-arrow-in-right"></i> Đăng nhập
+                </a>
+            </li>
+        </ul>
+    </div>
+</body>
+
+</html>

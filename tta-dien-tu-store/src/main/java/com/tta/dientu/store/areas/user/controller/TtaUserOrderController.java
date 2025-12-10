@@ -1,6 +1,8 @@
 package com.tta.dientu.store.areas.user.controller;
 
 import com.tta.dientu.store.entity.TtaDonHang;
+import com.tta.dientu.store.entity.TtaChiTietDonHang;
+import com.tta.dientu.store.repository.TtaChiTietDonHangRepository;
 import com.tta.dientu.store.service.TtaUserOrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -12,16 +14,16 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/user/orders")
 @RequiredArgsConstructor
 public class TtaUserOrderController {
 
     private final TtaUserOrderService userOrderService;
+    private final TtaChiTietDonHangRepository ttaChiTietDonHangRepository;
 
     /**
      * Hiển thị danh sách đơn hàng của người dùng
      */
-    @GetMapping
+    @GetMapping("/user/orders")
     public String listOrders(Model model) {
         List<TtaDonHang> orders = userOrderService.getMyOrders();
         model.addAttribute("orders", orders);
@@ -31,7 +33,7 @@ public class TtaUserOrderController {
     /**
      * Hiển thị chi tiết đơn hàng
      */
-    @GetMapping("/{id}")
+    @GetMapping("/user/orders/{id}")
     public String orderDetail(@PathVariable Integer id, Model model, RedirectAttributes redirectAttributes) {
         Optional<TtaDonHang> orderOpt = userOrderService.getOrderDetail(id);
 
@@ -51,7 +53,7 @@ public class TtaUserOrderController {
     /**
      * Hủy đơn hàng
      */
-    @PostMapping("/{id}/cancel")
+    @PostMapping("/user/orders/{id}/cancel")
     public String cancelOrder(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
         boolean success = userOrderService.cancelOrder(id);
 
@@ -63,5 +65,28 @@ public class TtaUserOrderController {
         }
 
         return "redirect:/user/orders";
+    }
+
+    /**
+     * Hiển thị hóa đơn
+     */
+    @GetMapping("/user/invoice/{id}")
+    public String viewInvoice(@PathVariable Integer id, Model model, RedirectAttributes redirectAttributes) {
+        Optional<TtaDonHang> orderOpt = userOrderService.getOrderDetail(id);
+
+        if (orderOpt.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error",
+                    "Không tìm thấy đơn hàng hoặc bạn không có quyền xem đơn hàng này.");
+            return "redirect:/user/orders";
+        }
+
+        TtaDonHang order = orderOpt.get();
+        List<TtaChiTietDonHang> orderDetails = ttaChiTietDonHangRepository.findByTtaDonHang_TtaMaDonHang(id);
+
+        model.addAttribute("order", order);
+        model.addAttribute("orderDetails", orderDetails);
+        model.addAttribute("pageTitle", "Hóa đơn #" + id);
+
+        return "areas/user/order/tta-invoice";
     }
 }
