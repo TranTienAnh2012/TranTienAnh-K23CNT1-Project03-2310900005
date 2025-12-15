@@ -41,6 +41,18 @@
                     <i class="bi bi-card-image"></i> Banner
                 </a>
             </li>
+            <li class="nav-item mb-2">
+                <a class="nav-link text-white" th:href="@{/admin/danhgia}"
+                    th:classappend="${activePage == 'TtaDanhGia'} ? 'active'">
+                    <i class="bi bi-star"></i> Đánh giá
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a class="nav-link text-white" th:href="@{/admin/khuyenmai}"
+                    th:classappend="${activePage == 'khuyenmai'} ? 'active'">
+                    <i class="bi bi-ticket-perforated"></i> Khuyến mãi
+                </a>
+            </li>
             <!-- Thêm Chi tiết đơn hàng -->
             <li class="nav-item mb-2">
                 <a class="nav-link text-white" th:href="@{/admin/ttachitietdonhang}"

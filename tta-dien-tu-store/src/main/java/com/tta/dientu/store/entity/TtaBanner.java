@@ -5,7 +5,8 @@ import lombok.Data;
 
 @Entity
 @Table(name = "tta_Banner")
-@Data
+@lombok.Getter
+@lombok.Setter
 public class TtaBanner {
 
     @Id

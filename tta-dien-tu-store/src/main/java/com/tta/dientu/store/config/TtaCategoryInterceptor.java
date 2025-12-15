@@ -20,6 +20,7 @@ public class TtaCategoryInterceptor implements HandlerInterceptor {
         if (modelAndView != null && !modelAndView.getViewName().startsWith("redirect:")) {
             // Inject categories into all views
             modelAndView.addObject("globalDanhMucs", ttaDanhMucRepository.findAllByOrderByTtaTenDanhMucAsc());
+            modelAndView.addObject("ttaWebsitePhone", "0345862097");
         }
     }
 }

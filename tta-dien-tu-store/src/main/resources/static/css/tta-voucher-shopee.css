@@ -1,0 +1,325 @@
+/* ===================================
+   Simple Blue Voucher Page CSS
+   =================================== */
+
+/* Color Variables */
+:root {
+    --voucher-blue: #2563EB;
+    --voucher-blue-light: #3B82F6;
+    --voucher-blue-dark: #1E40AF;
+    --voucher-bg: #F8FAFC;
+    --voucher-white: #FFFFFF;
+    --voucher-text: #1E293B;
+    --voucher-text-light: #64748B;
+    --voucher-border: #E2E8F0;
+    --voucher-success: #10B981;
+    --voucher-gray: #94A3B8;
+}
+
+/* ===================================
+   Voucher Input Section
+   =================================== */
+.voucher-input-section {
+    background: var(--voucher-white);
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid var(--voucher-border);
+}
+
+.voucher-input-section label {
+    font-weight: 600;
+    color: var(--voucher-text);
+    margin-bottom: 10px;
+    display: block;
+}
+
+.voucher-input-group {
+    display: flex;
+    gap: 10px;
+}
+
+.voucher-input-group input {
+    flex: 1;
+    padding: 10px 15px;
+    border: 1px solid var(--voucher-border);
+    border-radius: 6px;
+    font-size: 0.95rem;
+}
+
+.voucher-input-group input:focus {
+    outline: none;
+    border-color: var(--voucher-blue);
+}
+
+.voucher-input-group .btn-save {
+    background: var(--voucher-blue);
+    border: none;
+    color: white;
+    padding: 10px 30px;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.voucher-input-group .btn-save:hover {
+    background: var(--voucher-blue-dark);
+}
+
+/* ===================================
+   Tab Navigation
+   =================================== */
+.voucher-tabs {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--voucher-border);
+}
+
+.voucher-tabs .tab {
+    background: transparent;
+    border: none;
+    padding: 12px 20px;
+    color: var(--voucher-text-light);
+    font-size: 0.95rem;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s;
+}
+
+.voucher-tabs .tab:hover {
+    color: var(--voucher-blue);
+}
+
+.voucher-tabs .tab.active {
+    color: var(--voucher-blue);
+    border-bottom-color: var(--voucher-blue);
+    font-weight: 600;
+}
+
+/* ===================================
+   Section Headers
+   =================================== */
+.voucher-section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--voucher-text);
+    margin: 30px 0 15px 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--voucher-border);
+}
+
+/* ===================================
+   Simple Voucher Card
+   =================================== */
+.voucher-ticket {
+    display: flex;
+    background: var(--voucher-white);
+    border: 1px solid var(--voucher-border);
+    border-radius: 8px;
+    margin: 15px 0;
+    overflow: hidden;
+    transition: all 0.3s;
+}
+
+.voucher-ticket:hover {
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+    border-color: var(--voucher-blue-light);
+}
+
+/* Quantity Badge */
+.voucher-ticket .quantity-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--voucher-blue);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+/* Left Section - Brand/Logo */
+.ticket-left {
+    width: 120px;
+    min-width: 120px;
+    background: linear-gradient(135deg, var(--voucher-blue) 0%, var(--voucher-blue-light) 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    padding: 20px 15px;
+    text-align: center;
+}
+
+.ticket-left .brand-logo {
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.ticket-left .brand-icon {
+    font-size: 2rem;
+    margin-bottom: 8px;
+}
+
+/* Right Section - Details */
+.ticket-right {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+
+/* Voucher Info Section */
+.voucher-info {
+    flex: 1;
+    padding-right: 15px;
+}
+
+.voucher-info h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--voucher-text);
+    margin: 0 0 8px 0;
+}
+
+.voucher-info .min-order {
+    font-size: 0.9rem;
+    color: var(--voucher-text-light);
+    margin: 0 0 8px 0;
+}
+
+.voucher-info .min-order strong {
+    color: var(--voucher-blue);
+    font-weight: 600;
+}
+
+.voucher-info .expiry {
+    font-size: 0.85rem;
+    color: var(--voucher-text-light);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.voucher-info .conditions {
+    font-size: 0.85rem;
+    color: var(--voucher-blue);
+    margin-top: 5px;
+    cursor: pointer;
+}
+
+/* Use Button */
+.btn-use-voucher {
+    background: transparent;
+    border: 2px solid var(--voucher-blue);
+    color: var(--voucher-blue);
+    padding: 10px 24px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    white-space: nowrap;
+}
+
+.btn-use-voucher:hover {
+    background: var(--voucher-blue);
+    color: white;
+}
+
+/* Used Voucher */
+.voucher-ticket.used {
+    opacity: 0.6;
+}
+
+.voucher-ticket.used .ticket-left {
+    background: linear-gradient(135deg, var(--voucher-gray) 0%, #B0B8C4 100%);
+}
+
+.voucher-ticket.used .btn-use-voucher {
+    border-color: var(--voucher-gray);
+    color: var(--voucher-gray);
+    cursor: not-allowed;
+}
+
+/* ===================================
+   Empty State
+   =================================== */
+.voucher-empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    background: var(--voucher-bg);
+    border-radius: 8px;
+    margin: 20px 0;
+}
+
+.voucher-empty-state i {
+    font-size: 4rem;
+    color: var(--voucher-border);
+    margin-bottom: 15px;
+}
+
+.voucher-empty-state h5 {
+    color: var(--voucher-text);
+    margin-bottom: 8px;
+}
+
+.voucher-empty-state p {
+    color: var(--voucher-text-light);
+    font-size: 0.95rem;
+}
+
+/* ===================================
+   Responsive Design
+   =================================== */
+@media (max-width: 768px) {
+    .voucher-ticket {
+        flex-direction: column;
+    }
+
+    .ticket-left {
+        width: 100%;
+        min-width: 100%;
+        padding: 15px;
+    }
+
+    .ticket-right {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 15px;
+    }
+
+    .voucher-info {
+        padding-right: 0;
+        margin-bottom: 15px;
+        width: 100%;
+    }
+
+    .btn-use-voucher {
+        width: 100%;
+        text-align: center;
+    }
+
+    .voucher-tabs .tab {
+        padding: 10px 12px;
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .voucher-input-group {
+        flex-direction: column;
+    }
+
+    .voucher-input-group .btn-save {
+        width: 100%;
+    }
+}

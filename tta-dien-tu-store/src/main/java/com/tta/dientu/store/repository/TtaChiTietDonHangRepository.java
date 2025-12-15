@@ -11,33 +11,35 @@ import java.util.List;
 @Repository
 public interface TtaChiTietDonHangRepository extends JpaRepository<TtaChiTietDonHang, Integer> {
 
-    // Tìm chi tiết đơn hàng theo mã đơn hàng
-    List<TtaChiTietDonHang> findByTtaDonHang_TtaMaDonHang(Integer ttaMaDonHang);
+        // Tìm chi tiết đơn hàng theo mã đơn hàng
+        // Tìm chi tiết đơn hàng theo mã đơn hàng
+        @Query("SELECT ct FROM TtaChiTietDonHang ct JOIN FETCH ct.ttaSanPham WHERE ct.ttaDonHang.ttaMaDonHang = :ttaMaDonHang")
+        List<TtaChiTietDonHang> findByTtaDonHang_TtaMaDonHang(@Param("ttaMaDonHang") Integer ttaMaDonHang);
 
-    // Tìm chi tiết đơn hàng theo mã sản phẩm
-    List<TtaChiTietDonHang> findByTtaSanPham_TtaMaSanPham(Integer ttaMaSanPham);
+        // Tìm chi tiết đơn hàng theo mã sản phẩm
+        List<TtaChiTietDonHang> findByTtaSanPham_TtaMaSanPham(Integer ttaMaSanPham);
 
-    // Tính tổng số lượng sản phẩm đã bán
-    @Query("SELECT SUM(ct.ttaSoLuong) FROM TtaChiTietDonHang ct WHERE ct.ttaSanPham.ttaMaSanPham = :ttaMaSanPham")
-    Integer getTongSoLuongDaBan(@Param("ttaMaSanPham") Integer ttaMaSanPham);
+        // Tính tổng số lượng sản phẩm đã bán
+        @Query("SELECT SUM(ct.ttaSoLuong) FROM TtaChiTietDonHang ct WHERE ct.ttaSanPham.ttaMaSanPham = :ttaMaSanPham")
+        Integer getTongSoLuongDaBan(@Param("ttaMaSanPham") Integer ttaMaSanPham);
 
-    // Lấy top sản phẩm bán chạy
-    @Query("SELECT ct.ttaSanPham.ttaMaSanPham, SUM(ct.ttaSoLuong) as totalSold " +
-            "FROM TtaChiTietDonHang ct " +
-            "GROUP BY ct.ttaSanPham.ttaMaSanPham " +
-            "ORDER BY totalSold DESC")
-    List<Object[]> findTopSanPhamBanChay();
+        // Lấy top sản phẩm bán chạy
+        @Query("SELECT ct.ttaSanPham.ttaMaSanPham, SUM(ct.ttaSoLuong) as totalSold " +
+                        "FROM TtaChiTietDonHang ct " +
+                        "GROUP BY ct.ttaSanPham.ttaMaSanPham " +
+                        "ORDER BY totalSold DESC")
+        List<Object[]> findTopSanPhamBanChay();
 
-    // Tính doanh thu theo sản phẩm
-    @Query("SELECT ct.ttaSanPham.ttaMaSanPham, SUM(ct.ttaSoLuong * ct.ttaDonGia) as revenue " +
-            "FROM TtaChiTietDonHang ct " +
-            "GROUP BY ct.ttaSanPham.ttaMaSanPham " +
-            "ORDER BY revenue DESC")
-    List<Object[]> findDoanhThuTheoSanPham();
+        // Tính doanh thu theo sản phẩm
+        @Query("SELECT ct.ttaSanPham.ttaMaSanPham, SUM(ct.ttaSoLuong * ct.ttaDonGia) as revenue " +
+                        "FROM TtaChiTietDonHang ct " +
+                        "GROUP BY ct.ttaSanPham.ttaMaSanPham " +
+                        "ORDER BY revenue DESC")
+        List<Object[]> findDoanhThuTheoSanPham();
 
-    // Kiểm tra sản phẩm có trong đơn hàng nào không
-    boolean existsByTtaSanPham_TtaMaSanPham(Integer ttaMaSanPham);
+        // Kiểm tra sản phẩm có trong đơn hàng nào không
+        boolean existsByTtaSanPham_TtaMaSanPham(Integer ttaMaSanPham);
 
-    // Đếm số chi tiết đơn hàng theo đơn hàng
-    long countByTtaDonHang_TtaMaDonHang(Integer ttaMaDonHang);
+        // Đếm số chi tiết đơn hàng theo đơn hàng
+        long countByTtaDonHang_TtaMaDonHang(Integer ttaMaDonHang);
 }

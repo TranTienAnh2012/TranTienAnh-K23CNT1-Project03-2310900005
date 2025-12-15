@@ -5,7 +5,8 @@ import lombok.Data;
 
 @Entity
 @Table(name = "tta_DanhMuc")
-@Data
+@lombok.Getter
+@lombok.Setter
 public class TtaDanhMuc {
 
     @Id

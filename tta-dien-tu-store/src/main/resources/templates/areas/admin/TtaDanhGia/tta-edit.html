@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi" th:replace="~{layout/tta-admin-layout :: layout(~{::content})}">
+
+<head>
+    <title th:text="${pageTitle}">Sửa Đánh giá - TTA Store</title>
+</head>
+
+<body>
+    <div th:fragment="content">
+        <!-- Header -->
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <h2 class="mb-0">Sửa đánh giá #<span th:text="${danhGia.ttaMaDanhGia}">1</span></h2>
+            <a th:href="@{/admin/danhgia}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Quay lại
+            </a>
+        </div>
+
+        <!-- Form -->
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <form th:action="@{/admin/danhgia/edit/{id}(id=${danhGia.ttaMaDanhGia})}" method="post">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Sản phẩm</label>
+                            <input type="text" class="form-control" th:value="${danhGia.ttaSanPham.ttaTenSanPham}"
+                                readonly>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Người dùng</label>
+                            <input type="text" class="form-control" th:value="${danhGia.ttaNguoiDung.ttaHoTen}"
+                                readonly>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Số sao <span class="text-danger">*</span></label>
+                        <div class="star-rating">
+                            <div class="btn-group" role="group">
+                                <input type="radio" class="btn-check" name="soSao" id="star1" value="1"
+                                    th:checked="${danhGia.ttaSoSao == 1}" required>
+                                <label class="btn btn-outline-warning" for="star1">
+                                    <i class="bi bi-star-fill"></i> 1
+                                </label>
+
+                                <input type="radio" class="btn-check" name="soSao" id="star2" value="2"
+                                    th:checked="${danhGia.ttaSoSao == 2}">
+                                <label class="btn btn-outline-warning" for="star2">
+                                    <i class="bi bi-star-fill"></i> 2
+                                </label>
+
+                                <input type="radio" class="btn-check" name="soSao" id="star3" value="3"
+                                    th:checked="${danhGia.ttaSoSao == 3}">
+                                <label class="btn btn-outline-warning" for="star3">
+                                    <i class="bi bi-star-fill"></i> 3
+                                </label>
+
+                                <input type="radio" class="btn-check" name="soSao" id="star4" value="4"
+                                    th:checked="${danhGia.ttaSoSao == 4}">
+                                <label class="btn btn-outline-warning" for="star4">
+                                    <i class="bi bi-star-fill"></i> 4
+                                </label>
+
+                                <input type="radio" class="btn-check" name="soSao" id="star5" value="5"
+                                    th:checked="${danhGia.ttaSoSao == 5}">
+                                <label class="btn btn-outline-warning" for="star5">
+                                    <i class="bi bi-star-fill"></i> 5
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="binhLuan" class="form-label">Bình luận</label>
+                        <textarea class="form-control" id="binhLuan" name="binhLuan" rows="4"
+                            th:text="${danhGia.ttaBinhLuan}" placeholder="Nhập bình luận về sản phẩm..."></textarea>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Cập nhật
+                        </button>
+                        <a th:href="@{/admin/danhgia}" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> Hủy
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

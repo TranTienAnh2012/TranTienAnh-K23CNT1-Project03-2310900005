@@ -23,6 +23,7 @@ public class TtaUserHomeController {
     private final TtaSanPhamRepository ttaSanPhamRepository;
     private final TtaDanhMucRepository ttaDanhMucRepository;
     private final TtaBannerService ttaBannerService;
+    private final com.tta.dientu.store.service.TtaDanhGiaService ttaDanhGiaService;
 
     @GetMapping({ "", "/", "/dashboard" })
     public String dashboard(Model model) {
@@ -50,9 +51,11 @@ public class TtaUserHomeController {
         // Lấy danh sách danh mục để hiển thị filter
         model.addAttribute("ttaDanhMucs", ttaDanhMucRepository.findAllByOrderByTtaTenDanhMucAsc());
 
+        java.util.List<com.tta.dientu.store.entity.TtaSanPham> products;
+
         // Nếu có từ khóa tìm kiếm, ưu tiên tìm kiếm theo từ khóa
         if (keyword != null && !keyword.trim().isEmpty()) {
-            model.addAttribute("ttaSanPhams", ttaSanPhamRepository.searchByKeywordList(keyword.trim()));
+            products = ttaSanPhamRepository.searchByKeywordList(keyword.trim());
             model.addAttribute("keyword", keyword);
             model.addAttribute("pageTitle", "Tìm kiếm: " + keyword + " - TTA Store");
         } else {
@@ -68,10 +71,9 @@ public class TtaUserHomeController {
                 });
 
                 if (minPrice != null || maxPrice != null) {
-                    model.addAttribute("ttaSanPhams",
-                            ttaSanPhamRepository.findByCategoryAndPrice(categoryId, min, max));
+                    products = ttaSanPhamRepository.findByCategoryAndPrice(categoryId, min, max);
                 } else {
-                    model.addAttribute("ttaSanPhams", ttaSanPhamRepository.findByTtaDanhMuc_TtaMaDanhMuc(categoryId));
+                    products = ttaSanPhamRepository.findByTtaDanhMuc_TtaMaDanhMuc(categoryId);
                 }
                 model.addAttribute("activeCategoryId", categoryId);
             } else {
@@ -83,9 +85,9 @@ public class TtaUserHomeController {
                 }
 
                 if (minPrice != null || maxPrice != null) {
-                    model.addAttribute("ttaSanPhams", ttaSanPhamRepository.findByGiaBetween(min, max));
+                    products = ttaSanPhamRepository.findByGiaBetween(min, max);
                 } else {
-                    model.addAttribute("ttaSanPhams", ttaSanPhamRepository.findByTtaTrangThai(true));
+                    products = ttaSanPhamRepository.findByTtaTrangThai(true);
                 }
             }
 
@@ -93,15 +95,52 @@ public class TtaUserHomeController {
             model.addAttribute("maxPrice", maxPrice);
         }
 
+        model.addAttribute("ttaSanPhams", products);
+
+        // Tính rating cho mỗi sản phẩm
+        java.util.Map<Integer, Double> productRatings = new java.util.HashMap<>();
+        java.util.Map<Integer, Long> productReviewCounts = new java.util.HashMap<>();
+
+        for (com.tta.dientu.store.entity.TtaSanPham product : products) {
+            Double avgRating = ttaDanhGiaService.getAverageRating(product.getTtaMaSanPham());
+            Long reviewCount = ttaDanhGiaService.getReviewCount(product.getTtaMaSanPham());
+            productRatings.put(product.getTtaMaSanPham(), avgRating);
+            productReviewCounts.put(product.getTtaMaSanPham(), reviewCount);
+        }
+
+        model.addAttribute("productRatings", productRatings);
+        model.addAttribute("productReviewCounts", productReviewCounts);
+
         return "areas/user/TtaSanPham/tta-list";
     }
 
     @GetMapping("/san-pham/{id}")
-    public String viewProductDetail(@PathVariable("id") Integer id, Model model) {
+    public String viewProductDetail(@PathVariable("id") Integer id, Model model,
+            org.springframework.security.core.Authentication authentication) {
         com.tta.dientu.store.entity.TtaSanPham ttaSanPham = ttaSanPhamRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Sản phẩm không tồn tại"));
         model.addAttribute("ttaSanPham", ttaSanPham);
         model.addAttribute("pageTitle", ttaSanPham.getTtaTenSanPham() + " - TTA Store");
+
+        // Thêm reviews
+        model.addAttribute("reviews", ttaDanhGiaService.getReviewsByProduct(id));
+        model.addAttribute("averageRating", ttaDanhGiaService.getAverageRating(id));
+        model.addAttribute("reviewCount", ttaDanhGiaService.getReviewCount(id));
+
+        // Kiểm tra user đã đánh giá chưa và có thể đánh giá không
+        if (authentication != null && authentication.isAuthenticated()) {
+            com.tta.dientu.store.areas.user.service.TtaCustomUserDetails userDetails = (com.tta.dientu.store.areas.user.service.TtaCustomUserDetails) authentication
+                    .getPrincipal();
+            Integer userId = userDetails.getTtaMaNguoiDung();
+
+            boolean hasReviewed = ttaDanhGiaService.hasUserReviewed(id, userId);
+            boolean hasPurchased = ttaDanhGiaService.hasUserPurchasedProduct(id, userId);
+
+            model.addAttribute("hasReviewed", hasReviewed);
+            model.addAttribute("hasPurchased", hasPurchased);
+            model.addAttribute("canReview", hasPurchased && !hasReviewed);
+        }
+
         return "areas/user/TtaSanPham/tta-detail";
     }
 }

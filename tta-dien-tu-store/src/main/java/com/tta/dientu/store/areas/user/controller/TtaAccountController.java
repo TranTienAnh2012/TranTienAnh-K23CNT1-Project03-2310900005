@@ -35,8 +35,8 @@ public class TtaAccountController {
             return "redirect:/account/login";
         }
 
-        // Sau khi đăng nhập, tất cả user (cả ADMIN và USER) đều vào trang sản phẩm
-        // Admin có thể truy cập admin dashboard qua nút Admin trên thanh nav
+        // Redirect all users (including admin) to user product page
+        // Admin can access admin panel via the "Admin" button in navigation
         return "redirect:/user/san-pham";
     }
 

@@ -6,7 +6,8 @@ import java.math.BigDecimal;
 
 @Entity
 @Table(name = "tta_ChiTietDonHang")
-@Data
+@lombok.Getter
+@lombok.Setter
 public class TtaChiTietDonHang {
 
     @Id
@@ -16,10 +17,12 @@ public class TtaChiTietDonHang {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tta_MaDonHang", nullable = false)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private TtaDonHang ttaDonHang;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tta_MaSanPham", nullable = false)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private TtaSanPham ttaSanPham;
 
     @Column(name = "tta_SoLuong", nullable = false)

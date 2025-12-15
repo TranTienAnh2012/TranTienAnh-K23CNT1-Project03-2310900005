@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi" th:replace="~{layout/tta-admin-layout :: layout(~{::content})}">
+
+<head>
+    <title th:text="${pageTitle}">Quản lý Khuyến mãi - TTA Store</title>
+</head>
+
+<body>
+    <div th:fragment="content">
+        <!-- Header -->
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <h2 class="mb-0">Quản lý Khuyến mãi</h2>
+            <a th:href="@{/admin/khuyenmai/create}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Thêm khuyến mãi
+            </a>
+        </div>
+
+        <!-- Alert Messages -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show">
+            <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- Table -->
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>ID</th>
+                                <th>Mã Code</th>
+                                <th>Tên Voucher</th>
+                                <th>Loại giảm giá</th>
+                                <th>Giá trị</th>
+                                <th>Đơn tối thiểu</th>
+                                <th>Thời hạn</th>
+                                <th>Đã dùng/Tổng</th>
+                                <th>Trạng thái</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="voucher : ${listVoucher}">
+                                <td th:text="${voucher.ttaId}">1</td>
+                                <td>
+                                    <span class="badge bg-light text-dark border"
+                                        th:text="${voucher.ttaCode}">CODE</span>
+                                </td>
+                                <td th:text="${voucher.ttaName}">Tên voucher</td>
+                                <td>
+                                    <span th:if="${voucher.ttaDiscountType.name() == 'PERCENT'}" class="badge bg-info">
+                                        Phần trăm
+                                    </span>
+                                    <span th:if="${voucher.ttaDiscountType.name() == 'FIXED_AMOUNT'}"
+                                        class="badge bg-warning text-dark">
+                                        Số tiền
+                                    </span>
+                                </td>
+                                <td>
+                                    <span th:if="${voucher.ttaDiscountType.name() == 'PERCENT'}">
+                                        <strong
+                                            th:text="${#numbers.formatDecimal(voucher.ttaDiscountValue, 1, 0)}">10</strong>%
+                                        <br>
+                                        <small class="text-muted" th:if="${voucher.ttaMaxDiscount != null}">
+                                            Tối đa: <span
+                                                th:text="${#numbers.formatDecimal(voucher.ttaMaxDiscount, 0, 'COMMA', 0, 'POINT')}"></span>₫
+                                        </small>
+                                    </span>
+                                    <span th:if="${voucher.ttaDiscountType.name() == 'FIXED_AMOUNT'}">
+                                        <strong
+                                            th:text="${#numbers.formatDecimal(voucher.ttaDiscountValue, 0, 'COMMA', 0, 'POINT')}">100,000</strong>₫
+                                    </span>
+                                </td>
+                                <td>
+                                    <span th:if="${voucher.ttaMinOrderValue != null}"
+                                        th:text="${#numbers.formatDecimal(voucher.ttaMinOrderValue, 0, 'COMMA', 0, 'POINT')} + '₫'">0₫</span>
+                                    <span th:if="${voucher.ttaMinOrderValue == null}">0₫</span>
+                                </td>
+                                <td class="small">
+                                    <div th:text="${#temporals.format(voucher.ttaStartDate, 'dd/MM/yyyy HH:mm')}"></div>
+                                    <div th:text="${#temporals.format(voucher.ttaEndDate, 'dd/MM/yyyy HH:mm')}"></div>
+                                </td>
+                                <td>
+                                    <span th:if="${voucher.ttaTotalQuantity != null}">
+                                        <span th:text="${voucher.ttaUsedQuantity}">0</span> / <span
+                                            th:text="${voucher.ttaTotalQuantity}">100</span>
+                                    </span>
+                                    <span th:if="${voucher.ttaTotalQuantity == null}" class="text-muted">
+                                        <span th:text="${voucher.ttaUsedQuantity}">0</span> / ∞
+                                    </span>
+                                </td>
+                                <td>
+                                    <span th:class="'badge ' +
+                                        (${voucher.ttaStatus.name() == 'ACTIVE'} ? 'bg-success' :
+                                        (${voucher.ttaStatus.name() == 'INACTIVE'} ? 'bg-secondary' : 'bg-danger'))"
+                                        th:text="${voucher.ttaStatus}">
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a th:href="@{/admin/khuyenmai/edit/{id}(id=${voucher.ttaId})}"
+                                            class="btn btn-outline-primary" title="Sửa">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a th:href="@{/admin/khuyenmai/delete/{id}(id=${voucher.ttaId})}"
+                                            class="btn btn-outline-danger" title="Xóa"
+                                            onclick="return confirm('Bạn có chắc chắn muốn xóa voucher này?');">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(listVoucher)}">
+                                <td colspan="10" class="text-center py-4 text-muted">Chưa có voucher nào</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

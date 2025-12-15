@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+
+<head th:replace="~{layout/tta-user-layout :: head}">
+    <title>Voucher của tôi - TTA Store</title>
+</head>
+
+<body th:replace="~{layout/tta-user-layout :: layout(~{::content})}">
+    <th:block th:fragment="head-extra">
+        <link rel="stylesheet" th:href="@{/css/tta-voucher-shopee.css}">
+    </th:block>
+
+    <div th:fragment="content">
+        <div class="container-fluid">
+            <!-- Page Title -->
+            <h2 class="mb-4">
+                <i class="bi bi-ticket-perforated text-danger"></i> Kho Voucher
+            </h2>
+
+            <!-- Alert Messages -->
+            <div th:if="${success}" class="alert alert-success alert-dismissible fade show">
+                <i class="bi bi-check-circle"></i> <span th:text="${success}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+                <i class="bi bi-exclamation-circle"></i> <span th:text="${error}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <!-- Voucher Code Input Section -->
+            <div class="voucher-input-section">
+                <label for="voucherCode">Mã Voucher</label>
+                <div class="voucher-input-group">
+                    <input type="text" id="voucherCode" placeholder="Nhập mã voucher tại đây">
+                    <button class="btn-save">Lưu</button>
+                </div>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="voucher-tabs">
+                <button class="tab active" data-filter="all">
+                    Tất Cả <span class="count"
+                        th:text="'(' + ${myVouchers.size() + availableVouchers.size()} + ')'"></span>
+                </button>
+                <button class="tab" data-filter="available">
+                    Voucher có thể nhận <span class="count" th:text="'(' + ${availableVouchers.size()} + ')'"></span>
+                </button>
+                <button class="tab" data-filter="owned">
+                    Voucher đã nhận <span class="count" th:text="'(' + ${myVouchers.size()} + ')'"></span>
+                </button>
+            </div>
+
+            <!-- Voucher đã nhận Section -->
+            <div class="voucher-section" data-section="owned">
+                <h3 class="voucher-section-title">
+                    <i class="bi bi-wallet2"></i> Voucher đã nhận
+                </h3>
+
+                <!-- Empty State -->
+                <div th:if="${myVouchers.isEmpty()}" class="voucher-empty-state">
+                    <i class="bi bi-inbox"></i>
+                    <h5>Bạn chưa có voucher nào</h5>
+                    <p>Hãy nhận voucher bên dưới để sử dụng!</p>
+                </div>
+
+                <!-- Voucher Cards -->
+                <div th:if="${!myVouchers.isEmpty()}">
+                    <div class="voucher-ticket" th:each="userVoucher : ${myVouchers}"
+                        th:classappend="${userVoucher.ttaIsUsed ? 'used' : ''}">
+
+                        <!-- Left Section - Brand -->
+                        <div class="ticket-left">
+                            <div class="brand-icon">
+                                <i class="bi bi-shop"></i>
+                            </div>
+                            <div class="brand-logo">ĐIỆN TỬ</div>
+                        </div>
+
+                        <!-- Right Section - Details -->
+                        <div class="ticket-right">
+                            <div class="voucher-info">
+                                <h4 th:text="${userVoucher.ttaVoucher.ttaName}">Tên voucher</h4>
+
+                                <p class="min-order">
+                                    <span th:if="${userVoucher.ttaVoucher.ttaDiscountType.name() == 'PERCENT'}">
+                                        Giảm <strong th:text="${userVoucher.ttaVoucher.ttaDiscountValue}">10</strong>%
+                                    </span>
+                                    <span th:if="${userVoucher.ttaVoucher.ttaDiscountType.name() == 'FIXED_AMOUNT'}">
+                                        Giảm <strong
+                                            th:text="${#numbers.formatDecimal(userVoucher.ttaVoucher.ttaDiscountValue, 0, 'COMMA', 0, 'POINT')}">100,000</strong>₫
+                                    </span>
+                                </p>
+
+                                <div class="expiry">
+                                    <i class="bi bi-clock"></i>
+                                    <span th:if="${userVoucher.ttaIsUsed}">
+                                        Đã dùng: <span
+                                            th:text="${#temporals.format(userVoucher.ttaUsedAt, 'dd.MM.yyyy')}"></span>
+                                    </span>
+                                    <span th:unless="${userVoucher.ttaIsUsed}">
+                                        HSD: <span
+                                            th:text="${#temporals.format(userVoucher.ttaVoucher.ttaEndDate, 'dd.MM.yyyy')}"></span>
+                                    </span>
+                                </div>
+
+                                <div class="conditions" th:if="${userVoucher.ttaVoucher.ttaDescription != null}">
+                                    <i class="bi bi-info-circle"></i> Điều kiện
+                                </div>
+                            </div>
+
+                            <button class="btn-use-voucher" th:disabled="${userVoucher.ttaIsUsed}">
+                                <span th:if="${userVoucher.ttaIsUsed}">Đã sử dụng</span>
+                                <span th:unless="${userVoucher.ttaIsUsed}">Dùng Ngay</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Voucher có thể nhận Section -->
+            <div class="voucher-section" data-section="available">
+                <h3 class="voucher-section-title">
+                    <i class="bi bi-gift"></i> Voucher có thể nhận
+                </h3>
+
+                <!-- Empty State -->
+                <div th:if="${availableVouchers.isEmpty()}" class="voucher-empty-state">
+                    <i class="bi bi-inbox"></i>
+                    <h5>Hiện không có voucher nào</h5>
+                    <p>Vui lòng quay lại sau!</p>
+                </div>
+
+                <!-- Voucher Cards -->
+                <div th:if="${!availableVouchers.isEmpty()}">
+                    <div class="voucher-ticket" th:each="voucher : ${availableVouchers}">
+
+                        <!-- Quantity Badge -->
+                        <div class="quantity-badge"
+                            th:if="${voucher.ttaTotalQuantity != null && (voucher.ttaTotalQuantity - voucher.ttaUsedQuantity) > 1}"
+                            th:text="'x' + ${voucher.ttaTotalQuantity - voucher.ttaUsedQuantity}"></div>
+
+                        <!-- Left Section - Brand -->
+                        <div class="ticket-left">
+                            <div class="brand-icon">
+                                <i class="bi bi-shop"></i>
+                            </div>
+                            <div class="brand-logo">ĐIỆN TỬ</div>
+                        </div>
+
+                        <!-- Right Section - Details -->
+                        <div class="ticket-right">
+                            <div class="voucher-info">
+                                <h4 th:text="${voucher.ttaName}">Tên voucher</h4>
+
+                                <p class="min-order">
+                                    <span th:if="${voucher.ttaDiscountType.name() == 'PERCENT'}">
+                                        Giảm <strong
+                                            th:text="${#numbers.formatDecimal(voucher.ttaDiscountValue, 0, 0)}">10</strong>%
+                                    </span>
+                                    <span th:if="${voucher.ttaDiscountType.name() == 'FIXED_AMOUNT'}">
+                                        Giảm <strong
+                                            th:text="${#numbers.formatDecimal(voucher.ttaDiscountValue, 0, 'COMMA', 0, 'POINT')}">100,000</strong>₫
+                                    </span>
+                                </p>
+
+                                <div class="expiry">
+                                    <i class="bi bi-clock"></i>
+                                    Hiệu lực từ: <span
+                                        th:text="${#temporals.format(voucher.ttaStartDate, 'dd.MM.yyyy')}"></span>
+                                    - <span th:text="${#temporals.format(voucher.ttaEndDate, 'dd.MM.yyyy')}"></span>
+                                </div>
+
+                                <div class="conditions" th:if="${voucher.ttaDescription != null}">
+                                    <i class="bi bi-info-circle"></i> Điều kiện
+                                </div>
+                            </div>
+
+                            <form th:action="@{/user/vouchers/claim/{id}(id=${voucher.ttaId})}" method="post"
+                                style="margin: 0;">
+                                <button type="submit" class="btn-use-voucher">Lưu Voucher</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- JavaScript for Tab Filtering -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const tabs = document.querySelectorAll('.voucher-tabs .tab');
+                const sections = document.querySelectorAll('.voucher-section');
+
+                tabs.forEach(tab => {
+                    tab.addEventListener('click', function () {
+                        // Remove active class from all tabs
+                        tabs.forEach(t => t.classList.remove('active'));
+
+                        // Add active class to clicked tab
+                        this.classList.add('active');
+
+                        // Get filter value
+                        const filter = this.getAttribute('data-filter');
+
+                        // Show/hide sections based on filter
+                        sections.forEach(section => {
+                            const sectionType = section.getAttribute('data-section');
+
+                            if (filter === 'all') {
+                                section.style.display = 'block';
+                            } else if (filter === sectionType) {
+                                section.style.display = 'block';
+                            } else {
+                                section.style.display = 'none';
+                            }
+                        });
+                    });
+                });
+            });
+        </script>
+    </div>
+</body>
+
+</html>

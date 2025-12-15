@@ -76,7 +76,7 @@ public class TtaAdminSanPhamController {
             // Kiểm tra tên sản phẩm đã tồn tại chưa
             if (ttaAdminSanPhamService.isTenSanPhamExists(ttaSanPham.getTtaTenSanPham(), null)) {
                 redirectAttributes.addFlashAttribute("error", "Tên sản phẩm đã tồn tại");
-                return "redirect:/admin/TtaSanPham/them";
+                return "redirect:/admin/sanpham/them";
             }
 
             // Xử lý upload ảnh
@@ -89,9 +89,9 @@ public class TtaAdminSanPhamController {
             redirectAttributes.addFlashAttribute("success", "Thêm sản phẩm thành công");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Lỗi khi thêm sản phẩm: " + e.getMessage());
-            return "redirect:/admin/TtaSanPham/them";
+            return "redirect:/admin/sanpham/them";
         }
-        return "redirect:/admin/TtaSanPham";
+        return "redirect:/admin/sanpham";
     }
 
     // Form sửa sản phẩm
@@ -101,7 +101,7 @@ public class TtaAdminSanPhamController {
         Optional<TtaSanPham> ttaSanPhamOpt = ttaAdminSanPhamService.getSanPhamById(id);
         if (ttaSanPhamOpt.isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "Không tìm thấy sản phẩm");
-            return "redirect:/admin/TtaSanPham";
+            return "redirect:/admin/sanpham";
         }
 
         model.addAttribute("pageTitle", "TTA Admin - Sửa Sản phẩm");
@@ -121,7 +121,7 @@ public class TtaAdminSanPhamController {
             // Kiểm tra tên sản phẩm đã tồn tại chưa (trừ sản phẩm hiện tại)
             if (ttaAdminSanPhamService.isTenSanPhamExists(ttaSanPham.getTtaTenSanPham(), id)) {
                 redirectAttributes.addFlashAttribute("error", "Tên sản phẩm đã tồn tại");
-                return "redirect:/admin/TtaSanPham/sua/" + id;
+                return "redirect:/admin/sanpham/sua/" + id;
             }
 
             // Xử lý upload ảnh
@@ -139,9 +139,9 @@ public class TtaAdminSanPhamController {
             redirectAttributes.addFlashAttribute("success", "Cập nhật sản phẩm thành công");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Lỗi khi cập nhật sản phẩm: " + e.getMessage());
-            return "redirect:/admin/TtaSanPham/sua/" + id;
+            return "redirect:/admin/sanpham/sua/" + id;
         }
-        return "redirect:/admin/TtaSanPham";
+        return "redirect:/admin/sanpham";
     }
 
     // Xóa sản phẩm
@@ -157,7 +157,7 @@ public class TtaAdminSanPhamController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Lỗi khi xóa sản phẩm: " + e.getMessage());
         }
-        return "redirect:/admin/TtaSanPham";
+        return "redirect:/admin/sanpham";
     }
 
     // Cập nhật trạng thái sản phẩm
@@ -175,7 +175,7 @@ public class TtaAdminSanPhamController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Lỗi khi cập nhật trạng thái");
         }
-        return "redirect:/admin/TtaSanPham";
+        return "redirect:/admin/sanpham";
     }
 
     // Helper method để lưu file

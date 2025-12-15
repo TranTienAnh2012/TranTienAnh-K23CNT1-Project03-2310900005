@@ -7,7 +7,8 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "tta_DonHang")
-@Data
+@lombok.Getter
+@lombok.Setter
 public class TtaDonHang {
 
     @Id
@@ -17,6 +18,7 @@ public class TtaDonHang {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tta_MaNguoiDung", nullable = false)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private TtaQuanTriVien ttaNguoiDung;
 
     @Column(name = "tta_NgayDatHang")
@@ -30,6 +32,7 @@ public class TtaDonHang {
     private com.tta.dientu.store.enums.TtaTrangThaiDonHang ttaTrangThai;
 
     @OneToMany(mappedBy = "ttaDonHang", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private java.util.List<TtaChiTietDonHang> ttaChiTietDonHangs;
 
     // Thông tin người nhận

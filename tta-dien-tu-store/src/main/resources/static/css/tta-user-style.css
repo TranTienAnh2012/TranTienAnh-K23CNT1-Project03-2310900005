@@ -247,3 +247,134 @@ button[data-bs-toggle="collapse"][aria-expanded="false"] .bi-chevron-down {
 .card-header {
     border-radius: 10px 10px 0 0 !important;
 }
+
+/* Zalo Chat Button */
+.fcta-zalo-vi-tri-nut {
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    z-index: 999;
+}
+
+.fcta-zalo-nen-nut {
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    color: #fff;
+    background: #0068ff;
+    border-radius: 50%;
+    position: relative;
+    cursor: pointer;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, .06), 0 2px 32px rgba(0, 0, 0, .16);
+    animation: zalo-pulse 2s infinite;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.fcta-zalo-ben-trong-nut svg {
+    width: 25px;
+    height: 25px;
+    vertical-align: middle;
+}
+
+.fcta-zalo-text {
+    position: absolute;
+    top: 50%;
+    right: 100%;
+    transform: translateY(-50%);
+    background: #0068ff;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 4px;
+    white-space: nowrap;
+    margin-right: 10px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+    font-size: 14px;
+}
+
+.fcta-zalo-vi-tri-nut:hover .fcta-zalo-text {
+    opacity: 1;
+    visibility: visible;
+}
+
+@keyframes zalo-pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(0, 104, 255, 0.7);
+    }
+
+    70% {
+        box-shadow: 0 0 0 15px rgba(0, 104, 255, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(0, 104, 255, 0);
+    }
+}
+
+/* Hotline Button */
+.tta-hotline {
+    position: fixed;
+    bottom: 24px;
+    right: 20px;
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 15px;
+    border-radius: 50px;
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    background: linear-gradient(135deg, #a52c2c 0%, #a52c2ce6 100%);
+    box-shadow: 0 4px 12px #a52c2c66;
+}
+
+.tta-hotline:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px #a52c2c88;
+    color: white;
+}
+
+.tta-hotline svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* Pulse animation for hotline */
+.tta-hotline {
+    animation: hotline-pulse 2s infinite;
+}
+
+@keyframes hotline-pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(165, 44, 44, 0.7);
+    }
+
+    70% {
+        box-shadow: 0 0 0 10px rgba(165, 44, 44, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(165, 44, 44, 0);
+    }
+}
+
+/* GTranslate Widget */
+.gtranslate_wrapper {
+    position: fixed;
+    bottom: 24px;
+    left: 20px;
+    z-index: 999;
+}
+
+.gtranslate_wrapper select {
+    border: none !important;
+    background: transparent !important;
+    font-size: 14px;
+    cursor: pointer;
+    outline: none;
+}

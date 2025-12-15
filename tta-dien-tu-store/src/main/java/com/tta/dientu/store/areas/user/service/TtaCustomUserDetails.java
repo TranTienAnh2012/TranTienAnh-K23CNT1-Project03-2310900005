@@ -67,4 +67,8 @@ public class TtaCustomUserDetails implements UserDetails {
     public Integer getVaiTro() {
         return ttaQuanTriVien.getTtaVaiTro();
     }
+
+    public Integer getTtaMaNguoiDung() {
+        return ttaQuanTriVien.getTtaMaNguoiDung();
+    }
 }

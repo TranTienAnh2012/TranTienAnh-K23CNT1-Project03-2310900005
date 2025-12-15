@@ -7,7 +7,8 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "tta_SanPham")
-@Data
+@lombok.Getter
+@lombok.Setter
 public class TtaSanPham {
 
     @Id
@@ -20,6 +21,7 @@ public class TtaSanPham {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tta_MaDanhMuc", nullable = false)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private TtaDanhMuc ttaDanhMuc;
 
     @Column(name = "tta_Gia", nullable = false, precision = 18, scale = 2)

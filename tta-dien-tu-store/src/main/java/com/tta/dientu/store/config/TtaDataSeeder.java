@@ -17,8 +17,8 @@ public class TtaDataSeeder {
     @Bean
     public CommandLineRunner demoData(TtaQuanTriVienRepository repo) {
         return args -> {
-            Optional<TtaQuanTriVien> admin = repo.findByTtaEmail("admin@gmail.com");
-            if (admin.isEmpty()) {
+            Optional<TtaQuanTriVien> adminOpt = repo.findByTtaEmail("admin@gmail.com");
+            if (adminOpt.isEmpty()) {
                 TtaQuanTriVien newAdmin = new TtaQuanTriVien();
                 newAdmin.setTtaEmail("admin@gmail.com");
                 newAdmin.setTtaHoTen("Administrator");
@@ -27,7 +27,12 @@ public class TtaDataSeeder {
                 repo.save(newAdmin);
                 System.out.println(">>> SEEDER: Created Admin user (admin@gmail.com / 123456)");
             } else {
-                System.out.println(">>> SEEDER: Admin user already exists.");
+                // Ensure admin always has correct role and password
+                TtaQuanTriVien admin = adminOpt.get();
+                admin.setTtaVaiTro(1);
+                admin.setTtaMatKhau("123456");
+                repo.save(admin);
+                System.out.println(">>> SEEDER: Updated existing Admin user to ensure role=1 and pass=123456.");
             }
 
             // Seed Banners

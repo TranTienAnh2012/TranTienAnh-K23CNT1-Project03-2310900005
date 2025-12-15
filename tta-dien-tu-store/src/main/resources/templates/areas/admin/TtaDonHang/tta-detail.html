@@ -47,7 +47,7 @@
                                     <tr th:each="ct, stat : ${ttaChiTietList}">
                                         <td th:text="${stat.index + 1}">1</td>
                                         <td>
-                                            <div class="d-flex align-items-center">
+                                            <div class="d-flex align-items-center" th:if="${ct.ttaSanPham != null}">
                                                 <img th:if="${ct.ttaSanPham.ttaHinhAnh != null}"
                                                     th:src="@{'/uploads/' + ${ct.ttaSanPham.ttaHinhAnh}}" alt="Product"
                                                     class="me-2"
@@ -58,6 +58,9 @@
                                                     <small class="text-muted">Mã: <span
                                                             th:text="${ct.ttaSanPham.ttaMaSanPham}">SP001</span></small>
                                                 </div>
+                                            </div>
+                                            <div class="d-flex align-items-center" th:if="${ct.ttaSanPham == null}">
+                                                <span class="text-danger">Sản phẩm không tồn tại</span>
                                             </div>
                                         </td>
                                         <td
@@ -94,9 +97,13 @@
                         <div class="mb-3">
                             <label class="form-label fw-bold">Trạng thái hiện tại:</label>
                             <div>
-                                <span class="badge fs-6" th:classappend="'bg-' + ${ttaDonHang.ttaTrangThai.mauBadge}">
+                                <span th:if="${ttaDonHang.ttaTrangThai != null}" class="badge fs-6"
+                                    th:classappend="'bg-' + ${ttaDonHang.ttaTrangThai.mauBadge}">
                                     <i th:class="'bi ' + ${ttaDonHang.ttaTrangThai.icon}"></i>
                                     <span th:text="${ttaDonHang.ttaTrangThai.tenHienThi}">Trạng thái</span>
+                                </span>
+                                <span th:if="${ttaDonHang.ttaTrangThai == null}" class="badge bg-secondary">
+                                    Không xác định
                                 </span>
                             </div>
                         </div>
