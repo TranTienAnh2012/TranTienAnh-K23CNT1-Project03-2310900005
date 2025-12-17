@@ -56,7 +56,7 @@
                                     <span th:if="${voucher.ttaDiscountType.name() == 'PERCENT'}" class="badge bg-info">
                                         Phần trăm
                                     </span>
-                                    <span th:if="${voucher.ttaDiscountType.name() == 'FIXED_AMOUNT'}"
+                                    <span th:if="${voucher.ttaDiscountType.name() == 'FIXED'}"
                                         class="badge bg-warning text-dark">
                                         Số tiền
                                     </span>
@@ -71,7 +71,7 @@
                                                 th:text="${#numbers.formatDecimal(voucher.ttaMaxDiscount, 0, 'COMMA', 0, 'POINT')}"></span>₫
                                         </small>
                                     </span>
-                                    <span th:if="${voucher.ttaDiscountType.name() == 'FIXED_AMOUNT'}">
+                                    <span th:if="${voucher.ttaDiscountType.name() == 'FIXED'}">
                                         <strong
                                             th:text="${#numbers.formatDecimal(voucher.ttaDiscountValue, 0, 'COMMA', 0, 'POINT')}">100,000</strong>₫
                                     </span>

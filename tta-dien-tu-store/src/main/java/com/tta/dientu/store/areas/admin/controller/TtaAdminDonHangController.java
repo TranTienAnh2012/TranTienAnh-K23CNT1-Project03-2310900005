@@ -83,6 +83,18 @@ public class TtaAdminDonHangController {
         model.addAttribute("ttaDonHang", ttaDonHangOpt.get());
         model.addAttribute("ttaChiTietList", ttaChiTietList);
 
+        // Calculate totals for display
+        java.math.BigDecimal subtotal = ttaChiTietList.stream()
+                .map(TtaChiTietDonHang::getThanhTien)
+                .reduce(java.math.BigDecimal.ZERO, java.math.BigDecimal::add);
+        java.math.BigDecimal discount = subtotal.subtract(ttaDonHangOpt.get().getTtaTongTien());
+
+        model.addAttribute("subtotal", subtotal);
+        model.addAttribute("discount", discount);
+
+        // Add status list for dropdown
+        model.addAttribute("allTrangThai", TtaTrangThaiDonHang.values());
+
         return "areas/admin/TtaDonHang/tta-detail";
     }
 

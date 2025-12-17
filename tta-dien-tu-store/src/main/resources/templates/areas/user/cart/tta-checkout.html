@@ -77,21 +77,103 @@
                                 </tbody>
                             </table>
                         </div>
+                        <div class="mb-3">
+                            <label class="form-label">Mã giảm giá</label>
+                            <div class="input-group">
+                                <select class="form-select" id="voucherCodeInput">
+                                    <option value="">-- Chọn mã voucher --</option>
+                                    <option th:each="uv : ${availableVouchers}" th:value="${uv.ttaVoucher.ttaCode}"
+                                        th:text="${uv.ttaVoucher.ttaCode + ' - ' + uv.ttaVoucher.ttaName + ' (Giảm ' + (uv.ttaVoucher.ttaDiscountType.name() == 'PERCENT' ? uv.ttaVoucher.ttaDiscountValue + '%' : #numbers.formatDecimal(uv.ttaVoucher.ttaDiscountValue, 0, 'COMMA', 0, 'POINT') + 'đ') + ')'}">
+                                    </option>
+                                </select>
+                                <button class="btn btn-outline-primary" type="button" onclick="applyVoucher()">Áp
+                                    dụng</button>
+                            </div>
+                            <small id="voucherMessage" class="form-text"></small>
+                            <div th:if="${availableVouchers == null || availableVouchers.isEmpty()}" class="mt-1">
+                                <small class="text-muted">Bạn chưa có voucher nào khả dụng.</small>
+                            </div>
+                        </div>
+
                         <hr>
                         <div class="d-flex justify-content-between mb-2">
                             <span class="text-muted">Tạm tính</span>
                             <span class="fw-bold"
                                 th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 0, 'POINT')} + ' đ'">0 đ</span>
                         </div>
+                        <div class="d-flex justify-content-between mb-2" id="discountRow" style="display: none;">
+                            <span class="text-success">Giảm giá</span>
+                            <span class="fw-bold text-success" id="discountAmount">-0 đ</span>
+                        </div>
                         <div class="d-flex justify-content-between mb-4">
                             <span class="h5 mb-0">Tổng cộng</span>
-                            <span class="h5 mb-0 text-primary"
+                            <span class="h5 mb-0 text-primary" id="totalAmountDisplay"
                                 th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 0, 'POINT')} + ' đ'">0 đ</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        <script th:inline="javascript">
+            function applyVoucher() {
+                var code = document.getElementById('voucherCodeInput').value;
+                var total = [[${ total }]]; // Original total from server
+
+                if (!code) {
+                    showVoucherToast('Thông báo', 'Vui lòng chọn mã voucher', null);
+                    return;
+                }
+
+                fetch('/user/cart/validate-voucher?code=' + code + '&total=' + total)
+                    .then(response => response.json())
+                    .then(data => {
+                        var msgElement = document.getElementById('voucherMessage');
+                        if (data.success) {
+                            msgElement.className = 'form-text text-success';
+                            msgElement.innerText = data.message;
+                            showVoucherToast('Thành công', data.message, null);
+
+                            // Update display
+                            document.getElementById('discountRow').style.display = 'flex';
+                            document.getElementById('discountAmount').innerText = '-' + formatCurrency(data.discount);
+                            document.getElementById('totalAmountDisplay').innerText = formatCurrency(data.newTotal);
+
+                            // Add hidden input to form
+                            var form = document.querySelector('form');
+                            var existingInput = document.getElementById('hiddenVoucherCode');
+                            if (existingInput) {
+                                existingInput.value = code;
+                            } else {
+                                var input = document.createElement('input');
+                                input.type = 'hidden';
+                                input.name = 'voucherCode';
+                                input.id = 'hiddenVoucherCode';
+                                input.value = code;
+                                form.appendChild(input);
+                            }
+                        } else {
+                            msgElement.className = 'form-text text-danger';
+                            msgElement.innerText = data.message;
+                            showVoucherToast('Lỗi', data.message, null);
+
+                            // Reset display
+                            document.getElementById('discountRow').style.display = 'none';
+                            document.getElementById('totalAmountDisplay').innerText = formatCurrency(total);
+                            var existingInput = document.getElementById('hiddenVoucherCode');
+                            if (existingInput) existingInput.remove();
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showVoucherToast('Lỗi', 'Có lỗi xảy ra khi kiểm tra voucher', null);
+                    });
+            }
+
+            function formatCurrency(amount) {
+                return new Intl.NumberFormat('vi-VN').format(amount) + ' đ';
+            }
+        </script>
     </div>
 </body>
 

@@ -16,6 +16,7 @@ public class TtaCartController {
     private final TtaCartService ttaCartService;
     private final com.tta.dientu.store.repository.TtaQuanTriVienRepository ttaQuanTriVienRepository;
     private final TtaSanPhamRepository ttaSanPhamRepository;
+    private final com.tta.dientu.store.service.TtaUserVoucherService ttaUserVoucherService;
 
     @GetMapping
     public String viewCart(Model model) {
@@ -62,6 +63,9 @@ public class TtaCartController {
             String email = authentication.getName();
             ttaQuanTriVienRepository.findByTtaEmail(email).ifPresent(user -> {
                 model.addAttribute("user", user);
+                // Get valid vouchers
+                model.addAttribute("availableVouchers",
+                        ttaUserVoucherService.getMyValidVouchers(user.getTtaMaNguoiDung()));
             });
         }
 
@@ -71,15 +75,58 @@ public class TtaCartController {
         return "areas/user/cart/tta-checkout";
     }
 
+    // Validate voucher endpoint
+    @GetMapping("/validate-voucher")
+    @ResponseBody
+    public java.util.Map<String, Object> validateVoucher(@RequestParam("code") String code,
+            @RequestParam("total") BigDecimal total) {
+        java.util.Map<String, Object> response = new java.util.HashMap<>();
+        try {
+            // Get current user
+            org.springframework.security.core.Authentication authentication = org.springframework.security.core.context.SecurityContextHolder
+                    .getContext().getAuthentication();
+            if (authentication == null || !authentication.isAuthenticated()
+                    || "anonymousUser".equals(authentication.getPrincipal())) {
+                response.put("success", false);
+                response.put("message", "Bạn cần đăng nhập để sử dụng voucher");
+                return response;
+            }
+            String email = authentication.getName();
+            // Get user ID (Need to inject repository or service to get ID)
+            com.tta.dientu.store.entity.TtaQuanTriVien user = ttaQuanTriVienRepository.findByTtaEmail(email)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            // Use functionality from CartService or UserVoucherService (need to update
+            // Service first ideally, but doing
+            // validation here for now)
+            // Ideally validation should be in Service. Assuming CartService will be updated
+            // to handle this via delegation
+            BigDecimal discount = ttaCartService.calculateVoucherDiscount(user.getTtaMaNguoiDung(), code, total);
+            BigDecimal newTotal = total.subtract(discount);
+            if (newTotal.compareTo(BigDecimal.ZERO) < 0)
+                newTotal = BigDecimal.ZERO;
+
+            response.put("success", true);
+            response.put("discount", discount);
+            response.put("newTotal", newTotal);
+            response.put("message", "Áp dụng voucher thành công!");
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
+        }
+        return response;
+    }
+
     @PostMapping("/checkout")
     public String processCheckout(@RequestParam("hoTen") String hoTen,
             @RequestParam("soDienThoai") String soDienThoai,
             @RequestParam("diaChi") String diaChi,
             @RequestParam("email") String email,
             @RequestParam(value = "ghiChu", required = false) String ghiChu,
+            @RequestParam(value = "voucherCode", required = false) String voucherCode,
             org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
         try {
-            ttaCartService.checkout(hoTen, soDienThoai, diaChi, email, ghiChu);
+            ttaCartService.checkout(hoTen, soDienThoai, diaChi, email, ghiChu, voucherCode);
             redirectAttributes.addFlashAttribute("message", "Đặt hàng thành công!");
             return "redirect:/user/cart"; // Hoặc trang thông báo thành công riêng
         } catch (RuntimeException e) {
@@ -108,6 +155,9 @@ public class TtaCartController {
             String email = authentication.getName();
             ttaQuanTriVienRepository.findByTtaEmail(email).ifPresent(user -> {
                 model.addAttribute("user", user);
+                // Get valid vouchers
+                model.addAttribute("availableVouchers",
+                        ttaUserVoucherService.getMyValidVouchers(user.getTtaMaNguoiDung()));
             });
         }
 
@@ -125,10 +175,12 @@ public class TtaCartController {
             @RequestParam("soDienThoai") String soDienThoai,
             @RequestParam("diaChi") String diaChi,
             @RequestParam(value = "ghiChu", required = false) String ghiChu,
+            @RequestParam(value = "voucherCode", required = false) String voucherCode,
             org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
         try {
             // Create order directly
-            Integer orderId = ttaCartService.createDirectOrder(productId, quantity, hoTen, soDienThoai, diaChi, ghiChu);
+            Integer orderId = ttaCartService.createDirectOrder(productId, quantity, hoTen, soDienThoai, diaChi, ghiChu,
+                    voucherCode);
             redirectAttributes.addFlashAttribute("message", "Đặt hàng thành công!");
             return "redirect:/user/invoice/" + orderId;
         } catch (RuntimeException e) {

@@ -25,6 +25,8 @@ public class TtaCartService {
     private final com.tta.dientu.store.repository.TtaChiTietDonHangRepository ttaChiTietDonHangRepository;
     private final com.tta.dientu.store.repository.TtaSanPhamRepository ttaSanPhamRepository;
 
+    private final TtaUserVoucherService ttaUserVoucherService;
+
     private Integer getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()
@@ -38,7 +40,8 @@ public class TtaCartService {
     }
 
     @Transactional
-    public void checkout(String hoTen, String soDienThoai, String diaChi, String email, String ghiChu) {
+    public void checkout(String hoTen, String soDienThoai, String diaChi, String email, String ghiChu,
+            String voucherCode) {
         Integer userId = getCurrentUserId();
         if (userId == null) {
             throw new RuntimeException("Bạn cần đăng nhập để thanh toán");
@@ -52,11 +55,19 @@ public class TtaCartService {
         TtaQuanTriVien user = ttaQuanTriVienRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Người dùng không tồn tại"));
 
+        java.math.BigDecimal total = java.math.BigDecimal.valueOf(getTotal());
+        java.math.BigDecimal discount = java.math.BigDecimal.ZERO;
+
+        // Apply voucher if provided
+        if (voucherCode != null && !voucherCode.trim().isEmpty()) {
+            discount = ttaUserVoucherService.calculateDiscount(userId, voucherCode, total);
+        }
+
         // Tạo đơn hàng
         com.tta.dientu.store.entity.TtaDonHang donHang = new com.tta.dientu.store.entity.TtaDonHang();
         donHang.setTtaNguoiDung(user);
         donHang.setTtaNgayDatHang(java.time.LocalDateTime.now());
-        donHang.setTtaTongTien(java.math.BigDecimal.valueOf(getTotal()));
+        donHang.setTtaTongTien(total.subtract(discount).max(java.math.BigDecimal.ZERO));
         donHang.setTtaTrangThai(com.tta.dientu.store.enums.TtaTrangThaiDonHang.DA_DAT);
 
         donHang.setTtaHoTenNguoiNhan(hoTen);
@@ -66,6 +77,11 @@ public class TtaCartService {
         donHang.setTtaGhiChu(ghiChu);
 
         donHang = ttaDonHangRepository.save(donHang);
+
+        // Mark voucher as used
+        if (voucherCode != null && !voucherCode.trim().isEmpty()) {
+            ttaUserVoucherService.useVoucher(userId, voucherCode, donHang);
+        }
 
         // Tạo chi tiết đơn hàng
         for (TtaCartItem item : cartItems) {
@@ -80,6 +96,11 @@ public class TtaCartService {
 
         // Xóa giỏ hàng
         clearCart();
+    }
+
+    public java.math.BigDecimal calculateVoucherDiscount(Integer userId, String voucherCode,
+            java.math.BigDecimal total) {
+        return ttaUserVoucherService.calculateDiscount(userId, voucherCode, total);
     }
 
     public List<TtaCartItem> getCartItems() {
@@ -160,7 +181,7 @@ public class TtaCartService {
     // Create order directly from Buy Now (skip cart)
     @Transactional
     public Integer createDirectOrder(Integer productId, int quantity, String hoTen, String soDienThoai, String diaChi,
-            String ghiChu) {
+            String ghiChu, String voucherCode) {
         Integer userId = getCurrentUserId();
         if (userId == null) {
             throw new RuntimeException("Bạn cần đăng nhập để mua hàng");
@@ -180,12 +201,18 @@ public class TtaCartService {
 
         // Calculate total
         java.math.BigDecimal total = product.getTtaGia().multiply(java.math.BigDecimal.valueOf(quantity));
+        java.math.BigDecimal discount = java.math.BigDecimal.ZERO;
+
+        // Apply voucher
+        if (voucherCode != null && !voucherCode.trim().isEmpty()) {
+            discount = ttaUserVoucherService.calculateDiscount(userId, voucherCode, total);
+        }
 
         // Create order
         com.tta.dientu.store.entity.TtaDonHang donHang = new com.tta.dientu.store.entity.TtaDonHang();
         donHang.setTtaNguoiDung(user);
         donHang.setTtaNgayDatHang(java.time.LocalDateTime.now());
-        donHang.setTtaTongTien(total);
+        donHang.setTtaTongTien(total.subtract(discount).max(java.math.BigDecimal.ZERO));
         donHang.setTtaTrangThai(com.tta.dientu.store.enums.TtaTrangThaiDonHang.DA_DAT);
         donHang.setTtaHoTenNguoiNhan(hoTen);
         donHang.setTtaSoDienThoaiNguoiNhan(soDienThoai);
@@ -193,6 +220,11 @@ public class TtaCartService {
         donHang.setTtaGhiChu(ghiChu);
 
         donHang = ttaDonHangRepository.save(donHang);
+
+        // Mark voucher as used
+        if (voucherCode != null && !voucherCode.trim().isEmpty()) {
+            ttaUserVoucherService.useVoucher(userId, voucherCode, donHang);
+        }
 
         // Create order detail
         com.tta.dientu.store.entity.TtaChiTietDonHang chiTiet = new com.tta.dientu.store.entity.TtaChiTietDonHang();

@@ -207,6 +207,78 @@
             opacity: 0;
             pointer-events: none;
         }
+
+        button[data-bs-toggle="collapse"][aria-expanded="false"] .bi-chevron-down {
+            transform: rotate(-90deg);
+        }
+
+        /* Voucher Toast Notification */
+        .voucher-toast {
+            position: fixed;
+            bottom: 80px;
+            /* Above GTranslate */
+            left: 20px;
+            z-index: 10000;
+            max-width: 320px;
+            background: white;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+            border-radius: 50px;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            transform: translateX(0);
+            opacity: 1;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .voucher-toast.hidden {
+            transform: translateX(-120%);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .toast-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .toast-image img {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #f0f0f0;
+        }
+
+        .toast-text {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .toast-header {
+            font-size: 0.75rem;
+            color: #888;
+            margin-bottom: 2px;
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            gap: 10px;
+        }
+
+        .toast-header .toast-time {
+            font-weight: normal;
+            color: #aaa;
+        }
+
+        .toast-message {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #333;
+            line-height: 1.2;
+        }
     </style>
 
     <script>
@@ -240,6 +312,44 @@
     </script>
 
     <th:block th:fragment="scripts-extra"></th:block>
+    <!-- Voucher Toast Notification -->
+    <div id="voucher-toast" class="voucher-toast hidden">
+        <div class="toast-content">
+            <div class="toast-image">
+                <img src="https://cdn-icons-png.flaticon.com/512/726/726476.png" alt="Voucher" id="toast-img">
+            </div>
+            <div class="toast-text">
+                <div class="toast-header">
+                    <span class="toast-from" id="toast-title">Thông báo</span>
+                    <span class="toast-time">Vừa xong</span>
+                </div>
+                <div class="toast-message" id="toast-message">Áp dụng voucher thành công</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showVoucherToast(title, message, imageUrl) {
+            const toast = document.getElementById('voucher-toast');
+            const titleEl = document.getElementById('toast-title');
+            const messageEl = document.getElementById('toast-message');
+            const imgEl = document.getElementById('toast-img');
+
+            if (title) titleEl.innerText = title;
+            if (message) messageEl.innerText = message;
+            if (imageUrl) imgEl.src = imageUrl;
+
+            toast.classList.remove('hidden');
+
+            if (window.voucherToastTimeout) {
+                clearTimeout(window.voucherToastTimeout);
+            }
+
+            window.voucherToastTimeout = setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 4000);
+        }
+    </script>
 </body>
 
 </html>

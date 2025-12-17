@@ -53,6 +53,12 @@
                     <i class="bi bi-ticket-perforated"></i> Khuyến mãi
                 </a>
             </li>
+            <li class="nav-item mb-2">
+                <a class="nav-link text-white" th:href="@{/admin/user-voucher}"
+                    th:classappend="${activePage == 'user-voucher'} ? 'active'">
+                    <i class="bi bi-ticket-detailed"></i> User Voucher
+                </a>
+            </li>
             <!-- Thêm Chi tiết đơn hàng -->
             <li class="nav-item mb-2">
                 <a class="nav-link text-white" th:href="@{/admin/ttachitietdonhang}"

@@ -26,6 +26,14 @@ public class TtaUserVoucherService {
     private final TtaQuanTriVienRepository quantriVienRepository;
 
     /**
+     * Get all user vouchers (for Admin)
+     */
+    public List<TtaUserVoucher> getAllUserVouchers() {
+        return userVoucherRepository.findAll(
+                org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "ttaId"));
+    }
+
+    /**
      * Get all vouchers available for users to claim
      */
     public List<TtaVoucher> getAvailableVouchers() {

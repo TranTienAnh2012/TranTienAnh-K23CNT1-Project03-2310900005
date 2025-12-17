@@ -35,166 +35,162 @@
                 </div>
             </div>
         </div>
-<!--        <div class="col-md-4">-->
-<!--            <div class="card border-0 shadow-sm">-->
-<!--                <div class="card-body">-->
-<!--                    <div class="d-flex align-items-center">-->
-<!--                        <div class="flex-shrink-0">-->
-<!--                            <div class="bg-success bg-opacity-10 rounded-3 p-3">-->
-<!--                                <i class="bi bi-box-seam fs-3 text-success"></i>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                        <div class="flex-grow-1 ms-3">-->
-<!--                            <h6 class="text-muted mb-1">Tổng Số Lượng</h6>-->
-<!--                            <h3 class="mb-0" th:text="${totalQuantity}">0</h3>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--        <div class="col-md-4">-->
-<!--            <div class="card border-0 shadow-sm">-->
-<!--                <div class="card-body">-->
-<!--                    <div class="d-flex align-items-center">-->
-<!--                        <div class="flex-shrink-0">-->
-<!--                            <div class="bg-warning bg-opacity-10 rounded-3 p-3">-->
-<!--                                <i class="bi bi-currency-dollar fs-3 text-warning"></i>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                        <div class="flex-grow-1 ms-3">-->
-<!--                            <h6 class="text-muted mb-1">Tổng Giá Trị</h6>-->
-<!--                            <h3 class="mb-0">-->
-<!--                                <span th:text="${#numbers.formatDecimal(totalValue, 0, 'COMMA', 0, 'POINT')}">0</span>đ-->
-<!--                            </h3>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
+        <!--        <div class="col-md-4">-->
+        <!--            <div class="card border-0 shadow-sm">-->
+        <!--                <div class="card-body">-->
+        <!--                    <div class="d-flex align-items-center">-->
+        <!--                        <div class="flex-shrink-0">-->
+        <!--                            <div class="bg-success bg-opacity-10 rounded-3 p-3">-->
+        <!--                                <i class="bi bi-box-seam fs-3 text-success"></i>-->
+        <!--                            </div>-->
+        <!--                        </div>-->
+        <!--                        <div class="flex-grow-1 ms-3">-->
+        <!--                            <h6 class="text-muted mb-1">Tổng Số Lượng</h6>-->
+        <!--                            <h3 class="mb-0" th:text="${totalQuantity}">0</h3>-->
+        <!--                        </div>-->
+        <!--                    </div>-->
+        <!--                </div>-->
+        <!--            </div>-->
+        <!--        </div>-->
+        <!--        <div class="col-md-4">-->
+        <!--            <div class="card border-0 shadow-sm">-->
+        <!--                <div class="card-body">-->
+        <!--                    <div class="d-flex align-items-center">-->
+        <!--                        <div class="flex-shrink-0">-->
+        <!--                            <div class="bg-warning bg-opacity-10 rounded-3 p-3">-->
+        <!--                                <i class="bi bi-currency-dollar fs-3 text-warning"></i>-->
+        <!--                            </div>-->
+        <!--                        </div>-->
+        <!--                        <div class="flex-grow-1 ms-3">-->
+        <!--                            <h6 class="text-muted mb-1">Tổng Giá Trị</h6>-->
+        <!--                            <h3 class="mb-0">-->
+        <!--                                <span th:text="${#numbers.formatDecimal(totalValue, 0, 'COMMA', 0, 'POINT')}">0</span>đ-->
+        <!--                            </h3>-->
+        <!--                        </div>-->
+        <!--                    </div>-->
+        <!--                </div>-->
+        <!--            </div>-->
+        <!--        </div>-->
+        <!--    </div>-->
 
-    <!-- Order Details List -->
-    <div class="card border-0 shadow-sm">
-        <div class="card-header bg-white py-3">
-            <h5 class="mb-0">
-                <i class="bi bi-list-ul"></i> Danh Sách Chi Tiết
-            </h5>
-        </div>
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th class="px-4 py-3">
-                                <i class="bi bi-hash"></i> Mã CT
-                            </th>
-                            <th class="py-3">
-                                <i class="bi bi-receipt"></i> Mã ĐH
-                            </th>
-                            <th class="py-3">
-                                <i class="bi bi-box"></i> Sản Phẩm
-                            </th>
-                            <th class="py-3 text-center">
-                                <i class="bi bi-123"></i> Số Lượng
-                            </th>
-                            <th class="py-3 text-end">
-                                <i class="bi bi-tag"></i> Đơn Giá
-                            </th>
-                            <th class="py-3 text-end">
-                                <i class="bi bi-cash-stack"></i> Thành Tiền
-                            </th>
-                            <th class="py-3 text-center">
-                                <i class="bi bi-gear"></i> Thao Tác
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="item : ${ttaList}" class="order-detail-row">
-                            <td class="px-4">
-                                <span class="badge bg-secondary bg-opacity-10 text-dark fw-normal px-3 py-2">
-                                    #<span th:text="${item.ttaMaChiTiet}">001</span>
-                                </span>
-                            </td>
-                            <td>
-                                <a th:href="@{'/admin/ttadonhang/detail/' + ${item.ttaDonHang?.ttaMaDonHang}}"
-                                    class="text-decoration-none" th:if="${item.ttaDonHang != null}">
-                                    <span class="badge bg-primary bg-opacity-10 text-primary fw-normal px-3 py-2">
-                                        <i class="bi bi-receipt"></i>
-                                        <span th:text="${item.ttaDonHang.ttaMaDonHang}">DH001</span>
+        <!-- Order Details List -->
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0">
+                    <i class="bi bi-list-ul"></i> Danh Sách Chi Tiết
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="px-4 py-3">
+                                    <i class="bi bi-hash"></i> Mã CT
+                                </th>
+                                <th class="py-3">
+                                    <i class="bi bi-receipt"></i> Mã ĐH
+                                </th>
+                                <th class="py-3">
+                                    <i class="bi bi-box"></i> Sản Phẩm
+                                </th>
+                                <th class="py-3 text-center">
+                                    <i class="bi bi-123"></i> Số Lượng
+                                </th>
+                                <th class="py-3 text-end">
+                                    <i class="bi bi-tag"></i> Đơn Giá
+                                </th>
+                                <th class="py-3 text-end">
+                                    <i class="bi bi-cash-stack"></i> Thành Tiền
+                                </th>
+                                <th class="py-3 text-end">
+                                    <i class="bi bi-wallet2"></i> Tổng ĐH (Sau Voucher)
+                                </th>
+                                <th class="py-3 text-center">
+                                    <i class="bi bi-gear"></i> Thao Tác
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="item : ${ttaList}" class="order-detail-row">
+                                <td class="px-4">
+                                    <span class="badge bg-secondary bg-opacity-10 text-dark fw-normal px-3 py-2">
+                                        #<span th:text="${item.ttaMaChiTiet}">001</span>
                                     </span>
-                                </a>
-                                <span th:unless="${item.ttaDonHang != null}" class="text-muted">N/A</span>
-                            </td>
-                            <td>
-                                <div class="d-flex align-items-center">
-<!--                                    <div class="product-image-wrapper me-3">-->
-<!--                                        <img th:if="${item.ttaSanPham?.ttaHinhAnh != null}"-->
-<!--                                            th:src="@{${item.ttaSanPham.ttaHinhAnh}}" alt="Product Image"-->
-<!--                                            class="rounded" style="width: 50px; height: 50px; object-fit: cover;">-->
-<!--                                        <div th:unless="${item.ttaSanPham?.ttaHinhAnh != null}"-->
-<!--                                            class="bg-light rounded d-flex align-items-center justify-content-center"-->
-<!--                                            style="width: 50px; height: 50px;">-->
-<!--                                            <i class="bi bi-image text-muted"></i>-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-                                    <div>
-                                        <div class="fw-medium"
-                                            th:text="${item.ttaSanPham?.ttaTenSanPham != null ? item.ttaSanPham.ttaTenSanPham : 'N/A'}">
-                                            Tên sản phẩm
+                                </td>
+                                <td>
+                                    <a th:href="@{'/admin/donhang/chitiet/' + ${item.ttaDonHang?.ttaMaDonHang}}"
+                                        class="text-decoration-none" th:if="${item.ttaDonHang != null}">
+                                        <span class="badge bg-primary bg-opacity-10 text-primary fw-normal px-3 py-2">
+                                            <i class="bi bi-receipt"></i>
+                                            <span th:text="${item.ttaDonHang.ttaMaDonHang}">DH001</span>
+                                        </span>
+                                    </a>
+                                    <span th:unless="${item.ttaDonHang != null}" class="text-muted">N/A</span>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div>
+                                            <div class="fw-medium"
+                                                th:text="${item.ttaSanPham?.ttaTenSanPham != null ? item.ttaSanPham.ttaTenSanPham : 'N/A'}">
+                                                Tên sản phẩm
+                                            </div>
                                         </div>
-<!--                                        <small class="text-muted" th:if="${item.ttaSanPham?.ttaMaSanPham != null}">-->
-<!--                                            Mã: <span th:text="${item.ttaSanPham.ttaMaSanPham}">SP001</span>-->
-<!--                                        </small>-->
                                     </div>
-                                </div>
-                            </td>
-                            <td class="text-center">
-                                <span class="badge bg-info bg-opacity-10 text-info px-3 py-2">
-                                    <i class="bi bi-box"></i>
-                                    <span th:text="${item.ttaSoLuong}">1</span>
-                                </span>
-                            </td>
-                            <td class="text-end">
-                                <span class="fw-medium text-dark">
-                                    <span
-                                        th:text="${#numbers.formatDecimal(item.ttaDonGia != null ? item.ttaDonGia : 0, 0, 'COMMA', 0, 'POINT')}">0</span>đ
-                                </span>
-                            </td>
-                            <td class="text-end">
-                                <span class="fw-bold text-success fs-6">
-                                    <span
-                                        th:text="${#numbers.formatDecimal((item.ttaSoLuong != null ? item.ttaSoLuong : 0) * (item.ttaDonGia != null ? item.ttaDonGia : 0), 0, 'COMMA', 0, 'POINT')}">0</span>đ
-                                </span>
-                            </td>
-                            <td class="text-center">
-                                <div class="btn-group" role="group">
-                                    <a th:href="@{'/admin/ttachitietdonhang/edit/' + ${item.ttaMaChiTiet}}"
-                                        class="btn btn-sm btn-outline-warning" data-bs-toggle="tooltip"
-                                        title="Chỉnh sửa">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                    <a th:href="@{'/admin/ttachitietdonhang/delete/' + ${item.ttaMaChiTiet}}"
-                                        onclick="return confirm('Bạn có chắc chắn muốn xóa chi tiết đơn hàng này?')"
-                                        class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" title="Xóa">
-                                        <i class="bi bi-trash"></i>
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr th:if="${#lists.isEmpty(ttaList)}">
-                            <td colspan="7" class="text-center py-5">
-                                <div class="text-muted">
-                                    <i class="bi bi-inbox fs-1 d-block mb-3"></i>
-                                    <p class="mb-0">Chưa có chi tiết đơn hàng nào</p>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-info bg-opacity-10 text-info px-3 py-2">
+                                        <i class="bi bi-box"></i>
+                                        <span th:text="${item.ttaSoLuong}">1</span>
+                                    </span>
+                                </td>
+                                <td class="text-end">
+                                    <span class="fw-medium text-dark">
+                                        <span
+                                            th:text="${#numbers.formatDecimal(item.ttaDonGia != null ? item.ttaDonGia : 0, 0, 'COMMA', 0, 'POINT')}">0</span>đ
+                                    </span>
+                                </td>
+                                <td class="text-end">
+                                    <span class="fw-bold text-success fs-6">
+                                        <span
+                                            th:text="${#numbers.formatDecimal((item.ttaSoLuong != null ? item.ttaSoLuong : 0) * (item.ttaDonGia != null ? item.ttaDonGia : 0), 0, 'COMMA', 0, 'POINT')}">0</span>đ
+                                    </span>
+                                </td>
+                                <td class="text-end">
+                                    <span class="fw-bold text-primary fs-6" th:if="${item.ttaDonHang != null}">
+                                        <span
+                                            th:text="${#numbers.formatDecimal(item.ttaDonHang.ttaTongTien, 0, 'COMMA', 0, 'POINT')}">0</span>đ
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group" role="group">
+                                        <a th:href="@{'/admin/ttachitietdonhang/edit/' + ${item.ttaMaChiTiet}}"
+                                            class="btn btn-sm btn-outline-warning" data-bs-toggle="tooltip"
+                                            title="Chỉnh sửa">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a th:href="@{'/admin/ttachitietdonhang/delete/' + ${item.ttaMaChiTiet}}"
+                                            onclick="return confirm('Bạn có chắc chắn muốn xóa chi tiết đơn hàng này?')"
+                                            class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" title="Xóa">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(ttaList)}">
+                                <td colspan="8" class="text-center py-5">
+                                    <div class="text-muted">
+                                        <i class="bi bi-inbox fs-1 d-block mb-3"></i>
+                                        <p class="mb-0">Chưa có chi tiết đơn hàng nào</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
-</div>
 </div>
 <style>
     .order-detail-row {

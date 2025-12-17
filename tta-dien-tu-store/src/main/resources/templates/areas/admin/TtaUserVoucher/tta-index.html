@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/tta-admin-layout :: layout(~{::content})}">
+
+<head>
+    <title>Quản lý User Voucher</title>
+</head>
+
+<body>
+    <div th:fragment="content">
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <h2 class="section-title">Danh sách User Voucher</h2>
+            </div>
+            <!-- Disabled Create button as these are usually created by system/user actions -->
+            <!-- 
+            <div class="col-md-6 text-end">
+                <a th:href="@{/admin/user-voucher/create}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Thêm mới
+                </a>
+            </div>
+            -->
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-header bg-white py-3">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h5 class="mb-0 text-primary">Danh sách User đã nhận Voucher</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Mã ID</th>
+                                <th>Người dùng</th>
+                                <th>Mã Voucher</th>
+                                <th>Tên Voucher</th>
+                                <th>Ngày nhận</th>
+                                <th>Trạng thái</th>
+                                <th>Ngày sử dụng</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${#lists.isEmpty(listUserVoucher)}">
+                                <td colspan="7" class="text-center py-4 text-muted">
+                                    <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                                    Chưa có dữ liệu
+                                </td>
+                            </tr>
+                            <tr th:each="item : ${listUserVoucher}">
+                                <td th:text="${'#' + item.ttaId}">#1</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-circle bg-light text-primary me-2">
+                                            <i class="bi bi-person"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold" th:text="${item.ttaUser.ttaHoTen}">Tên User</div>
+                                            <small class="text-muted"
+                                                th:text="${item.ttaUser.ttaEmail}">email@example.com</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-dark border font-monospace"
+                                        th:text="${item.ttaVoucher.ttaCode}">CODE</span>
+                                </td>
+                                <td th:text="${item.ttaVoucher.ttaName}">Tên Voucher</td>
+                                <td th:text="${#temporals.format(item.ttaClaimedAt, 'dd/MM/yyyy HH:mm')}">01/01/2024
+                                    10:00</td>
+                                <td>
+                                    <span th:if="${item.ttaIsUsed}" class="badge bg-success">
+                                        <i class="bi bi-check-circle me-1"></i>Đã sử dụng
+                                    </span>
+                                    <span th:unless="${item.ttaIsUsed}" class="badge bg-info text-dark">
+                                        <i class="bi bi-ticket-perforated me-1"></i>Chưa sử dụng
+                                    </span>
+                                </td>
+                                <td>
+                                    <span th:if="${item.ttaIsUsed}"
+                                        th:text="${#temporals.format(item.ttaUsedAt, 'dd/MM/yyyy HH:mm')}">01/01/2024
+                                        12:00</span>
+                                    <span th:unless="${item.ttaIsUsed}" class="text-muted">-</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
