@@ -124,12 +124,22 @@ public class TtaCartController {
             @RequestParam("email") String email,
             @RequestParam(value = "ghiChu", required = false) String ghiChu,
             @RequestParam(value = "voucherCode", required = false) String voucherCode,
+            @RequestParam(value = "paymentMethod", defaultValue = "cod") String paymentMethod,
             org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
         try {
-            ttaCartService.checkout(hoTen, soDienThoai, diaChi, email, ghiChu, voucherCode);
+            com.tta.dientu.store.entity.TtaDonHang donHang = ttaCartService.checkout(hoTen, soDienThoai, diaChi, email,
+                    ghiChu, voucherCode);
+
+            if ("zalopay".equals(paymentMethod)) {
+                // ZaloPay removed
+                redirectAttributes.addFlashAttribute("error", "Phương thức thanh toán này hiện chưa được hỗ trợ.");
+                return "redirect:/user/cart/checkout";
+            }
+
             redirectAttributes.addFlashAttribute("message", "Đặt hàng thành công!");
-            return "redirect:/user/cart"; // Hoặc trang thông báo thành công riêng
-        } catch (RuntimeException e) {
+            return "redirect:/user/invoice/" + donHang.getTtaMaDonHang();
+        } catch (Exception e) {
+            e.printStackTrace();
             redirectAttributes.addFlashAttribute("error", e.getMessage());
             return "redirect:/user/cart/checkout";
         }

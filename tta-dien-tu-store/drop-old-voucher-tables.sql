@@ -9,8 +9,10 @@ SET FOREIGN_KEY_CHECKS = 0;
 
 -- Drop old voucher-related tables
 DROP TABLE IF EXISTS tta_SanPhamKhuyenMai;
+DROP TABLE IF EXISTS tta_sanpham_khuyenmai;
 DROP TABLE IF EXISTS tta_NguoiDungGiamGia;
 DROP TABLE IF EXISTS tta_KhuyenMai;
+DROP TABLE IF EXISTS tta_giamgia;
 
 -- Re-enable foreign key checks
 SET FOREIGN_KEY_CHECKS = 1;

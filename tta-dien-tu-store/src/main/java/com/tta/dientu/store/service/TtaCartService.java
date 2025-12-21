@@ -40,7 +40,8 @@ public class TtaCartService {
     }
 
     @Transactional
-    public void checkout(String hoTen, String soDienThoai, String diaChi, String email, String ghiChu,
+    public com.tta.dientu.store.entity.TtaDonHang checkout(String hoTen, String soDienThoai, String diaChi,
+            String email, String ghiChu,
             String voucherCode) {
         Integer userId = getCurrentUserId();
         if (userId == null) {
@@ -96,6 +97,8 @@ public class TtaCartService {
 
         // Xóa giỏ hàng
         clearCart();
+
+        return donHang;
     }
 
     public java.math.BigDecimal calculateVoucherDiscount(Integer userId, String voucherCode,
