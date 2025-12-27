@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/tta-admin-layout :: layout(~{::content})}">
+
+<body>
+    <div th:fragment="content">
+        <!-- Header -->
+        <div class="mb-4">
+            <h2 class="mb-1">
+                <i class="bi bi-plus-circle-dotted text-primary"></i>
+                Thêm Nhiều Thuộc tính
+            </h2>
+            <p class="text-muted mb-0">Thêm nhiều thông số kỹ thuật cùng lúc cho sản phẩm</p>
+        </div>
+
+        <!-- Form -->
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <form th:action="@{/admin/thuoctinh/create-bulk}" method="post" id="bulkForm">
+                    <!-- Chọn sản phẩm -->
+                    <div class="mb-4">
+                        <label for="productId" class="form-label">
+                            Sản phẩm <span class="text-danger">*</span>
+                        </label>
+                        <select id="productId" name="productId" class="form-select" required>
+                            <option value="">-- Chọn sản phẩm --</option>
+                            <option th:each="product : ${products}" th:value="${product.ttaMaSanPham}"
+                                th:text="${product.ttaTenSanPham}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- Dynamic Attributes Container -->
+                    <div id="attributesContainer">
+                        <div class="row mb-3 attribute-row">
+                            <div class="col-md-5">
+                                <label class="form-label">Tên thuộc tính</label>
+                                <input type="text" name="names" class="form-control"
+                                    placeholder="VD: CPU, RAM, Màn hình..." required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Giá trị</label>
+                                <input type="text" name="values" class="form-control"
+                                    placeholder="VD: Intel Core i7, 16GB..." required>
+                            </div>
+                            <div class="col-md-1 d-flex align-items-end">
+                                <button type="button" class="btn btn-outline-danger btn-sm w-100"
+                                    onclick="removeRow(this)" disabled>
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Add More Button -->
+                    <div class="mb-4">
+                        <button type="button" class="btn btn-outline-primary" onclick="addRow()">
+                            <i class="bi bi-plus-circle"></i> Thêm thuộc tính
+                        </button>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Lưu tất cả
+                        </button>
+                        <a th:href="@{/admin/thuoctinh}" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-circle"></i> Hủy
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Quick Templates -->
+        <div class="card border-0 shadow-sm mt-4">
+            <div class="card-header bg-light">
+                <h6 class="mb-0"><i class="bi bi-lightbulb"></i> Template nhanh</h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <button class="btn btn-sm btn-outline-primary w-100 mb-2" onclick="loadLaptopTemplate()">
+                            <i class="bi bi-laptop"></i> Laptop
+                        </button>
+                    </div>
+                    <div class="col-md-4">
+                        <button class="btn btn-sm btn-outline-success w-100 mb-2" onclick="loadPhoneTemplate()">
+                            <i class="bi bi-phone"></i> Điện thoại
+                        </button>
+                    </div>
+                    <div class="col-md-4">
+                        <button class="btn btn-sm btn-outline-warning w-100 mb-2" onclick="loadHeadphoneTemplate()">
+                            <i class="bi bi-headphones"></i> Tai nghe
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            let rowCount = 1;
+
+            function addRow() {
+                const container = document.getElementById('attributesContainer');
+                const newRow = document.createElement('div');
+                newRow.className = 'row mb-3 attribute-row';
+                newRow.innerHTML = `
+                <div class="col-md-5">
+                    <label class="form-label">Tên thuộc tính</label>
+                    <input type="text" name="names" class="form-control" 
+                           placeholder="VD: CPU, RAM, Màn hình..." required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Giá trị</label>
+                    <input type="text" name="values" class="form-control" 
+                           placeholder="VD: Intel Core i7, 16GB..." required>
+                </div>
+                <div class="col-md-1 d-flex align-items-end">
+                    <button type="button" class="btn btn-outline-danger btn-sm w-100" onclick="removeRow(this)">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+            `;
+                container.appendChild(newRow);
+                rowCount++;
+            }
+
+            function removeRow(button) {
+                button.closest('.attribute-row').remove();
+            }
+
+            function loadLaptopTemplate() {
+                clearRows();
+                addAttributeRow('CPU', 'Intel Core i7-12700H');
+                addAttributeRow('RAM', '16GB DDR4');
+                addAttributeRow('Ổ cứng', '512GB SSD NVMe');
+                addAttributeRow('Màn hình', '15.6 inch Full HD');
+                addAttributeRow('Card đồ họa', 'NVIDIA GeForce RTX 3050');
+                addAttributeRow('Hệ điều hành', 'Windows 11 Home');
+            }
+
+            function loadPhoneTemplate() {
+                clearRows();
+                addAttributeRow('Chip', 'Apple A17 Pro');
+                addAttributeRow('RAM', '8GB');
+                addAttributeRow('Bộ nhớ', '256GB');
+                addAttributeRow('Màn hình', '6.7 inch Super Retina XDR');
+                addAttributeRow('Camera', '48MP + 12MP + 12MP');
+                addAttributeRow('Pin', '4422 mAh');
+            }
+
+            function loadHeadphoneTemplate() {
+                clearRows();
+                addAttributeRow('Kết nối', 'Bluetooth 5.3');
+                addAttributeRow('Thời lượng pin', '30 giờ');
+                addAttributeRow('Chống ồn', 'ANC');
+                addAttributeRow('Driver', '40mm');
+                addAttributeRow('Trọng lượng', '250g');
+            }
+
+            function clearRows() {
+                document.getElementById('attributesContainer').innerHTML = '';
+                rowCount = 0;
+            }
+
+            function addAttributeRow(name, value) {
+                const container = document.getElementById('attributesContainer');
+                const newRow = document.createElement('div');
+                newRow.className = 'row mb-3 attribute-row';
+                newRow.innerHTML = `
+                <div class="col-md-5">
+                    <label class="form-label">Tên thuộc tính</label>
+                    <input type="text" name="names" class="form-control" 
+                           value="${name}" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Giá trị</label>
+                    <input type="text" name="values" class="form-control" 
+                           value="${value}" required>
+                </div>
+                <div class="col-md-1 d-flex align-items-end">
+                    <button type="button" class="btn btn-outline-danger btn-sm w-100" onclick="removeRow(this)">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+            `;
+                container.appendChild(newRow);
+                rowCount++;
+            }
+        </script>
+    </div>
+</body>
+
+</html>

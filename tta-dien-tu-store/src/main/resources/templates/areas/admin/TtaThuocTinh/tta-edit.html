@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/tta-admin-layout :: layout(~{::content})}">
+
+<body>
+    <div th:fragment="content">
+        <!-- Header -->
+        <div class="mb-4">
+            <h2 class="mb-1">
+                <i class="bi bi-pencil text-warning"></i>
+                Sửa Thuộc tính Sản phẩm
+            </h2>
+            <p class="text-muted mb-0">Chỉnh sửa thông số kỹ thuật</p>
+        </div>
+
+        <!-- Form -->
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <form th:action="@{'/admin/thuoctinh/edit/' + ${thuocTinh.ttaGiaTriId}}" method="post">
+                    <!-- Sản phẩm (read-only) -->
+                    <div class="mb-3">
+                        <label class="form-label">Sản phẩm</label>
+                        <input type="text" class="form-control" th:value="${thuocTinh.ttaSanPham?.ttaTenSanPham}"
+                            readonly>
+                        <div class="form-text">Không thể thay đổi sản phẩm khi sửa thuộc tính</div>
+                    </div>
+
+                    <!-- Tên thuộc tính -->
+                    <div class="mb-3">
+                        <label for="tenThuocTinh" class="form-label">
+                            Tên thuộc tính <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" id="tenThuocTinh" name="tenThuocTinh" class="form-control"
+                            th:value="${thuocTinh.ttaThuocTinh}" required>
+                    </div>
+
+                    <!-- Giá trị -->
+                    <div class="mb-4">
+                        <label for="giaTri" class="form-label">
+                            Giá trị <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" id="giaTri" name="giaTri" class="form-control"
+                            th:value="${thuocTinh.ttaGiaTri}" required>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-warning">
+                            <i class="bi bi-check-circle"></i> Cập nhật
+                        </button>
+                        <a th:href="@{/admin/thuoctinh(productId=${thuocTinh.ttaSanPham?.ttaMaSanPham})}"
+                            class="btn btn-outline-secondary">
+                            <i class="bi bi-x-circle"></i> Hủy
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

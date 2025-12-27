@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!-- Price Display Fragment -->
+<div th:fragment="price-display(product)" class="price-display">
+    <!-- Has Discount -->
+    <div th:if="${product.hasDiscount()}" class="d-flex align-items-center gap-2 flex-wrap">
+        <!-- Original Price (strikethrough) -->
+        <span class="text-muted text-decoration-line-through fs-6"
+            th:text="${#numbers.formatDecimal(product.ttaGia, 0, 'COMMA', 0, 'POINT')} + ' ₫'">
+            1,000,000 ₫
+        </span>
+
+        <!-- Sale Price (red, bold) -->
+        <span class="text-danger fw-bold fs-5"
+            th:text="${#numbers.formatDecimal(product.ttaGiaBan, 0, 'COMMA', 0, 'POINT')} + ' ₫'">
+            800,000 ₫
+        </span>
+
+        <!-- Discount Badge -->
+        <span class="badge bg-danger" th:text="'-' + ${#numbers.formatDecimal(product.discountPercentage, 0, 0)} + '%'">
+            -20%
+        </span>
+    </div>
+
+    <!-- No Discount -->
+    <div th:unless="${product.hasDiscount()}">
+        <span class="fw-bold fs-5 text-primary"
+            th:text="${#numbers.formatDecimal(product.ttaGia, 0, 'COMMA', 0, 'POINT')} + ' ₫'">
+            1,000,000 ₫
+        </span>
+    </div>
+</div>
+
+<!-- Compact Price Display (for cards) -->
+<div th:fragment="price-compact(product)" class="price-compact">
+    <!-- Has Discount -->
+    <div th:if="${product.hasDiscount()}">
+        <div class="text-muted text-decoration-line-through small"
+            th:text="${#numbers.formatDecimal(product.ttaGia, 0, 'COMMA', 0, 'POINT')} + ' ₫'">
+        </div>
+        <div class="d-flex align-items-center gap-1">
+            <span class="text-danger fw-bold"
+                th:text="${#numbers.formatDecimal(product.ttaGiaBan, 0, 'COMMA', 0, 'POINT')} + ' ₫'">
+            </span>
+            <span class="badge bg-danger badge-sm"
+                th:text="'-' + ${#numbers.formatDecimal(product.discountPercentage, 0, 0)} + '%'">
+            </span>
+        </div>
+    </div>
+
+    <!-- No Discount -->
+    <div th:unless="${product.hasDiscount()}">
+        <span class="fw-bold text-primary"
+            th:text="${#numbers.formatDecimal(product.ttaGia, 0, 'COMMA', 0, 'POINT')} + ' ₫'">
+        </span>
+    </div>
+</div>
+
+</html>

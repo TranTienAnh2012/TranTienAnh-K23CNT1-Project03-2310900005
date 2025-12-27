@@ -42,7 +42,7 @@ public class TtaCartService {
     @Transactional
     public com.tta.dientu.store.entity.TtaDonHang checkout(String hoTen, String soDienThoai, String diaChi,
             String email, String ghiChu,
-            String voucherCode) {
+            String voucherCode, String paymentMethod) {
         Integer userId = getCurrentUserId();
         if (userId == null) {
             throw new RuntimeException("Bạn cần đăng nhập để thanh toán");
@@ -76,6 +76,15 @@ public class TtaCartService {
         donHang.setTtaDiaChiNguoiNhan(diaChi);
         donHang.setTtaEmailNguoiNhan(email);
         donHang.setTtaGhiChu(ghiChu);
+
+        // Set payment method
+        if ("online".equals(paymentMethod)) {
+            donHang.setTtaPhuongThucThanhToan(com.tta.dientu.store.enums.TtaPhuongThucThanhToan.ONLINE);
+            donHang.setTtaTrangThaiThanhToan(com.tta.dientu.store.enums.TtaTrangThaiThanhToan.UNPAID);
+        } else {
+            donHang.setTtaPhuongThucThanhToan(com.tta.dientu.store.enums.TtaPhuongThucThanhToan.COD);
+            donHang.setTtaTrangThaiThanhToan(com.tta.dientu.store.enums.TtaTrangThaiThanhToan.UNPAID);
+        }
 
         donHang = ttaDonHangRepository.save(donHang);
 
@@ -184,7 +193,7 @@ public class TtaCartService {
     // Create order directly from Buy Now (skip cart)
     @Transactional
     public Integer createDirectOrder(Integer productId, int quantity, String hoTen, String soDienThoai, String diaChi,
-            String ghiChu, String voucherCode) {
+            String ghiChu, String voucherCode, String paymentMethod) {
         Integer userId = getCurrentUserId();
         if (userId == null) {
             throw new RuntimeException("Bạn cần đăng nhập để mua hàng");
@@ -202,8 +211,8 @@ public class TtaCartService {
         TtaQuanTriVien user = ttaQuanTriVienRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Người dùng không tồn tại"));
 
-        // Calculate total
-        java.math.BigDecimal total = product.getTtaGia().multiply(java.math.BigDecimal.valueOf(quantity));
+        // Calculate total using effective price (sale price if available)
+        java.math.BigDecimal total = product.getEffectivePrice().multiply(java.math.BigDecimal.valueOf(quantity));
         java.math.BigDecimal discount = java.math.BigDecimal.ZERO;
 
         // Apply voucher
@@ -222,6 +231,15 @@ public class TtaCartService {
         donHang.setTtaDiaChiNguoiNhan(diaChi);
         donHang.setTtaGhiChu(ghiChu);
 
+        // Set payment method
+        if ("online".equals(paymentMethod)) {
+            donHang.setTtaPhuongThucThanhToan(com.tta.dientu.store.enums.TtaPhuongThucThanhToan.ONLINE);
+            donHang.setTtaTrangThaiThanhToan(com.tta.dientu.store.enums.TtaTrangThaiThanhToan.UNPAID);
+        } else {
+            donHang.setTtaPhuongThucThanhToan(com.tta.dientu.store.enums.TtaPhuongThucThanhToan.COD);
+            donHang.setTtaTrangThaiThanhToan(com.tta.dientu.store.enums.TtaTrangThaiThanhToan.UNPAID);
+        }
+
         donHang = ttaDonHangRepository.save(donHang);
 
         // Mark voucher as used
@@ -234,7 +252,7 @@ public class TtaCartService {
         chiTiet.setTtaDonHang(donHang);
         chiTiet.setTtaSanPham(product);
         chiTiet.setTtaSoLuong(quantity);
-        chiTiet.setTtaDonGia(product.getTtaGia());
+        chiTiet.setTtaDonGia(product.getEffectivePrice());
 
         ttaChiTietDonHangRepository.save(chiTiet);
 
@@ -243,5 +261,73 @@ public class TtaCartService {
         ttaSanPhamRepository.save(product);
 
         return donHang.getTtaMaDonHang();
+    }
+
+    /**
+     * Tạo đơn hàng từ payment session (SAU KHI thanh toán thành công)
+     */
+    @Transactional
+    public com.tta.dientu.store.entity.TtaDonHang createOrderFromSession(
+            com.tta.dientu.store.entity.TtaPaymentSession session) {
+        Integer userId = getCurrentUserId();
+        if (userId == null) {
+            throw new RuntimeException("Bạn cần đăng nhập để tạo đơn hàng");
+        }
+
+        TtaQuanTriVien user = ttaQuanTriVienRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Người dùng không tồn tại"));
+
+        // Parse cart data from JSON
+        List<TtaCartItem> cartItems;
+        try {
+            com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+            cartItems = mapper.readValue(
+                    session.getTtaCartDataJson(),
+                    mapper.getTypeFactory().constructCollectionType(List.class, TtaCartItem.class));
+        } catch (Exception e) {
+            throw new RuntimeException("Lỗi khi đọc thông tin giỏ hàng", e);
+        }
+
+        // Tạo đơn hàng
+        com.tta.dientu.store.entity.TtaDonHang donHang = new com.tta.dientu.store.entity.TtaDonHang();
+        donHang.setTtaNguoiDung(user);
+        donHang.setTtaNgayDatHang(java.time.LocalDateTime.now());
+        donHang.setTtaTongTien(session.getTtaTongTien());
+        donHang.setTtaTrangThai(com.tta.dientu.store.enums.TtaTrangThaiDonHang.DA_DAT);
+
+        donHang.setTtaHoTenNguoiNhan(session.getTtaHoTen());
+        donHang.setTtaSoDienThoaiNguoiNhan(session.getTtaSoDienThoai());
+        donHang.setTtaDiaChiNguoiNhan(session.getTtaDiaChi());
+        donHang.setTtaEmailNguoiNhan(session.getTtaEmail());
+        donHang.setTtaGhiChu(session.getTtaGhiChu());
+
+        // Set payment method - online payment
+        donHang.setTtaPhuongThucThanhToan(com.tta.dientu.store.enums.TtaPhuongThucThanhToan.ONLINE);
+        donHang.setTtaTrangThaiThanhToan(com.tta.dientu.store.enums.TtaTrangThaiThanhToan.PAID); // Đã thanh toán
+
+        donHang = ttaDonHangRepository.save(donHang);
+
+        // Mark voucher as used if applicable
+        if (session.getTtaVoucherCode() != null && !session.getTtaVoucherCode().trim().isEmpty()) {
+            ttaUserVoucherService.useVoucher(userId, session.getTtaVoucherCode(), donHang);
+        }
+
+        // Tạo chi tiết đơn hàng
+        for (TtaCartItem item : cartItems) {
+            com.tta.dientu.store.entity.TtaChiTietDonHang chiTiet = new com.tta.dientu.store.entity.TtaChiTietDonHang();
+            chiTiet.setTtaDonHang(donHang);
+            chiTiet.setTtaSanPham(item.getTtaSanPham());
+            chiTiet.setTtaSoLuong(item.getTtaSoLuong());
+            chiTiet.setTtaDonGia(item.getTtaSanPham().getGiaKhuyenMai());
+
+            ttaChiTietDonHangRepository.save(chiTiet);
+
+            // Update stock
+            com.tta.dientu.store.entity.TtaSanPham product = item.getTtaSanPham();
+            product.setTtaSoLuongTon(product.getTtaSoLuongTon() - item.getTtaSoLuong());
+            ttaSanPhamRepository.save(product);
+        }
+
+        return donHang;
     }
 }

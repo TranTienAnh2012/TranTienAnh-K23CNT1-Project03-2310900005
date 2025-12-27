@@ -1,5 +1,7 @@
 package com.tta.dientu.store.entity;
 
+import com.tta.dientu.store.enums.TtaPhuongThucThanhToan;
+import com.tta.dientu.store.enums.TtaTrangThaiThanhToan;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.math.BigDecimal;
@@ -51,11 +53,23 @@ public class TtaDonHang {
     @Column(name = "tta_GhiChu", columnDefinition = "TEXT")
     private String ttaGhiChu;
 
+    // Phương thức thanh toán
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tta_PhuongThucThanhToan", length = 20)
+    private TtaPhuongThucThanhToan ttaPhuongThucThanhToan;
+
+    // Trạng thái thanh toán
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tta_TrangThaiThanhToan", length = 20)
+    private TtaTrangThaiThanhToan ttaTrangThaiThanhToan;
+
     // Constructor mặc định
     public TtaDonHang() {
         this.ttaNgayDatHang = LocalDateTime.now();
         this.ttaTrangThai = com.tta.dientu.store.enums.TtaTrangThaiDonHang.DA_DAT; // Mặc định là đã đặt
         this.ttaTongTien = BigDecimal.ZERO;
+        this.ttaPhuongThucThanhToan = TtaPhuongThucThanhToan.COD; // Mặc định COD
+        this.ttaTrangThaiThanhToan = TtaTrangThaiThanhToan.UNPAID; // Mặc định chưa thanh toán
     }
 
     // Constructor với tham số

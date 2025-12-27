@@ -78,6 +78,70 @@
             </div>
         </div>
 
+        <!-- Row 2: Additional Statistics -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-muted mb-2">Danh mục</h6>
+                                <h3 class="mb-0" th:text="${ttaTongDanhMuc}">0</h3>
+                            </div>
+                            <div class="text-secondary">
+                                <i class="bi bi-tags" style="font-size: 2.5rem;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-muted mb-2">Banner</h6>
+                                <h3 class="mb-0" th:text="${ttaTongBanner}">0</h3>
+                            </div>
+                            <div class="text-danger">
+                                <i class="bi bi-image" style="font-size: 2.5rem;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-muted mb-2">Voucher</h6>
+                                <h3 class="mb-0" th:text="${ttaTongVoucher}">0</h3>
+                            </div>
+                            <div class="text-warning">
+                                <i class="bi bi-ticket-perforated" style="font-size: 2.5rem;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-muted mb-2">User Voucher</h6>
+                                <h3 class="mb-0" th:text="${ttaTongUserVoucher}">0</h3>
+                            </div>
+                            <div class="text-info">
+                                <i class="bi bi-gift" style="font-size: 2.5rem;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Additional Info -->
         <div class="row g-4">
             <div class="col-md-6">
@@ -91,20 +155,20 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-success text-white">
-                        <h5 class="mb-0"><i class="bi bi-currency-dollar"></i> Doanh thu tháng này</h5>
-                    </div>
-                    <div class="card-body">
-                        <h2 class="text-success"
-                            th:text="${#numbers.formatDecimal(ttaDoanhThuThang, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}">
-                            0 VNĐ
-                        </h2>
-                        <p class="text-muted mb-0">Tổng doanh thu trong tháng</p>
-                    </div>
-                </div>
-            </div>
+<!--            <div class="col-md-6">-->
+<!--                <div class="card border-0 shadow-sm">-->
+<!--                    <div class="card-header bg-success text-white">-->
+<!--                        <h5 class="mb-0"><i class="bi bi-currency-dollar"></i> Doanh thu tháng này</h5>-->
+<!--                    </div>-->
+<!--                    <div class="card-body">-->
+<!--                        <h2 class="text-success"-->
+<!--                            th:text="${#numbers.formatDecimal(ttaDoanhThuThang, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}">-->
+<!--                            0 VNĐ-->
+<!--                        </h2>-->
+<!--                        <p class="text-muted mb-0">Tổng doanh thu trong tháng</p>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
         </div>
     </div>
 </body>

@@ -5,17 +5,17 @@
     <!-- Admin Sidebar Navigation Fragment -->
     <nav th:fragment="admin-sidebar-nav" class="sidebar-nav p-3">
         <ul class="nav flex-column">
+            <!-- Dashboard -->
             <li class="nav-item mb-2">
                 <a class="nav-link text-white" th:href="@{/admin/dashboard}"
                     th:classappend="${activePage == 'dashboard'} ? 'active'">
                     <i class="bi bi-speedometer2"></i> Dashboard
                 </a>
             </li>
-            <li class="nav-item mb-2">
-                <a class="nav-link text-white" th:href="@{/admin/quan-tri-vien}"
-                    th:classappend="${activePage == 'quantrivien'} ? 'active'">
-                    <i class="bi bi-people"></i> Quản trị viên
-                </a>
+
+            <!-- QUẢN LÝ SẢN PHẨM -->
+            <li class="nav-item mt-3 mb-2">
+                <small class="text-muted text-uppercase fw-bold px-3">Quản lý sản phẩm</small>
             </li>
             <li class="nav-item mb-2">
                 <a class="nav-link text-white" th:href="@{/admin/sanpham}"
@@ -30,21 +30,37 @@
                 </a>
             </li>
             <li class="nav-item mb-2">
+                <a class="nav-link text-white" th:href="@{/admin/thuoctinh}"
+                    th:classappend="${activePage == 'thuoctinh'} ? 'active'">
+                    <i class="bi bi-list-check"></i> Thuộc tính sản phẩm
+                </a>
+            </li>
+
+            <!-- QUẢN LÝ ĐỐN HÀNG -->
+            <li class="nav-item mt-3 mb-2">
+                <small class="text-muted text-uppercase fw-bold px-3">Quản lý đơn hàng</small>
+            </li>
+            <li class="nav-item mb-2">
                 <a class="nav-link text-white" th:href="@{/admin/donhang}"
                     th:classappend="${activePage == 'TtaDonHang'} ? 'active'">
                     <i class="bi bi-cart-check"></i> Đơn hàng
                 </a>
             </li>
             <li class="nav-item mb-2">
+                <a class="nav-link text-white" th:href="@{/admin/ttachitietdonhang}"
+                    th:classappend="${activePage == 'chitietdonhang'} ? 'active'">
+                    <i class="bi bi-card-list"></i> Chi tiết đơn hàng
+                </a>
+            </li>
+
+            <!-- MARKETING -->
+            <li class="nav-item mt-3 mb-2">
+                <small class="text-muted text-uppercase fw-bold px-3">Marketing</small>
+            </li>
+            <li class="nav-item mb-2">
                 <a class="nav-link text-white" th:href="@{/admin/banner}"
                     th:classappend="${activePage == 'banner'} ? 'active'">
                     <i class="bi bi-card-image"></i> Banner
-                </a>
-            </li>
-            <li class="nav-item mb-2">
-                <a class="nav-link text-white" th:href="@{/admin/danhgia}"
-                    th:classappend="${activePage == 'TtaDanhGia'} ? 'active'">
-                    <i class="bi bi-star"></i> Đánh giá
                 </a>
             </li>
             <li class="nav-item mb-2">
@@ -56,15 +72,30 @@
             <li class="nav-item mb-2">
                 <a class="nav-link text-white" th:href="@{/admin/user-voucher}"
                     th:classappend="${activePage == 'user-voucher'} ? 'active'">
-                    <i class="bi bi-ticket-detailed"></i> User Voucher
+                    <i class="bi bi-gift"></i> User Voucher
                 </a>
             </li>
-            <!-- Thêm Chi tiết đơn hàng -->
+
+            <!-- QUẢN LÝ CHUNG -->
+            <li class="nav-item mt-3 mb-2">
+                <small class="text-muted text-uppercase fw-bold px-3">Quản lý chung</small>
+            </li>
             <li class="nav-item mb-2">
-                <a class="nav-link text-white" th:href="@{/admin/ttachitietdonhang}"
-                    th:classappend="${activePage == 'chitietdonhang'} ? 'active'">
-                    <i class="bi bi-card-list"></i> Chi tiết đơn hàng
+                <a class="nav-link text-white" th:href="@{/admin/quan-tri-vien}"
+                    th:classappend="${activePage == 'quantrivien'} ? 'active'">
+                    <i class="bi bi-people"></i> Quản trị viên
                 </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a class="nav-link text-white" th:href="@{/admin/danhgia}"
+                    th:classappend="${activePage == 'TtaDanhGia'} ? 'active'">
+                    <i class="bi bi-star"></i> Đánh giá
+                </a>
+            </li>
+
+            <!-- HỆ THỐNG -->
+            <li class="nav-item mt-3 mb-2">
+                <small class="text-muted text-uppercase fw-bold px-3">Hệ thống</small>
             </li>
             <li class="nav-item mb-2">
                 <a class="nav-link text-white" th:href="@{/account/profile}">

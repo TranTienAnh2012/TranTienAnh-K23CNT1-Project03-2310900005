@@ -6,11 +6,12 @@ import com.tta.dientu.store.entity.TtaSanPham;
 import com.tta.dientu.store.repository.TtaDonHangRepository;
 import com.tta.dientu.store.repository.TtaSanPhamRepository;
 import com.tta.dientu.store.areas.admin.service.TtaChiTietDonHangService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Controller
 @RequestMapping("/admin/ttachitietdonhang")
@@ -28,20 +29,26 @@ public class TtaChiTietDonHangController {
         this.sanPhamRepo = sanPhamRepo;
     }
 
-    // ➤ Danh sách
+    // ➤ Danh sách với phân trang
     @GetMapping
-    public String list(Model model) {
-        List<TtaChiTietDonHang> ttaList = service.getAll();
+    public String list(@RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            Model model) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<TtaChiTietDonHang> ttaPage = service.getAll(pageable);
 
         // fix null
-        for (TtaChiTietDonHang item : ttaList) {
+        for (TtaChiTietDonHang item : ttaPage.getContent()) {
             if (item.getTtaDonHang() == null)
                 item.setTtaDonHang(new TtaDonHang());
             if (item.getTtaSanPham() == null)
                 item.setTtaSanPham(new TtaSanPham());
         }
 
-        model.addAttribute("ttaList", ttaList);
+        model.addAttribute("ttaPage", ttaPage);
+        model.addAttribute("ttaList", ttaPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", ttaPage.getTotalPages());
         model.addAttribute("pageTitle", "Danh sách Chi Tiết Đơn Hàng");
         return "areas/admin/ttachitietdonhang/tta-list";
     }

@@ -27,6 +27,9 @@ public interface TtaQuanTriVienRepository extends JpaRepository<TtaQuanTriVien, 
     // Lấy top quản trị viên mới nhất
     List<TtaQuanTriVien> findTop5ByOrderByTtaNgayDangKyDesc();
 
+    // Tìm user bằng reset token
+    Optional<TtaQuanTriVien> findByTtaResetToken(String ttaResetToken);
+
     // Tìm kiếm theo họ tên hoặc email
     Page<TtaQuanTriVien> findByTtaHoTenContainingIgnoreCaseOrTtaEmailContainingIgnoreCase(
             String ttaHoTenKeyword,

@@ -13,6 +13,6 @@ public class TtaCartItem {
     private int ttaSoLuong;
 
     public double getThanhTien() {
-        return ttaSanPham.getGiaKhuyenMai().doubleValue() * ttaSoLuong;
+        return ttaSanPham.getEffectivePrice().doubleValue() * ttaSoLuong;
     }
 }

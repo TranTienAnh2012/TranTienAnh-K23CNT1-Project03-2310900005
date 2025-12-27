@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/tta-admin-layout :: layout(~{::content})}">
+
+<div th:fragment="content">
+    <!-- Header -->
+    <div class="mb-4">
+        <h2 class="mb-1">
+            <i class="bi bi-plus-circle text-primary"></i>
+            Thêm Thuộc tính Sản phẩm
+        </h2>
+        <p class="text-muted mb-0">Thêm thông số kỹ thuật cho sản phẩm</p>
+    </div>
+
+    <!-- Form -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+            <form th:action="@{/admin/thuoctinh/create}" method="post">
+                <!-- Chọn sản phẩm -->
+                <div class="mb-3">
+                    <label for="productId" class="form-label">
+                        Sản phẩm <span class="text-danger">*</span>
+                    </label>
+                    <select id="productId" name="productId" class="form-select" required
+                        th:value="${thuocTinh.ttaSanPham?.ttaMaSanPham}">
+                        <option value="">-- Chọn sản phẩm --</option>
+                        <option th:each="product : ${products}" th:value="${product.ttaMaSanPham}"
+                            th:text="${product.ttaTenSanPham}"
+                            th:selected="${thuocTinh.ttaSanPham != null && thuocTinh.ttaSanPham.ttaMaSanPham == product.ttaMaSanPham}">
+                        </option>
+                    </select>
+                </div>
+
+                <!-- Tên thuộc tính -->
+                <div class="mb-3">
+                    <label for="tenThuocTinh" class="form-label">
+                        Tên thuộc tính <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" id="tenThuocTinh" name="tenThuocTinh" class="form-control"
+                        placeholder="Ví dụ: CPU, RAM, Màn hình, Pin..." required>
+                    <div class="form-text">Tên của thông số kỹ thuật (VD: CPU, RAM, Màn hình)</div>
+                </div>
+
+                <!-- Giá trị -->
+                <div class="mb-4">
+                    <label for="giaTri" class="form-label">
+                        Giá trị <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" id="giaTri" name="giaTri" class="form-control"
+                        placeholder="Ví dụ: Intel Core i7, 16GB, 15.6 inch..." required>
+                    <div class="form-text">Giá trị cụ thể của thuộc tính (VD: Intel i7, 16GB, 15.6 inch)</div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle"></i> Lưu
+                    </button>
+                    <a th:href="@{/admin/thuoctinh}" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-circle"></i> Hủy
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Quick Add Examples -->
+    <div class="card border-0 shadow-sm mt-4">
+        <div class="card-header bg-light">
+            <h6 class="mb-0"><i class="bi bi-lightbulb"></i> Gợi ý thuộc tính phổ biến</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <h6 class="text-primary">Laptop</h6>
+                    <ul class="small">
+                        <li>CPU: Intel Core i7-12700H</li>
+                        <li>RAM: 16GB DDR4</li>
+                        <li>Ổ cứng: 512GB SSD NVMe</li>
+                        <li>Màn hình: 15.6 inch Full HD</li>
+                        <li>Card đồ họa: NVIDIA RTX 3050</li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h6 class="text-success">Điện thoại</h6>
+                    <ul class="small">
+                        <li>Chip: Apple A17 Pro</li>
+                        <li>RAM: 8GB</li>
+                        <li>Bộ nhớ: 256GB</li>
+                        <li>Màn hình: 6.7 inch Super Retina XDR</li>
+                        <li>Camera: 48MP + 12MP + 12MP</li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h6 class="text-warning">Tai nghe</h6>
+                    <ul class="small">
+                        <li>Kết nối: Bluetooth 5.3</li>
+                        <li>Thời lượng pin: 30 giờ</li>
+                        <li>Chống ồn: ANC</li>
+                        <li>Driver: 40mm</li>
+                        <li>Trọng lượng: 250g</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</html>

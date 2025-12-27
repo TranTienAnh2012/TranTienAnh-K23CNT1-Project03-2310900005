@@ -27,6 +27,12 @@ public class TtaQuanTriVien {
     @Column(name = "tta_NgayDangKy")
     private LocalDateTime ttaNgayDangKy;
 
+    @Column(name = "tta_ResetToken", length = 100)
+    private String ttaResetToken;
+
+    @Column(name = "tta_ResetTokenExpiry")
+    private LocalDateTime ttaResetTokenExpiry;
+
     // Constructor mặc định
     public TtaQuanTriVien() {
         this.ttaNgayDangKy = LocalDateTime.now();
@@ -80,5 +86,21 @@ public class TtaQuanTriVien {
 
     public void setTtaNgayDangKy(LocalDateTime ttaNgayDangKy) {
         this.ttaNgayDangKy = ttaNgayDangKy;
+    }
+
+    public String getTtaResetToken() {
+        return ttaResetToken;
+    }
+
+    public void setTtaResetToken(String ttaResetToken) {
+        this.ttaResetToken = ttaResetToken;
+    }
+
+    public LocalDateTime getTtaResetTokenExpiry() {
+        return ttaResetTokenExpiry;
+    }
+
+    public void setTtaResetTokenExpiry(LocalDateTime ttaResetTokenExpiry) {
+        this.ttaResetTokenExpiry = ttaResetTokenExpiry;
     }
 }

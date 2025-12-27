@@ -17,6 +17,7 @@ public class TtaCartController {
     private final com.tta.dientu.store.repository.TtaQuanTriVienRepository ttaQuanTriVienRepository;
     private final TtaSanPhamRepository ttaSanPhamRepository;
     private final com.tta.dientu.store.service.TtaUserVoucherService ttaUserVoucherService;
+    private final com.tta.dientu.store.service.TtaPaymentSessionService ttaPaymentSessionService;
 
     @GetMapping
     public String viewCart(Model model) {
@@ -127,14 +128,16 @@ public class TtaCartController {
             @RequestParam(value = "paymentMethod", defaultValue = "cod") String paymentMethod,
             org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
         try {
-            com.tta.dientu.store.entity.TtaDonHang donHang = ttaCartService.checkout(hoTen, soDienThoai, diaChi, email,
-                    ghiChu, voucherCode);
-
-            if ("zalopay".equals(paymentMethod)) {
-                // ZaloPay removed
-                redirectAttributes.addFlashAttribute("error", "Phương thức thanh toán này hiện chưa được hỗ trợ.");
-                return "redirect:/user/cart/checkout";
+            // If online payment, create session instead of order
+            if ("online".equals(paymentMethod)) {
+                com.tta.dientu.store.entity.TtaPaymentSession session = ttaPaymentSessionService.createSession(hoTen,
+                        soDienThoai, diaChi, email, ghiChu, voucherCode);
+                return "redirect:/user/payment/session/" + session.getTtaMaSession();
             }
+
+            // For COD, create order immediately
+            com.tta.dientu.store.entity.TtaDonHang donHang = ttaCartService.checkout(hoTen, soDienThoai, diaChi, email,
+                    ghiChu, voucherCode, paymentMethod);
 
             redirectAttributes.addFlashAttribute("message", "Đặt hàng thành công!");
             return "redirect:/user/invoice/" + donHang.getTtaMaDonHang();
@@ -154,8 +157,8 @@ public class TtaCartController {
         TtaSanPham product = ttaSanPhamRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Sản phẩm không tồn tại"));
 
-        // Calculate total
-        BigDecimal total = product.getTtaGia().multiply(BigDecimal.valueOf(quantity));
+        // Calculate total using effective price (sale price if available)
+        BigDecimal total = product.getEffectivePrice().multiply(BigDecimal.valueOf(quantity));
 
         // Get current user info
         org.springframework.security.core.Authentication authentication = org.springframework.security.core.context.SecurityContextHolder
@@ -190,7 +193,7 @@ public class TtaCartController {
         try {
             // Create order directly
             Integer orderId = ttaCartService.createDirectOrder(productId, quantity, hoTen, soDienThoai, diaChi, ghiChu,
-                    voucherCode);
+                    voucherCode, "cod"); // Direct checkout always uses COD for now
             redirectAttributes.addFlashAttribute("message", "Đặt hàng thành công!");
             return "redirect:/user/invoice/" + orderId;
         } catch (RuntimeException e) {

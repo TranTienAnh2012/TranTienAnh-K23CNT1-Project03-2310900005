@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+
+<head th:replace="~{layout/tta-user-layout :: head}">
+    <title>Sản phẩm đã xem</title>
+</head>
+
+<body th:replace="~{layout/tta-user-layout :: layout(~{::content})}">
+    <div th:fragment="content">
+        <div class="container-fluid py-4">
+            <!-- Header Section -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h2 class="mb-1">
+                                <i class="bi bi-clock-history text-primary"></i> Sản phẩm đã xem
+                            </h2>
+                            <p class="text-muted mb-0">
+                                <span th:text="${totalViewed}">0</span> sản phẩm
+                            </p>
+                        </div>
+                        <div th:if="${totalViewed > 0}">
+                            <form th:action="@{/user/recently-viewed/clear}" method="post"
+                                onsubmit="return confirm('Bạn có chắc chắn muốn xóa toàn bộ lịch sử xem sản phẩm?');">
+                                <button type="submit" class="btn btn-outline-danger">
+                                    <i class="bi bi-trash"></i> Xóa lịch sử
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Success Message -->
+            <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle"></i> <span th:text="${successMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <!-- Products Grid -->
+            <div th:if="${totalViewed > 0}" class="row g-4">
+                <div th:each="product : ${recentlyViewedProducts}" class="col-lg-3 col-md-4 col-sm-6">
+                    <div class="card h-100 border-0 shadow-sm hover-shadow transition-all">
+                        <a th:href="@{/user/san-pham/{id}(id=${product.ttaMaSanPham})}" class="text-decoration-none">
+                            <img th:src="@{'/uploads/' + ${product.ttaHinhAnh}}" class="card-img-top"
+                                alt="Product Image" style="height: 250px; object-fit: cover;">
+                        </a>
+                        <div class="card-body d-flex flex-column">
+                            <h6 class="card-title mb-2">
+                                <a th:href="@{/user/san-pham/{id}(id=${product.ttaMaSanPham})}"
+                                    class="text-dark text-decoration-none" th:text="${product.ttaTenSanPham}">
+                                    Tên sản phẩm
+                                </a>
+                            </h6>
+                            <p class="text-muted small mb-2">
+                                <i class="bi bi-tag"></i>
+                                <span th:text="${product.ttaDanhMuc.ttaTenDanhMuc}">Danh mục</span>
+                            </p>
+                            <div class="mt-auto">
+                                <h5 class="text-danger mb-3"
+                                    th:text="${#numbers.formatDecimal(product.ttaGia, 0, 'COMMA', 0, 'POINT')} + ' đ'">
+                                    100.000 đ
+                                </h5>
+                                <div class="d-grid gap-2">
+                                    <a th:href="@{/user/san-pham/{id}(id=${product.ttaMaSanPham})}"
+                                        class="btn btn-outline-primary btn-sm">
+                                        <i class="bi bi-eye"></i> Xem chi tiết
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div th:if="${totalViewed == 0}" class="row">
+                <div class="col-12">
+                    <div class="text-center py-5">
+                        <i class="bi bi-clock-history display-1 text-muted"></i>
+                        <h3 class="mt-4 mb-2">Chưa có sản phẩm nào</h3>
+                        <p class="text-muted mb-4">Bạn chưa xem sản phẩm nào. Hãy khám phá các sản phẩm của chúng tôi!
+                        </p>
+                        <a th:href="@{/user/san-pham}" class="btn btn-primary">
+                            <i class="bi bi-shop"></i> Khám phá sản phẩm
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            .hover-shadow {
+                transition: all 0.3s ease;
+            }
+
+            .hover-shadow:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+            }
+
+            .transition-all {
+                transition: all 0.3s ease;
+            }
+        </style>
+    </div>
+</body>
+
+</html>

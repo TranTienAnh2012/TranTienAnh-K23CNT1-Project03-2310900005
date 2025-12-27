@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+
+<head th:replace="~{layout/tta-user-layout :: head}">
+    <title>Thanh toán QR Code</title>
+</head>
+
+<body th:replace="~{layout/tta-user-layout :: layout(~{::content})}">
+    <div th:fragment="content">
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-6">
+                    <div class="card border-0 shadow-lg">
+                        <div class="card-body p-5 text-center">
+                            <h3 class="mb-4">Thanh toán đơn hàng</h3>
+
+                            <!-- Session Info -->
+                            <div class="alert alert-info mb-4">
+                                <p class="mb-1"><strong>Mã phiên:</strong> #<span
+                                        th:text="${paymentSession.ttaMaSession}"></span></p>
+                                <p class="mb-0"><strong>Số tiền:</strong> <span class="text-danger fs-4"
+                                        th:text="${#numbers.formatDecimal(paymentSession.ttaTongTien, 0, 'COMMA', 0, 'POINT')} + ' đ'"></span>
+                                </p>
+                            </div>
+
+                            <!-- QR Code -->
+                            <div class="mb-4">
+                                <img th:src="${paymentSession.ttaQrCodeUrl}" alt="QR Code thanh toán"
+                                    class="img-fluid rounded shadow" style="max-width: 350px;">
+                            </div>
+
+                            <!-- Payment Instructions -->
+                            <div class="alert alert-warning mb-4">
+                                <h5 class="alert-heading">📱 Hướng dẫn thanh toán</h5>
+                                <ol class="text-start mb-0">
+                                    <li>Mở ứng dụng ngân hàng của bạn</li>
+                                    <li>Chọn chức năng quét mã QR</li>
+                                    <li>Quét mã QR phía trên</li>
+                                    <li>Kiểm tra thông tin và xác nhận thanh toán</li>
+                                </ol>
+                            </div>
+
+                            <!-- Payment Details -->
+                            <div class="card bg-light mb-4">
+                                <div class="card-body">
+                                    <p class="mb-2"><strong>Ngân hàng:</strong> VPBank</p>
+                                    <p class="mb-2"><strong>Nội dung CK:</strong> <code
+                                            th:text="${paymentSession.ttaNoiDungCK}"></code></p>
+                                    <p class="mb-0 text-muted small">⚠️ Vui lòng giữ nguyên nội dung chuyển khoản</p>
+                                </div>
+                            </div>
+
+                            <!-- Countdown Timer -->
+                            <div class="mb-4">
+                                <p class="text-muted">Thời gian còn lại:</p>
+                                <h4 id="countdown" class="text-danger"></h4>
+                            </div>
+
+                            <!-- Status -->
+                            <div id="paymentStatus" class="mb-3">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Đang kiểm tra...</span>
+                                </div>
+                                <p class="mt-2 text-muted">Đang chờ thanh toán...</p>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="d-flex gap-2 justify-content-center flex-wrap">
+                                <a th:href="@{/user/cart}" class="btn btn-outline-secondary" onclick="stopPolling()">
+                                    ← Quay lại giỏ hàng
+                                </a>
+
+                                <form th:action="@{/user/payment/cancel/{id}(id=${paymentSession.ttaMaSession})}"
+                                    method="post"
+                                    onsubmit="stopPolling(); return confirm('Bạn có chắc muốn hủy giao dịch này?');"
+                                    style="display: inline;">
+                                    <button type="submit" class="btn btn-danger">
+                                        ✕ Hủy giao dịch
+                                    </button>
+                                </form>
+                            </div>
+                            <small class="d-block mt-3 text-muted">
+                                Lưu ý: Phiên thanh toán sẽ hết hạn sau 15 phút
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Success Modal -->
+        <div class="modal fade" id="successModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-body text-center p-5">
+                        <div class="mb-4">
+                            <i class="bi bi-check-circle-fill text-success" style="font-size: 5rem;"></i>
+                        </div>
+                        <h3 class="text-success mb-3">Thanh toán thành công!</h3>
+                        <p class="text-muted">Đơn hàng của bạn đã được xác nhận</p>
+                        <button type="button" class="btn btn-success" onclick="redirectToInvoice()">
+                            Xem hóa đơn
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+            const sessionId = [[${ paymentSession.ttaMaSession }]];
+            // Parse ISO-8601 formatted date string
+            const expiryTimeStr = /*[[${paymentSession.ttaNgayHetHan}]]*/ '';
+            const expiryTime = new Date(expiryTimeStr).getTime();
+
+            console.log('=== DEBUG JavaScript ===');
+            console.log('sessionId:', sessionId, 'type:', typeof sessionId);
+            console.log('expiryTimeStr:', expiryTimeStr);
+            console.log('expiryTime:', expiryTime, 'type:', typeof expiryTime);
+            console.log('expiryTime as Date:', new Date(expiryTime));
+
+            let pollingInterval;
+            let countdownInterval;
+
+            // Countdown timer
+            function updateCountdown() {
+                const now = new Date().getTime();
+                const distance = expiryTime - now;
+
+                if (distance < 0) {
+                    clearInterval(countdownInterval);
+                    clearInterval(pollingInterval);
+                    document.getElementById('countdown').innerHTML = "Hết hạn";
+                    document.getElementById('paymentStatus').innerHTML =
+                        '<div class="alert alert-danger">Phiên thanh toán đã hết hạn. Vui lòng tạo đơn hàng mới.</div>';
+                    return;
+                }
+
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                document.getElementById('countdown').innerHTML =
+                    minutes.toString().padStart(2, '0') + ":" + seconds.toString().padStart(2, '0');
+            }
+
+            // Check session status
+            function checkSessionStatus() {
+                fetch('/user/payment/api/check-session/' + sessionId)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Session status:', data);
+
+                        if (data.status === 'paid') {
+                            clearInterval(pollingInterval);
+                            clearInterval(countdownInterval);
+
+                            // Show success modal
+                            const modal = new bootstrap.Modal(document.getElementById('successModal'));
+                            modal.show();
+
+                            // Store orderId for redirect
+                            window.orderId = data.orderId;
+                        } else if (data.status === 'expired') {
+                            clearInterval(pollingInterval);
+                            clearInterval(countdownInterval);
+                            document.getElementById('paymentStatus').innerHTML =
+                                '<div class="alert alert-danger">' + data.message + '</div>';
+                        } else if (data.status === 'error') {
+                            console.error('Error checking session:', data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            }
+
+            function stopPolling() {
+                console.log('Stopping polling...');
+                clearInterval(pollingInterval);
+                clearInterval(countdownInterval);
+            }
+
+            function redirectToInvoice() {
+                stopPolling();
+                if (window.orderId) {
+                    window.location.href = '/user/invoice/' + window.orderId;
+                } else {
+                    window.location.href = '/user/orders';
+                }
+            }
+
+            // Start polling and countdown
+            updateCountdown();
+            countdownInterval = setInterval(updateCountdown, 1000);
+
+            // Check immediately
+            checkSessionStatus();
+            // Then check every 3 seconds
+            pollingInterval = setInterval(checkSessionStatus, 3000);
+
+            // Stop polling when user leaves the page
+            window.addEventListener('beforeunload', function () {
+                clearInterval(pollingInterval);
+                clearInterval(countdownInterval);
+            });
+            /*]]>*/
+        </script>
+    </div>
+</body>
+
+</html>

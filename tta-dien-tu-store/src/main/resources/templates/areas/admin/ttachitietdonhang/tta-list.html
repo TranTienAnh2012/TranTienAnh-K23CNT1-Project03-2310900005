@@ -131,8 +131,9 @@
                                 <td>
                                     <div class="d-flex align-items-center">
                                         <div>
-                                            <div class="fw-medium"
-                                                th:text="${item.ttaSanPham?.ttaTenSanPham != null ? item.ttaSanPham.ttaTenSanPham : 'N/A'}">
+                                            <div class="fw-medium product-name-truncate"
+                                                th:text="${item.ttaSanPham?.ttaTenSanPham != null ? item.ttaSanPham.ttaTenSanPham : 'N/A'}"
+                                                th:title="${item.ttaSanPham?.ttaTenSanPham}">
                                                 Tên sản phẩm
                                             </div>
                                         </div>
@@ -189,6 +190,43 @@
                     </table>
                 </div>
             </div>
+
+            <!-- Pagination -->
+            <div class="card-footer bg-white py-3" th:if="${ttaPage.totalPages > 1}">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center mb-0">
+                        <!-- Previous button -->
+                        <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                            <a class="page-link" th:href="@{/admin/ttachitietdonhang(page=${currentPage - 1}, size=10)}"
+                                aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+
+                        <!-- Page numbers -->
+                        <li class="page-item" th:each="i : ${#numbers.sequence(0, ttaPage.totalPages - 1)}"
+                            th:classappend="${i == currentPage} ? 'active'">
+                            <a class="page-link" th:href="@{/admin/ttachitietdonhang(page=${i}, size=10)}"
+                                th:text="${i + 1}">1</a>
+                        </li>
+
+                        <!-- Next button -->
+                        <li class="page-item" th:classappend="${currentPage + 1 >= ttaPage.totalPages} ? 'disabled'">
+                            <a class="page-link" th:href="@{/admin/ttachitietdonhang(page=${currentPage + 1}, size=10)}"
+                                aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+
+                <!-- Page info -->
+                <div class="text-center mt-2 text-muted small">
+                    Trang <span th:text="${currentPage + 1}">1</span> /
+                    <span th:text="${ttaPage.totalPages}">1</span>
+                    (Tổng <span th:text="${ttaPage.totalElements}">0</span> mục)
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -221,6 +259,34 @@
 
     .btn-group .btn {
         padding: 0.375rem 0.75rem;
+    }
+
+    .product-name-truncate {
+        max-width: 250px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+    .product-name-truncate:hover {
+        cursor: help;
+    }
+
+    .pagination .page-link {
+        color: #6366f1;
+        border-color: #e5e7eb;
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: #6366f1;
+        border-color: #6366f1;
+    }
+
+    .pagination .page-link:hover {
+        background-color: #f3f4f6;
+        border-color: #d1d5db;
     }
 </style>
 

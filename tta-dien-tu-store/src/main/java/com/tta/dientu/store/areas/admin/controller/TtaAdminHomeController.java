@@ -5,6 +5,10 @@ import com.tta.dientu.store.repository.TtaDonHangRepository;
 import com.tta.dientu.store.repository.TtaSanPhamRepository;
 import com.tta.dientu.store.repository.TtaQuanTriVienRepository;
 import com.tta.dientu.store.repository.TtaDanhGiaRepository;
+import com.tta.dientu.store.repository.TtaDanhMucRepository;
+import com.tta.dientu.store.repository.TtaBannerRepository;
+import com.tta.dientu.store.repository.TtaVoucherRepository;
+import com.tta.dientu.store.repository.TtaUserVoucherRepository;
 import com.tta.dientu.store.enums.TtaTrangThaiDonHang;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -25,6 +29,10 @@ public class TtaAdminHomeController {
     private final TtaSanPhamRepository ttaSanPhamRepository;
     private final TtaQuanTriVienRepository ttaQuanTriVienRepository;
     private final TtaDanhGiaRepository ttaDanhGiaRepository;
+    private final TtaDanhMucRepository ttaDanhMucRepository;
+    private final TtaBannerRepository ttaBannerRepository;
+    private final TtaVoucherRepository ttaVoucherRepository;
+    private final TtaUserVoucherRepository ttaUserVoucherRepository;
 
     @GetMapping({ "", "/", "/dashboard" })
     public String dashboard(Model model) {
@@ -33,6 +41,12 @@ public class TtaAdminHomeController {
         long tongDonHang = ttaDonHangRepository.count();
         long tongNguoiDung = ttaQuanTriVienRepository.count();
         long tongDanhGia = ttaDanhGiaRepository.count();
+
+        // Thống kê bổ sung
+        long tongDanhMuc = ttaDanhMucRepository.count();
+        long tongBanner = ttaBannerRepository.count();
+        long tongVoucher = ttaVoucherRepository.count();
+        long tongUserVoucher = ttaUserVoucherRepository.count();
 
         // Đơn hàng chưa xử lý (Đã đặt + Đang xử lý)
         long donHangChuaXuLy = ttaDonHangRepository.countByTtaTrangThaiIn(
@@ -49,12 +63,16 @@ public class TtaAdminHomeController {
 
         model.addAttribute("pageTitle", "TTA Admin - Dashboard");
         model.addAttribute("activePage", "dashboard");
-        model.addAttribute("tongSanPham", tongSanPham);
-        model.addAttribute("tongDonHang", tongDonHang);
-        model.addAttribute("tongNguoiDung", tongNguoiDung);
-        model.addAttribute("tongDanhGia", tongDanhGia);
-        model.addAttribute("donHangChuaXuLy", donHangChuaXuLy);
-        model.addAttribute("doanhThuThang", doanhThuThang);
+        model.addAttribute("ttaTongSanPham", tongSanPham);
+        model.addAttribute("ttaTongDonHang", tongDonHang);
+        model.addAttribute("ttaTongNguoiDung", tongNguoiDung);
+        model.addAttribute("ttaTongDanhGia", tongDanhGia);
+        model.addAttribute("ttaTongDanhMuc", tongDanhMuc);
+        model.addAttribute("ttaTongBanner", tongBanner);
+        model.addAttribute("ttaTongVoucher", tongVoucher);
+        model.addAttribute("ttaTongUserVoucher", tongUserVoucher);
+        model.addAttribute("ttaDonHangChuaXuLy", donHangChuaXuLy);
+        model.addAttribute("ttaDoanhThuThang", doanhThuThang);
         model.addAttribute("ttaQuanTriVienMoi", ttaQuanTriVienMoi);
 
         return "areas/admin/home/tta-dashboard";

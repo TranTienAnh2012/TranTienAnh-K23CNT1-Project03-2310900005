@@ -24,6 +24,8 @@ public class TtaUserHomeController {
     private final TtaDanhMucRepository ttaDanhMucRepository;
     private final TtaBannerService ttaBannerService;
     private final com.tta.dientu.store.service.TtaDanhGiaService ttaDanhGiaService;
+    private final com.tta.dientu.store.service.TtaSanPhamDaXemService ttaSanPhamDaXemService;
+    private final com.tta.dientu.store.service.TtaGiaTriThuocTinhService ttaGiaTriThuocTinhService;
 
     @GetMapping({ "", "/", "/dashboard" })
     public String dashboard(Model model) {
@@ -36,6 +38,14 @@ public class TtaUserHomeController {
             model.addAttribute("ttaBanner", generalBanners.get(0));
         }
 
+        // Lấy 4 sản phẩm nổi bật (sản phẩm mới nhất)
+        List<com.tta.dientu.store.entity.TtaSanPham> featuredProducts = ttaSanPhamRepository
+                .findByTtaTrangThai(true)
+                .stream()
+                .limit(4)
+                .collect(java.util.stream.Collectors.toList());
+        model.addAttribute("featuredProducts", featuredProducts);
+
         return "areas/user/home/tta-dashboard";
     }
 
@@ -44,7 +54,8 @@ public class TtaUserHomeController {
             @RequestParam(required = false) Double minPrice,
             @RequestParam(required = false) Double maxPrice,
             @RequestParam(required = false) String keyword,
-            Model model) {
+            Model model,
+            org.springframework.security.core.Authentication authentication) {
         model.addAttribute("pageTitle", "Sản phẩm - TTA Store");
         model.addAttribute("activePage", "san-pham");
 
@@ -111,6 +122,18 @@ public class TtaUserHomeController {
         model.addAttribute("productRatings", productRatings);
         model.addAttribute("productReviewCounts", productReviewCounts);
 
+        // Thêm sản phẩm đã xem cho người dùng đã đăng nhập
+        if (authentication != null && authentication.isAuthenticated()) {
+            com.tta.dientu.store.areas.user.service.TtaCustomUserDetails userDetails = (com.tta.dientu.store.areas.user.service.TtaCustomUserDetails) authentication
+                    .getPrincipal();
+            Integer userId = userDetails.getTtaMaNguoiDung();
+
+            // Lấy 5 sản phẩm đã xem gần nhất
+            java.util.List<com.tta.dientu.store.entity.TtaSanPham> recentlyViewed = ttaSanPhamDaXemService
+                    .getRecentlyViewedProducts(userId, 5);
+            model.addAttribute("recentlyViewedProducts", recentlyViewed);
+        }
+
         return "areas/user/TtaSanPham/tta-list";
     }
 
@@ -127,6 +150,9 @@ public class TtaUserHomeController {
         model.addAttribute("averageRating", ttaDanhGiaService.getAverageRating(id));
         model.addAttribute("reviewCount", ttaDanhGiaService.getReviewCount(id));
 
+        // Thêm thuộc tính sản phẩm
+        model.addAttribute("productAttributes", ttaGiaTriThuocTinhService.getByProduct(id));
+
         // Kiểm tra user đã đánh giá chưa và có thể đánh giá không
         if (authentication != null && authentication.isAuthenticated()) {
             com.tta.dientu.store.areas.user.service.TtaCustomUserDetails userDetails = (com.tta.dientu.store.areas.user.service.TtaCustomUserDetails) authentication
@@ -139,6 +165,14 @@ public class TtaUserHomeController {
             model.addAttribute("hasReviewed", hasReviewed);
             model.addAttribute("hasPurchased", hasPurchased);
             model.addAttribute("canReview", hasPurchased && !hasReviewed);
+
+            // Lưu lịch sử xem sản phẩm
+            ttaSanPhamDaXemService.trackProductView(userId, id);
+
+            // Lấy danh sách sản phẩm đã xem (không bao gồm sản phẩm hiện tại)
+            java.util.List<com.tta.dientu.store.entity.TtaSanPham> recentlyViewed = ttaSanPhamDaXemService
+                    .getRecentlyViewedProductsExcluding(userId, id, 5);
+            model.addAttribute("recentlyViewedProducts", recentlyViewed);
         }
 
         return "areas/user/TtaSanPham/tta-detail";

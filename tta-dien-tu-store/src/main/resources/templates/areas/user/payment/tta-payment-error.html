@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+
+<head th:replace="~{layout/tta-user-layout :: head}">
+    <title>Lỗi thanh toán</title>
+</head>
+
+<body th:replace="~{layout/tta-user-layout :: layout(~{::content})}">
+    <div th:fragment="content">
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-6">
+                    <div class="card border-0 shadow">
+                        <div class="card-body p-5 text-center">
+                            <i class="bi bi-exclamation-triangle-fill text-danger" style="font-size: 5rem;"></i>
+                            <h3 class="mt-4 mb-3">Lỗi thanh toán</h3>
+                            <p class="text-muted" th:text="${error}">Đã xảy ra lỗi trong quá trình thanh toán</p>
+                            <div class="mt-4">
+                                <a th:href="@{/user/orders}" class="btn btn-primary me-2">Xem đơn hàng</a>
+                                <a th:href="@{/}" class="btn btn-outline-secondary">Về trang chủ</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

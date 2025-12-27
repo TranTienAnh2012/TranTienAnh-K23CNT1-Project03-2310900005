@@ -51,7 +51,8 @@
                                 <th>Mã</th>
                                 <th>Tên sản phẩm</th>
                                 <th>Danh mục</th>
-                                <th>Giá</th>
+                                <th>Giá gốc</th>
+                                <th>Giá bán</th>
                                 <th>Số lượng</th>
                                 <th>Trạng thái</th>
                                 <th class="text-end">Hành động</th>
@@ -60,7 +61,7 @@
 
                         <tbody>
                             <tr th:if="${ttaSanPhamPage.totalElements == 0}">
-                                <td colspan="9" class="text-center text-muted py-4">
+                                <td colspan="10" class="text-center text-muted py-4">
                                     Chưa có sản phẩm nào
                                 </td>
                             </tr>
@@ -90,6 +91,15 @@
                                 <td th:text="${sp.ttaDanhMuc.ttaTenDanhMuc}"></td>
 
                                 <td th:text="${#numbers.formatDecimal(sp.ttaGia,0,'COMMA',0,'POINT')}"></td>
+
+                                <td>
+                                    <span th:if="${sp.ttaGiaBan != null}"
+                                        th:text="${#numbers.formatDecimal(sp.ttaGiaBan,0,'COMMA',0,'POINT')}"
+                                        class="text-danger fw-bold"></span>
+                                    <span th:unless="${sp.ttaGiaBan != null}" class="text-muted">-</span>
+                                    <span th:if="${sp.hasDiscount()}" class="badge bg-danger ms-1"
+                                        th:text="'-' + ${#numbers.formatDecimal(sp.discountPercentage, 0, 0)} + '%'"></span>
+                                </td>
 
                                 <td th:text="${sp.ttaSoLuongTon}"></td>
 

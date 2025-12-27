@@ -25,8 +25,8 @@
                     <span class="badge bg-danger" th:unless="${ttaSanPham.ttaSoLuongTon > 0}">Hết hàng</span>
                 </div>
 
-                <h3 class="text-danger mb-4"
-                    th:text="${#numbers.formatDecimal(ttaSanPham.ttaGia, 0, 'COMMA', 0, 'POINT')} + ' đ'">100.000 đ</h3>
+                <!-- Price Display with Discount -->
+                <div th:replace="~{layout/fragments/tta-price-display :: price-display(${ttaSanPham})}"></div>
 
                 <p class="lead mb-4" th:text="${ttaSanPham.ttaMoTa}">Mô tả sản phẩm...</p>
 
@@ -60,6 +60,37 @@
                             </li>
                             <li><i class="bi bi-check-circle text-success me-2"></i>Giao hàng toàn quốc</li>
                         </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Specifications Section -->
+        <div th:if="${productAttributes != null and !productAttributes.isEmpty()}" class="row mt-5">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white border-bottom">
+                        <h4 class="mb-0">
+                            <i class="bi bi-list-check text-primary"></i> Thông số kỹ thuật
+                        </h4>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <tbody>
+                                    <tr th:each="attr, iterStat : ${productAttributes}"
+                                        th:classappend="${iterStat.odd} ? 'table-light' : ''">
+                                        <td class="fw-medium text-muted" style="width: 30%; padding: 15px 20px;">
+                                            <i class="bi bi-tag me-2"></i>
+                                            <span th:text="${attr.ttaThuocTinh}">Thuộc tính</span>
+                                        </td>
+                                        <td style="padding: 15px 20px;">
+                                            <span th:text="${attr.ttaGiaTri}">Giá trị</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -195,6 +226,57 @@
                 </div>
             </div>
         </div>
+
+        <!-- Recently Viewed Products Section -->
+        <div th:if="${recentlyViewedProducts != null and !recentlyViewedProducts.isEmpty()}" class="row mt-5">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white border-bottom">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4 class="mb-0">
+                                <i class="bi bi-clock-history text-primary"></i> Sản phẩm đã xem gần đây
+                            </h4>
+                            <a th:href="@{/user/recently-viewed}" class="btn btn-sm btn-outline-primary">
+                                Xem tất cả <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div th:each="product : ${recentlyViewedProducts}" class="col-lg-2 col-md-3 col-sm-4 col-6">
+                                <div class="card h-100 border shadow-sm hover-lift">
+                                    <a th:href="@{/user/san-pham/{id}(id=${product.ttaMaSanPham})}"
+                                        class="text-decoration-none">
+                                        <img th:src="@{'/uploads/' + ${product.ttaHinhAnh}}" class="card-img-top"
+                                            alt="Product" style="height: 150px; object-fit: cover;">
+                                        <div class="card-body p-2">
+                                            <h6 class="card-title small mb-1 text-dark text-truncate"
+                                                th:text="${product.ttaTenSanPham}" style="font-size: 0.85rem;">
+                                                Tên sản phẩm
+                                            </h6>
+                                            <div
+                                                th:replace="~{layout/fragments/tta-price-display :: price-compact(${product})}">
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            .hover-lift {
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+            }
+
+            .hover-lift:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+            }
+        </style>
 
         <script th:inline="javascript">
             function increaseQuantity() {

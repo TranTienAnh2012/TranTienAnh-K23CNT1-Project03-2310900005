@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/tta-admin-layout :: layout(~{::content})}">
+
+<body>
+    <div th:fragment="content">
+        <!-- Header Section -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="mb-1">
+                    <i class="bi bi-list-check text-primary"></i>
+                    Quản lý Thuộc tính Sản phẩm
+                </h2>
+                <p class="text-muted mb-0">Quản lý thông số kỹ thuật cho từng sản phẩm</p>
+            </div>
+            <div class="btn-group">
+                <a th:href="@{/admin/thuoctinh/create(productId=${selectedProduct?.ttaMaSanPham})}"
+                    class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Thêm Thuộc tính
+                </a>
+                <a th:href="@{/admin/thuoctinh/create-bulk}" class="btn btn-success">
+                    <i class="bi bi-plus-circle-dotted"></i> Thêm Nhiều
+                </a>
+            </div>
+        </div>
+
+        <!-- Product Filter -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <form th:action="@{/admin/thuoctinh}" method="get" class="row g-3">
+                    <div class="col-md-10">
+                        <label class="form-label">Lọc theo sản phẩm</label>
+                        <select name="productId" class="form-select" onchange="this.form.submit()">
+                            <option value="">-- Tất cả sản phẩm --</option>
+                            <option th:each="product : ${products}" th:value="${product.ttaMaSanPham}"
+                                th:text="${product.ttaTenSanPham}"
+                                th:selected="${selectedProduct != null && selectedProduct.ttaMaSanPham == product.ttaMaSanPham}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <a th:href="@{/admin/thuoctinh}" class="btn btn-outline-secondary w-100">
+                            <i class="bi bi-x-circle"></i> Xóa lọc
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Selected Product Info -->
+        <div th:if="${selectedProduct != null}" class="alert alert-info">
+            <strong>Đang xem thuộc tính của:</strong> <span th:text="${selectedProduct.ttaTenSanPham}"></span>
+            <span class="badge bg-primary ms-2" th:text="${#lists.size(thuocTinhs)} + ' thuộc tính'">0</span>
+        </div>
+
+        <!-- Grouped Attributes List (when no filter) -->
+        <div th:if="${selectedProduct == null && groupedAttributes != null}">
+            <div class="alert alert-warning" th:if="${#maps.isEmpty(groupedAttributes)}">
+                <i class="bi bi-info-circle"></i> Chưa có thuộc tính nào. Hãy chọn sản phẩm hoặc thêm mới.
+            </div>
+
+            <!-- Display grouped products -->
+            <div th:each="entry : ${groupedAttributes}" class="card border-0 shadow-sm mb-3">
+                <div class="card-header bg-light">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0">
+                            <i class="bi bi-box-seam text-primary"></i>
+                            <span th:text="${entry.key.ttaTenSanPham}">Sản phẩm</span>
+                            <span class="badge bg-primary ms-2"
+                                th:text="${#lists.size(entry.value)} + ' thuộc tính'">0</span>
+                        </h6>
+                        <a th:href="@{/admin/thuoctinh(productId=${entry.key.ttaMaSanPham})}"
+                            class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-eye"></i> Xem chi tiết
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="px-4" width="25%">Tên thuộc tính</th>
+                                    <th width="55%">Giá trị</th>
+                                    <th class="text-center" width="20%">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="item : ${entry.value}">
+                                    <td class="px-4">
+                                        <span class="badge bg-info bg-opacity-10 text-info px-3 py-2">
+                                            <i class="bi bi-tag"></i>
+                                            <span th:text="${item.ttaThuocTinh}">Thuộc tính</span>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="fw-medium" th:text="${item.ttaGiaTri}">Giá trị</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="btn-group" role="group">
+                                            <a th:href="@{'/admin/thuoctinh/edit/' + ${item.ttaGiaTriId}}"
+                                                class="btn btn-sm btn-outline-warning" title="Sửa">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <a th:href="@{'/admin/thuoctinh/delete/' + ${item.ttaGiaTriId}}"
+                                                onclick="return confirm('Bạn có chắc chắn muốn xóa thuộc tính này?')"
+                                                class="btn btn-sm btn-outline-danger" title="Xóa">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtered Attributes List (when product selected) -->
+        <div th:if="${selectedProduct != null}">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="px-4" width="5%">#</th>
+                                    <th width="25%">Tên thuộc tính</th>
+                                    <th width="50%">Giá trị</th>
+                                    <th class="text-center" width="20%">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="item, iterStat : ${thuocTinhs}">
+                                    <td class="px-4">
+                                        <span class="badge bg-secondary bg-opacity-10 text-dark fw-normal px-3 py-2">
+                                            #<span th:text="${iterStat.count}">1</span>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info bg-opacity-10 text-info px-3 py-2">
+                                            <i class="bi bi-tag"></i>
+                                            <span th:text="${item.ttaThuocTinh}">Thuộc tính</span>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="fw-medium" th:text="${item.ttaGiaTri}">Giá trị</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="btn-group" role="group">
+                                            <a th:href="@{'/admin/thuoctinh/edit/' + ${item.ttaGiaTriId}}"
+                                                class="btn btn-sm btn-outline-warning" title="Sửa">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <a th:href="@{'/admin/thuoctinh/delete/' + ${item.ttaGiaTriId}}"
+                                                onclick="return confirm('Bạn có chắc chắn muốn xóa thuộc tính này?')"
+                                                class="btn btn-sm btn-outline-danger" title="Xóa">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(thuocTinhs)}">
+                                    <td colspan="4" class="text-center py-5">
+                                        <div class="text-muted">
+                                            <i class="bi bi-inbox fs-1 d-block mb-3"></i>
+                                            <p class="mb-0">Sản phẩm này chưa có thuộc tính nào</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

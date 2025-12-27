@@ -6,6 +6,8 @@ import com.tta.dientu.store.entity.TtaSanPham;
 import com.tta.dientu.store.repository.TtaChiTietDonHangRepository;
 import com.tta.dientu.store.repository.TtaDonHangRepository;
 import com.tta.dientu.store.repository.TtaSanPhamRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,6 +30,11 @@ public class TtaChiTietDonHangService {
     // ➤ Lấy tất cả chi tiết
     public List<TtaChiTietDonHang> getAll() {
         return chiTietRepo.findAll();
+    }
+
+    // ➤ Lấy tất cả chi tiết với phân trang
+    public Page<TtaChiTietDonHang> getAll(Pageable pageable) {
+        return chiTietRepo.findAll(pageable);
     }
 
     // ➤ Lấy chi tiết theo mã đơn

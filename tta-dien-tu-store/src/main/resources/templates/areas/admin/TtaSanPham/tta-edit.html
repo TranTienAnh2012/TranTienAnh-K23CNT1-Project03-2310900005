@@ -32,8 +32,16 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Giá</label>
+                        <label class="form-label">Giá gốc</label>
                         <input class="form-control" type="number" th:field="*{ttaGia}">
+                        <small class="text-muted">Giá gốc của sản phẩm</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Giá bán (Giá khuyến mãi)</label>
+                        <input class="form-control" type="number" th:field="*{ttaGiaBan}">
+                        <small class="text-muted">Để trống nếu không có khuyến mãi. Nếu nhập, giá này sẽ được hiển thị
+                            thay vì giá gốc.</small>
                     </div>
 
                     <div class="mb-3">

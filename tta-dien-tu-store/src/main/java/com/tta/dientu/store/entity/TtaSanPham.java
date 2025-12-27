@@ -82,4 +82,24 @@ public class TtaSanPham {
     public BigDecimal getGiaKhuyenMai() {
         return this.ttaGiaBan != null ? this.ttaGiaBan : this.ttaGia;
     }
+
+    // Kiểm tra có giảm giá không
+    public boolean hasDiscount() {
+        return this.ttaGiaBan != null && this.ttaGiaBan.compareTo(this.ttaGia) < 0;
+    }
+
+    // Tính phần trăm giảm giá
+    public BigDecimal getDiscountPercentage() {
+        if (!hasDiscount()) {
+            return BigDecimal.ZERO;
+        }
+        return this.ttaGia.subtract(this.ttaGiaBan)
+                .divide(this.ttaGia, 4, java.math.RoundingMode.HALF_UP)
+                .multiply(new BigDecimal("100"));
+    }
+
+    // Lấy giá hiển thị (ưu tiên giá bán)
+    public BigDecimal getEffectivePrice() {
+        return this.ttaGiaBan != null ? this.ttaGiaBan : this.ttaGia;
+    }
 }
