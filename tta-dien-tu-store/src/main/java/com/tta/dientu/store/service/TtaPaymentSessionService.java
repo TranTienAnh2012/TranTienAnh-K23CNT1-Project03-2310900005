@@ -157,10 +157,19 @@ public class TtaPaymentSessionService {
      */
     @Transactional
     public Map<String, Object> checkPaymentStatus(Integer sessionId) {
+        System.out.println("=== [PAYMENT-CHECK] Starting check for session: " + sessionId);
+
         TtaPaymentSession session = getSession(sessionId);
+
+        System.out.println("[PAYMENT-CHECK] Session details:");
+        System.out.println("  - Amount: " + session.getTtaTongTien());
+        System.out.println("  - Content: " + session.getTtaNoiDungCK());
+        System.out.println("  - Status: " + session.getTtaTrangThai());
+        System.out.println("  - Expired: " + session.isExpired());
 
         // Kiểm tra đã hết hạn chưa
         if (session.isExpired() && session.isPending()) {
+            System.out.println("[PAYMENT-CHECK] Session expired, marking as expired");
             session.markAsExpired();
             sessionRepository.save(session);
             return Map.of(
@@ -170,6 +179,8 @@ public class TtaPaymentSessionService {
 
         // Nếu đã thanh toán rồi thì trả về luôn
         if (session.isPaid()) {
+            System.out.println("[PAYMENT-CHECK] Session already paid, returning order ID: "
+                    + session.getTtaDonHang().getTtaMaDonHang());
             return Map.of(
                     "status", "paid",
                     "message", "Đã thanh toán",
@@ -184,17 +195,29 @@ public class TtaPaymentSessionService {
                     session.getTtaTongTien().intValue(),
                     URLEncoder.encode(session.getTtaNoiDungCK(), StandardCharsets.UTF_8.toString()));
 
+            System.out.println("[PAYMENT-CHECK] Calling Flask API:");
+            System.out.println("  URL: " + url);
+
             @SuppressWarnings("unchecked")
             Map<String, Object> response = restTemplate.getForObject(url, Map.class);
 
+            System.out.println("[PAYMENT-CHECK] Flask response received:");
+            System.out.println("  - Success: " + (response != null ? response.get("success") : "null"));
+            System.out.println("  - Found: " + (response != null ? response.get("found") : "null"));
+
             if (response != null && Boolean.TRUE.equals(response.get("found"))) {
+                System.out.println("[PAYMENT-CHECK] ✓ PAYMENT FOUND! Creating order...");
+
                 // Tìm thấy giao dịch - TẠO ĐƠN HÀNG
                 @SuppressWarnings("unchecked")
                 Map<String, Object> transaction = (Map<String, Object>) response.get("transaction");
                 String transactionRef = transaction != null ? (String) transaction.get("reference") : null;
 
+                System.out.println("[PAYMENT-CHECK] Transaction reference: " + transactionRef);
+
                 // Tạo đơn hàng từ session data
                 TtaDonHang donHang = cartService.createOrderFromSession(session);
+                System.out.println("[PAYMENT-CHECK] Order created with ID: " + donHang.getTtaMaDonHang());
 
                 // Cập nhật session
                 session.markAsPaid(transactionRef);
@@ -203,6 +226,9 @@ public class TtaPaymentSessionService {
 
                 // Xóa giỏ hàng
                 cartService.clearCart();
+                System.out.println("[PAYMENT-CHECK] Cart cleared");
+
+                System.out.println("[PAYMENT-CHECK] ✓ Payment processing completed successfully!");
 
                 return Map.of(
                         "status", "paid",
@@ -210,12 +236,24 @@ public class TtaPaymentSessionService {
                         "orderId", donHang.getTtaMaDonHang(),
                         "transactionRef", transactionRef != null ? transactionRef : "N/A");
             } else {
+                System.out.println("[PAYMENT-CHECK] Payment not found yet, status: pending");
+                if (response != null && response.get("message") != null) {
+                    System.out.println("  Message: " + response.get("message"));
+                }
+                if (response != null && response.get("error") != null) {
+                    System.out.println("  Error: " + response.get("error"));
+                }
+
                 return Map.of(
                         "status", "pending",
                         "message", "Đang chờ thanh toán");
             }
         } catch (Exception e) {
+            System.out.println("[PAYMENT-CHECK] ✗ ERROR occurred:");
+            System.out.println("  Exception: " + e.getClass().getName());
+            System.out.println("  Message: " + e.getMessage());
             e.printStackTrace();
+
             return Map.of(
                     "status", "error",
                     "message", "Lỗi khi kiểm tra thanh toán: " + e.getMessage());

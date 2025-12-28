@@ -17,15 +17,7 @@
                 <i class="bi bi-ticket-perforated text-danger"></i> Kho Voucher
             </h2>
 
-            <!-- Alert Messages -->
-            <div th:if="${success}" class="alert alert-success alert-dismissible fade show">
-                <i class="bi bi-check-circle"></i> <span th:text="${success}"></span>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
-                <i class="bi bi-exclamation-circle"></i> <span th:text="${error}"></span>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
+
 
             <!-- Voucher Code Input Section -->
             <div class="voucher-input-section">
@@ -185,9 +177,10 @@
             </div>
         </div>
 
-        <!-- JavaScript for Tab Filtering -->
+        <!-- JavaScript for Tab Filtering and Voucher Code Submission -->
         <script>
             document.addEventListener('DOMContentLoaded', function () {
+                // Tab filtering functionality
                 const tabs = document.querySelectorAll('.voucher-tabs .tab');
                 const sections = document.querySelectorAll('.voucher-section');
 
@@ -216,7 +209,76 @@
                         });
                     });
                 });
+
+                // Voucher code submission
+                const voucherCodeInput = document.getElementById('voucherCode');
+                const saveButton = document.querySelector('.btn-save');
+
+                if (saveButton && voucherCodeInput) {
+                    saveButton.addEventListener('click', function () {
+                        const code = voucherCodeInput.value.trim();
+
+                        if (!code) {
+                            showToast('Vui lòng nhập mã voucher!', 'danger');
+                            return;
+                        }
+
+                        // Create and submit form
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = '/user/vouchers/claim-code';
+
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = 'voucherCode';
+                        input.value = code;
+
+                        form.appendChild(input);
+                        document.body.appendChild(form);
+                        form.submit();
+                    });
+
+                    // Allow Enter key to submit
+                    voucherCodeInput.addEventListener('keypress', function (e) {
+                        if (e.key === 'Enter') {
+                            saveButton.click();
+                        }
+                    });
+                }
             });
+
+            // Helper function to show toast notifications
+            function showToast(message, type = 'success') {
+                const toastContainer = document.querySelector('.toast-container');
+                if (!toastContainer) return;
+
+                const toastId = 'toast-' + Date.now();
+                const bgClass = type === 'success' ? 'text-bg-success' : 'text-bg-danger';
+                const icon = type === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill';
+
+                const toastHTML = `
+                    <div id="${toastId}" class="toast align-items-center ${bgClass} border-0" role="alert" 
+                         aria-live="assertive" aria-atomic="true">
+                        <div class="d-flex">
+                            <div class="toast-body">
+                                <i class="bi ${icon} me-2"></i>
+                                ${message}
+                            </div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                        </div>
+                    </div>
+                `;
+
+                toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+                const toastElement = document.getElementById(toastId);
+                const toast = new bootstrap.Toast(toastElement, { delay: 4000 });
+                toast.show();
+
+                // Remove toast from DOM after it's hidden
+                toastElement.addEventListener('hidden.bs.toast', function () {
+                    toastElement.remove();
+                });
+            }
         </script>
     </div>
 </body>
